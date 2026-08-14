@@ -89,10 +89,25 @@ a { color: inherit; }
 }
 
 .hero p {
-  margin: 0;
+  margin: 0 0 24px;
   color: #dfeee2;
   font-size: 1rem;
 }
+
+.btn--cta {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 700;
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-size: 1.05rem;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  transition: transform .15s ease;
+}
+
+.btn--cta:hover { transform: translateY(-2px); }
 
 /* Ad slots */
 .ad-slot {
@@ -223,6 +238,7 @@ a { color: inherit; }
 }
 
 .results__count { margin: 0; color: var(--ink-soft); font-size: 0.88rem; }
+.results__note { margin: 4px 0 0; color: var(--green-700); font-size: 0.82rem; font-weight: 600; }
 
 .kana-index {
   display: flex;

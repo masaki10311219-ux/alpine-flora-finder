@@ -1,0 +1,15 @@
+{
+  "name": "高山植物早見図鑑",
+  "short_name": "高山植物図鑑",
+  "description": "時期・エリア・色・名前・写真から高山植物をすぐに探せる図鑑。オフラインでも一部機能を利用可能。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf8f2",
+  "theme_color": "#2f6b42",
+  "lang": "ja",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>このサイトについて | 高山植物早見図鑑</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="theme-color" content="#2f6b42">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,8 +19,8 @@
       <span class="logo-text">高山植物<span class="logo-sub">早見図鑑</span></span>
     </a>
     <nav class="site-nav">
-      <a href="index.html#search">植物を探す</a>
       <a href="index.html#image-search">写真から探す</a>
+      <a href="index.html#search">絞り込みで探す</a>
       <a href="about.html">このサイトについて</a>
     </nav>
   </div>
@@ -44,6 +48,16 @@
     山菜や薬草としての利用判断、有毒植物の判別など、安全に関わる目的にはご利用にならないでください。
   </p>
 
+  <h2>オフラインでの利用について</h2>
+  <p>
+    このサイトは一度読み込んでおくと、電波の無い山中でも「絞り込み検索」と、その際に一度表示された植物写真については
+    再表示できるようになります（お使いのブラウザに保存されます）。登山前に自宅やふもとの電波が入る場所で
+    候補となる植物のページを一度開いておくことをおすすめします。
+  </p>
+  <p>
+    一方、「写真から探す」のAI画像識別は都度サーバーと通信するため、電波の無い場所では利用できません。
+  </p>
+
   <h2>掲載データについて</h2>
   <p>
     花期・分布エリアは代表的な傾向を簡略化して掲載しており、個体差や年による変動があります。
@@ -64,5 +78,6 @@
   </div>
 </footer>
 
+<script src="js/register-sw.js"></script>
 </body>
 </html>

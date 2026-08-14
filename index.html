@@ -4,8 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>高山植物図鑑 | 花の時期・エリア・色から早見検索</title>
-<meta name="description" content="高山植物を花期・エリア・色・名前から検索できる早見図鑑。写真からの植物識別（画像検索）にも対応。">
+<meta name="description" content="高山植物を花期・エリア・色・名前から検索できる早見図鑑。写真からの植物識別（画像検索）にも対応。オフラインでも一部利用可。">
 <link rel="preconnect" href="https://commons.wikimedia.org">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="theme-color" content="#2f6b42">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -17,8 +21,8 @@
       <span class="logo-text">高山植物<span class="logo-sub">早見図鑑</span></span>
     </a>
     <nav class="site-nav">
-      <a href="#search">植物を探す</a>
       <a href="#image-search">写真から探す</a>
+      <a href="#search">絞り込みで探す</a>
       <a href="about.html">このサイトについて</a>
     </nav>
   </div>
@@ -26,8 +30,28 @@
 
 <section class="hero">
   <div class="wrap">
-    <h1>花の名前、その場ですぐわかる。</h1>
-    <p>時期・エリア・色・名前から高山植物をかんたん検索。撮った写真からも探せます。</p>
+    <h1>山で見つけた花、その場ですぐわかる。</h1>
+    <p>写真を撮るか、時期・エリア・色・名前から検索。一度開いておけば、電波が無い場所でも一部の機能は使えます。</p>
+    <a href="#image-search" class="btn btn--cta">📷 写真で今すぐ調べる</a>
+  </div>
+</section>
+
+<section class="image-search" id="image-search">
+  <div class="wrap">
+    <h2>写真から植物を探す</h2>
+    <p class="image-search__lead">撮影した花の写真をアップロードすると、AI画像識別（Pl@ntNet）で植物の候補を推定します。</p>
+
+    <div class="image-search__panel">
+      <label class="upload-box" id="upload-box" for="photo-input">
+        <input type="file" id="photo-input" accept="image/*" capture="environment" hidden>
+        <span id="upload-preview-wrap">
+          <span class="upload-box__icon" aria-hidden="true">📷</span>
+          <span class="upload-box__text">タップして写真を選択・撮影</span>
+        </span>
+      </label>
+      <div class="image-search__result" id="image-search-result"></div>
+    </div>
+    <p class="image-search__disclaimer">※ 識別結果はAIによる自動推定です。正確性を保証するものではありません。有毒植物との誤認にご注意ください。<br>※ この機能は通信が必要です。電波が無い場所では使えません。</p>
   </div>
 </section>
 
@@ -74,7 +98,10 @@
 
   <section class="results">
     <div class="results__toolbar">
-      <p class="results__count" id="results-count"></p>
+      <div>
+        <p class="results__count" id="results-count"></p>
+        <p class="results__note" id="auto-filter-note" hidden></p>
+      </div>
       <div class="kana-index" id="kana-index" aria-label="50音順インデックス"></div>
     </div>
 
@@ -88,25 +115,6 @@
     <span class="ad-slot__label">広告</span>
   </div>
 </div>
-
-<section class="image-search" id="image-search">
-  <div class="wrap">
-    <h2>写真から植物を探す</h2>
-    <p class="image-search__lead">撮影した花の写真をアップロードすると、AI画像識別（PlantNet）で植物の候補を推定します。</p>
-
-    <div class="image-search__panel">
-      <label class="upload-box" id="upload-box" for="photo-input">
-        <input type="file" id="photo-input" accept="image/*" hidden>
-        <span id="upload-preview-wrap">
-          <span class="upload-box__icon" aria-hidden="true">📷</span>
-          <span class="upload-box__text">タップして写真を選択</span>
-        </span>
-      </label>
-      <div class="image-search__result" id="image-search-result"></div>
-    </div>
-    <p class="image-search__disclaimer">※ 識別結果はAIによる自動推定です。正確性を保証するものではありません。有毒植物との誤認にご注意ください。</p>
-  </div>
-</section>
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
@@ -138,5 +146,6 @@
 <script src="js/wikimedia.js"></script>
 <script src="js/app.js"></script>
 <script src="js/image-search.js"></script>
+<script src="js/register-sw.js"></script>
 </body>
 </html>

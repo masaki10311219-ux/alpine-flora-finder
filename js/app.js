@@ -51,7 +51,8 @@
     colorChips: document.getElementById("filter-colors"),
     kanaIndex: document.getElementById("kana-index"),
     clearBtn: document.getElementById("clear-filters"),
-    template: document.getElementById("card-template")
+    template: document.getElementById("card-template"),
+    autoFilterNote: document.getElementById("auto-filter-note")
   };
 
   function uniqueSorted(values) {
@@ -215,6 +216,20 @@
     els.empty.hidden = results.length !== 0;
     els.count.textContent = `${results.length}件 / 全${state.plants.length}種`;
     renderKanaIndex(results);
+    updateAutoFilterNote();
+  }
+
+  function updateAutoFilterNote() {
+    const currentMonth = new Date().getMonth() + 1;
+    const isAutoMonthOnly =
+      state.months.size === 1 &&
+      state.months.has(currentMonth) &&
+      !state.query && state.areas.size === 0 && state.colors.size === 0;
+
+    els.autoFilterNote.hidden = !isAutoMonthOnly;
+    if (isAutoMonthOnly) {
+      els.autoFilterNote.textContent = `🌸 今（${currentMonth}月）に見られる花を優先表示中。他の花も見る場合は絞り込みをクリアしてください。`;
+    }
   }
 
   function bindSearch() {
@@ -249,7 +264,16 @@
     bindMonthChips();
     bindSearch();
     bindClear();
+    preselectCurrentMonth();
     render();
+  }
+
+  function preselectCurrentMonth() {
+    const month = new Date().getMonth() + 1;
+    const btn = els.monthChips.querySelector(`[data-month="${month}"]`);
+    if (!btn) return;
+    state.months.add(month);
+    btn.classList.add("is-active");
   }
 
   init();
