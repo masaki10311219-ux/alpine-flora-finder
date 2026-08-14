@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高山植物図鑑 | 花の時期・エリア・色から早見検索</title>
+<meta name="description" content="高山植物を花期・エリア・色・名前から検索できる早見図鑑。写真からの植物識別（画像検索）にも対応。">
+<link rel="preconnect" href="https://commons.wikimedia.org">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="./">
+      <span class="logo-mark" aria-hidden="true">🌸</span>
+      <span class="logo-text">高山植物<span class="logo-sub">早見図鑑</span></span>
+    </a>
+    <nav class="site-nav">
+      <a href="#search">植物を探す</a>
+      <a href="#image-search">写真から探す</a>
+      <a href="about.html">このサイトについて</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>花の名前、その場ですぐわかる。</h1>
+    <p>時期・エリア・色・名前から高山植物をかんたん検索。撮った写真からも探せます。</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="ad-slot ad-slot--leaderboard" aria-hidden="true">
+    <!-- 広告枠（Google AdSense）: publisher ID 取得後、README の手順に沿って ins.adsbygoogle タグに置き換えてください -->
+    <span class="ad-slot__label">広告</span>
+  </div>
+</div>
+
+<main class="wrap layout">
+
+  <aside class="filters" id="search">
+    <h2 class="filters__title">絞り込み検索</h2>
+
+    <div class="filter-group">
+      <label class="filter-group__label" for="name-search">名前で検索</label>
+      <input type="search" id="name-search" placeholder="例：コマクサ、りんどう…" autocomplete="off">
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-group__label">時期（花期）</span>
+      <div class="chip-row" id="filter-months" role="group" aria-label="花期で絞り込み">
+        <button type="button" class="chip" data-month="5">5月</button>
+        <button type="button" class="chip" data-month="6">6月</button>
+        <button type="button" class="chip" data-month="7">7月</button>
+        <button type="button" class="chip" data-month="8">8月</button>
+        <button type="button" class="chip" data-month="9">9月</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-group__label">エリア</span>
+      <div class="chip-row" id="filter-areas" role="group" aria-label="エリアで絞り込み"></div>
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-group__label">花の色</span>
+      <div class="chip-row chip-row--color" id="filter-colors" role="group" aria-label="色で絞り込み"></div>
+    </div>
+
+    <button type="button" id="clear-filters" class="btn btn--ghost btn--full">絞り込みをクリア</button>
+  </aside>
+
+  <section class="results">
+    <div class="results__toolbar">
+      <p class="results__count" id="results-count"></p>
+      <div class="kana-index" id="kana-index" aria-label="50音順インデックス"></div>
+    </div>
+
+    <div class="card-grid" id="card-grid"></div>
+    <p class="empty-state" id="empty-state" hidden>条件に合う植物が見つかりませんでした。絞り込みを変更してみてください。</p>
+  </section>
+</main>
+
+<div class="wrap">
+  <div class="ad-slot ad-slot--rectangle" aria-hidden="true">
+    <span class="ad-slot__label">広告</span>
+  </div>
+</div>
+
+<section class="image-search" id="image-search">
+  <div class="wrap">
+    <h2>写真から植物を探す</h2>
+    <p class="image-search__lead">撮影した花の写真をアップロードすると、AI画像識別（PlantNet）で植物の候補を推定します。</p>
+
+    <div class="image-search__panel">
+      <label class="upload-box" id="upload-box" for="photo-input">
+        <input type="file" id="photo-input" accept="image/*" hidden>
+        <span id="upload-preview-wrap">
+          <span class="upload-box__icon" aria-hidden="true">📷</span>
+          <span class="upload-box__text">タップして写真を選択</span>
+        </span>
+      </label>
+      <div class="image-search__result" id="image-search-result"></div>
+    </div>
+    <p class="image-search__disclaimer">※ 識別結果はAIによる自動推定です。正確性を保証するものではありません。有毒植物との誤認にご注意ください。</p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>&copy; 2026 高山植物早見図鑑</p>
+    <nav>
+      <a href="about.html">このサイトについて・画像の出典</a>
+      <a href="privacy.html">プライバシーポリシー</a>
+    </nav>
+  </div>
+</footer>
+
+<template id="card-template">
+  <article class="card">
+    <div class="card__media">
+      <img class="card__img" alt="" loading="lazy">
+      <span class="card__credit"></span>
+    </div>
+    <div class="card__body">
+      <h3 class="card__name"></h3>
+      <p class="card__kanji"></p>
+      <p class="card__scientific"></p>
+      <p class="card__desc"></p>
+      <div class="card__tags"></div>
+    </div>
+  </article>
+</template>
+
+<script src="js/config.js"></script>
+<script src="js/wikimedia.js"></script>
+<script src="js/app.js"></script>
+<script src="js/image-search.js"></script>
+</body>
+</html>
