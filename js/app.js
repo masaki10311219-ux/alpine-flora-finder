@@ -10,7 +10,9 @@
     "紫": "#8e5bb5",
     "青紫": "#6a5acd",
     "青": "#3b7dd8",
-    "黒紫": "#4a2545"
+    "黒紫": "#4a2545",
+    "黄緑": "#a8c94a",
+    "赤褐": "#8a4a2e"
   };
 
   // 濁音・半濁音・拗音・長音を含むカタカナをあ行〜わ行の代表行にまとめる
@@ -38,6 +40,7 @@
     query: "",
     months: new Set(),
     areas: new Set(),
+    peaks: new Set(),
     colors: new Set()
   };
 
@@ -48,6 +51,7 @@
     search: document.getElementById("name-search"),
     monthChips: document.getElementById("filter-months"),
     areaChips: document.getElementById("filter-areas"),
+    peakChips: document.getElementById("filter-peaks"),
     colorChips: document.getElementById("filter-colors"),
     kanaIndex: document.getElementById("kana-index"),
     clearBtn: document.getElementById("clear-filters"),
@@ -74,6 +78,24 @@
         render();
       });
       els.areaChips.appendChild(btn);
+    });
+  }
+
+  function buildPeakChips() {
+    const peaks = uniqueSorted(state.plants.flatMap(p => p.peaks));
+    els.peakChips.innerHTML = "";
+    peaks.forEach(peak => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "chip";
+      btn.textContent = peak;
+      btn.dataset.peak = peak;
+      btn.addEventListener("click", () => {
+        toggle(state.peaks, peak);
+        btn.classList.toggle("is-active");
+        render();
+      });
+      els.peakChips.appendChild(btn);
     });
   }
 
@@ -123,6 +145,7 @@
     }
     if (state.months.size && !plant.months.some(m => state.months.has(m))) return false;
     if (state.areas.size && !plant.areas.some(a => state.areas.has(a))) return false;
+    if (state.peaks.size && !plant.peaks.some(p => state.peaks.has(p))) return false;
     if (state.colors.size && !plant.colors.some(c => state.colors.has(c))) return false;
     return true;
   }
@@ -170,6 +193,7 @@
       : "";
     if (monthLabel) tags.appendChild(makeTag(monthLabel));
     plant.areas.forEach(a => tags.appendChild(makeTag(a)));
+    plant.peaks.forEach(p => tags.appendChild(makeTag(`📍${p}`)));
     plant.colors.forEach(c => tags.appendChild(makeTag(c)));
 
     const article = node.querySelector(".card");
@@ -224,7 +248,7 @@
     const isAutoMonthOnly =
       state.months.size === 1 &&
       state.months.has(currentMonth) &&
-      !state.query && state.areas.size === 0 && state.colors.size === 0;
+      !state.query && state.areas.size === 0 && state.peaks.size === 0 && state.colors.size === 0;
 
     els.autoFilterNote.hidden = !isAutoMonthOnly;
     if (isAutoMonthOnly) {
@@ -248,6 +272,7 @@
       state.query = "";
       state.months.clear();
       state.areas.clear();
+      state.peaks.clear();
       state.colors.clear();
       els.search.value = "";
       document.querySelectorAll(".chip.is-active").forEach(c => c.classList.remove("is-active"));
@@ -260,6 +285,7 @@
     state.plants = await res.json();
     window.__PLANTS_DATA__ = state.plants;
     buildAreaChips();
+    buildPeakChips();
     buildColorChips();
     bindMonthChips();
     bindSearch();
