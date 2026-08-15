@@ -45,7 +45,14 @@ a { color: inherit; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  min-height: 64px;
+  padding: 10px 0;
+}
+
+@media (max-width: 480px) {
+  .header-inner { justify-content: center; text-align: center; }
 }
 
 .logo {
@@ -56,6 +63,7 @@ a { color: inherit; }
   font-weight: 700;
   color: var(--green-900);
   font-size: 1.1rem;
+  font-family: "Shippori Mincho", "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
 }
 
 .logo-mark { font-size: 1.3rem; }
@@ -63,9 +71,13 @@ a { color: inherit; }
 
 .site-nav {
   display: flex;
-  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 20px;
   font-size: 0.92rem;
 }
+
+.site-nav a { white-space: nowrap; }
 
 .site-nav a {
   text-decoration: none;
@@ -77,20 +89,50 @@ a { color: inherit; }
 
 /* Hero */
 .hero {
-  background: linear-gradient(135deg, var(--green-700), var(--green-900));
-  color: var(--white);
-  padding: 56px 0;
+  position: relative;
+  overflow: hidden;
+  background: var(--green-900);
+  min-height: 460px;
+  display: flex;
+  align-items: center;
   text-align: center;
 }
 
+.hero__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 1;
+  padding: 40px 20px 48px;
+}
+
+.hero__eyebrow {
+  margin: 0 0 10px;
+  font-family: "Cormorant Garamond", "EB Garamond", "Shippori Mincho", serif;
+  font-variant: small-caps;
+  letter-spacing: 0.18em;
+  font-size: 1rem;
+  color: var(--green-700);
+  font-weight: 600;
+}
+
 .hero h1 {
-  margin: 0 0 12px;
-  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  margin: 0 0 14px;
+  font-family: "Shippori Mincho", "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-weight: 600;
+  font-size: clamp(1.6rem, 3.4vw, 2.3rem);
+  color: var(--green-900);
+  line-height: 1.5;
 }
 
 .hero p {
   margin: 0 0 24px;
-  color: #dfeee2;
+  color: #2f4a3c;
   font-size: 1rem;
 }
 

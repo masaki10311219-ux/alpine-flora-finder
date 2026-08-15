@@ -29,8 +29,32 @@
 </header>
 
 <section class="hero">
-  <div class="wrap">
-    <h1>山で見つけた花、その場ですぐわかる。</h1>
+  <svg class="hero__art" viewBox="0 0 1440 480" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="hero-sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#f6ecd9"/>
+        <stop offset="45%" stop-color="#d3e4e8"/>
+        <stop offset="100%" stop-color="#aecbd8"/>
+      </linearGradient>
+      <filter id="hero-wobble" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="16"/>
+      </filter>
+    </defs>
+    <rect x="0" y="0" width="1440" height="480" fill="url(#hero-sky)"/>
+    <g filter="url(#hero-wobble)">
+      <path d="M0,340 C160,290 320,315 480,300 C640,285 800,315 960,300 C1120,285 1280,310 1440,295 L1440,480 L0,480 Z" fill="#9fb9c9" opacity="0.85"/>
+      <path d="M0,400 C180,360 340,385 500,368 C660,350 820,385 980,365 C1140,345 1300,380 1440,362 L1440,480 L0,480 Z" fill="#5f8fa0" opacity="0.88"/>
+      <path d="M0,460 C200,410 360,445 520,420 C680,395 840,435 1000,415 C1160,395 1320,430 1440,412 L1440,480 L0,480 Z" fill="#2f6b42" opacity="0.95"/>
+    </g>
+    <g fill="#1f3b2c" opacity="0.85">
+      <circle cx="230" cy="419" r="4"/>
+      <path d="M227,424 L233,424 L236,448 L232,448 L230,432 L228,448 L224,448 Z"/>
+    </g>
+  </svg>
+  <div class="wrap hero__content">
+    <p class="hero__eyebrow">Alpine Flora Finder</p>
+    <h1>山で見つけた花、<br>その場ですぐわかる。</h1>
     <p>写真を撮るか、時期・エリア・色・名前から検索。一度開いておけば、電波が無い場所でも一部の機能は使えます。</p>
     <a href="#image-search" class="btn btn--cta">📷 写真で今すぐ調べる</a>
   </div>
