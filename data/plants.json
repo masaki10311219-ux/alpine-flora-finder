@@ -610,5 +610,41 @@
     "peaks": [],
     "colors": ["黄"],
     "desc": "大きな丸い葉が特徴。シカが食べないため、近年群落が増加傾向にある。"
+  },
+  {
+    "id": "gomana",
+    "name": "ゴマナ",
+    "kanji": "胡麻菜",
+    "scientific": "Doellingeria glehnii",
+    "family": "キク科",
+    "months": [8, 9, 10],
+    "areas": ["東北", "上信越"],
+    "peaks": ["燧ヶ岳", "尾瀬"],
+    "colors": ["白"],
+    "desc": "尾瀬・燧ヶ岳周辺の湿原で晩夏に大群落を作る、白い小さな花を密につけるキク科の大型植物。近縁のシロヨメナと似ており写真だけでの区別は難しい。（利用者投稿写真からの推定のため要確認）"
+  },
+  {
+    "id": "iwa-otogiri",
+    "name": "イワオトギリ",
+    "kanji": "岩弟切",
+    "scientific": "Hypericum kamtschaticum var. hondoense",
+    "family": "オトギリソウ科",
+    "months": [7, 8, 9],
+    "areas": ["東北", "上信越", "北アルプス"],
+    "peaks": ["燧ヶ岳", "尾瀬"],
+    "colors": ["黄"],
+    "desc": "山地の草地や岩場に生える黄色い5弁花。オトギリソウ属の高山型。（利用者投稿写真からの推定のため要確認）"
+  },
+  {
+    "id": "nanbu-azami",
+    "name": "ナンブアザミ",
+    "kanji": "南部薊",
+    "scientific": "Cirsium nipponicum var. namboense",
+    "family": "キク科",
+    "months": [8, 9, 10],
+    "areas": ["東北", "上信越"],
+    "peaks": ["燧ヶ岳", "尾瀬"],
+    "colors": ["淡紫"],
+    "desc": "花がうつむくように咲く、東北地方の山に多いアザミ。アザミ属は種の判別が難しいグループ。（利用者投稿写真からの推定のため要確認）"
   }
 ]
