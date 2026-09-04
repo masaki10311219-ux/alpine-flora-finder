@@ -31,7 +31,7 @@ js/app.js            検索・絞り込み・一覧表示ロジック
 js/image-search.js   Pl@ntNet APIを使った画像検索
 js/community.js      Supabase REST/Storage APIを直接叩く投稿・コメント機能
 js/plant-detail.js   plant.html のレンダリングロジック
-data/plants.json     植物データ（55種、収録項目は下記）
+data/plants.json     植物データ（208種、収録項目は下記）
 supabase/schema.sql  投稿・コメント機能用のテーブル／RLS定義（SQL Editorで実行）
 ads.txt              AdSense審査用（内容は取得後に追記）
 ```
@@ -116,7 +116,8 @@ ads.txt              AdSense審査用（内容は取得後に追記）
 
 ### 植物データのさらなる拡充
 
-現在55種。網羅性を高めるため、種の追加は継続的なタスクとして残っている。
+現在208種。Wikipedia日本語版のCategory:高山植物を参照し、学名・分布を確認できた種を中心に拡充した。
+さらに拡充する場合も、既存データと同様に一次情報（Wikipedia・専門図鑑等）で学名を確認してから追加することを推奨する。
 
 ## 開発上の注意（このセッションでの制約）
 
