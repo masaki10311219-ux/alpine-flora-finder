@@ -212,8 +212,29 @@ a { color: inherit; }
 
 .filters__title {
   margin: 0 0 16px;
+}
+
+.section-ribbon {
+  position: relative;
+  display: inline-block;
+  background: var(--green-700);
+  color: var(--white);
+  font-family: "Shippori Mincho", "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-weight: 700;
   font-size: 1rem;
-  color: var(--green-900);
+  padding: 7px 20px 7px 14px;
+  box-shadow: 3px 3px 0 rgba(35, 77, 49, 0.16);
+  margin: 0;
+}
+
+.section-ribbon::after {
+  content: "";
+  position: absolute;
+  right: -10px;
+  top: 0;
+  border-style: solid;
+  border-width: 16px 0 16px 10px;
+  border-color: transparent transparent transparent var(--green-700);
 }
 
 .filter-group { margin-bottom: 20px; }
@@ -348,7 +369,9 @@ a { color: inherit; }
   box-shadow: var(--shadow);
   transition: box-shadow .3s var(--ease), transform .3s var(--ease), border-color .3s var(--ease);
   scroll-margin-top: 100px;
+  position: relative;
 }
+
 
 .card:hover {
   box-shadow: var(--shadow-hover);
@@ -390,9 +413,34 @@ a { color: inherit; }
 
 .card__credit a { color: #fff; text-decoration: underline; }
 
-.card__body { padding: 14px 16px 16px; }
+.card__body { padding: 0 16px 16px; }
 
-.card__name { margin: 0; font-size: 1.05rem; color: var(--green-900); }
+.card__name-wrap { margin: -12px 0 8px; }
+
+.card__name {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  background: var(--green-700);
+  color: var(--white);
+  font-family: "Shippori Mincho", "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-weight: 700;
+  font-size: 0.98rem;
+  line-height: 1.4;
+  padding: 5px 14px 5px 10px;
+  box-shadow: 2px 2px 0 rgba(35, 77, 49, 0.16);
+}
+
+.card__name::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  top: 0;
+  border-style: solid;
+  border-width: 12px 0 12px 8px;
+  border-color: transparent transparent transparent var(--green-700);
+}
+
 .card__kanji { margin: 2px 0 0; font-size: 0.8rem; color: var(--ink-soft); }
 .card__scientific { margin: 2px 0 8px; font-size: 0.76rem; font-style: italic; color: #9a9484; }
 .card__desc { margin: 0 0 10px; font-size: 0.85rem; color: var(--ink); }

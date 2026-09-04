@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#2f6b42">
 <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="paper">
 
 <header class="site-header">
   <div class="wrap header-inner">
@@ -62,7 +62,7 @@
 
 <section class="image-search" id="image-search">
   <div class="wrap">
-    <h2>写真から植物を探す</h2>
+    <h2 class="section-ribbon">写真から植物を探す</h2>
     <p class="image-search__lead">撮影した花の写真をアップロードすると、AI画像識別（Pl@ntNet）で植物の候補を推定します。</p>
 
     <div class="image-search__panel">
@@ -89,7 +89,7 @@
 <main class="wrap layout">
 
   <aside class="filters" id="search">
-    <h2 class="filters__title">絞り込み検索</h2>
+    <h2 class="filters__title"><span class="section-ribbon">絞り込み検索</span></h2>
 
     <div class="filter-group">
       <label class="filter-group__label" for="name-search">名前で検索</label>
@@ -163,7 +163,7 @@
       <span class="card__credit"></span>
     </div>
     <div class="card__body">
-      <h3 class="card__name"></h3>
+      <div class="card__name-wrap"><h3 class="card__name"></h3></div>
       <p class="card__kanji"></p>
       <p class="card__scientific"></p>
       <p class="card__desc"></p>
