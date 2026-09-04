@@ -10,13 +10,19 @@ const WikimediaImages = (() => {
     '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="#e7f2e8"/><text x="50%" y="50%" font-size="18" fill="#3d8451" text-anchor="middle" dominant-baseline="middle">画像準備中</text></svg>'
   );
 
+  const TIMEOUT_MS = 6000;
+
   async function fetchImage(scientificName) {
     if (cache.has(scientificName)) return cache.get(scientificName);
 
-    const promise = lookup(scientificName).catch(() => ({
-      url: FALLBACK_IMG,
-      credit: null
-    }));
+    const timeout = new Promise(resolve => {
+      setTimeout(() => resolve({ url: FALLBACK_IMG, credit: null }), TIMEOUT_MS);
+    });
+
+    const promise = Promise.race([
+      lookup(scientificName).catch(() => ({ url: FALLBACK_IMG, credit: null })),
+      timeout
+    ]);
     cache.set(scientificName, promise);
     return promise;
   }

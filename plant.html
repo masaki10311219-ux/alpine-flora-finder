@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>植物図鑑ページ | 高山植物早見図鑑</title>
+<meta name="description" content="高山植物1種ごとの詳しい図鑑ページ。見分け方のポイントと、みんなが山で見つけた写真も見られます。">
+<link rel="preconnect" href="https://commons.wikimedia.org">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="theme-color" content="#2f6b42">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="paper">
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="./">
+      <span class="logo-mark" aria-hidden="true">🌸</span>
+      <span class="logo-text">高山植物<span class="logo-sub">早見図鑑</span></span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html#image-search">写真から探す</a>
+      <a href="index.html#search">絞り込みで探す</a>
+      <a href="about.html">このサイトについて</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" style="padding-top:32px; padding-bottom:64px;">
+  <a href="index.html#search" style="font-size:0.85rem; color:var(--green-700); text-decoration:none;">&larr; 図鑑一覧にもどる</a>
+
+  <div id="plant-loading" class="status-msg" style="margin-top:24px;">読み込み中…</div>
+  <p id="plant-not-found" class="status-msg is-error" hidden>この植物が見つかりませんでした。図鑑一覧からお探しください。</p>
+
+  <article id="plant-detail" hidden>
+
+    <div style="margin-top:24px;">
+      <span class="ribbon" id="plant-ribbon">
+        <span id="plant-name"></span>
+        <span class="ribbon__sub" id="plant-kanji"></span>
+      </span>
+    </div>
+    <p style="margin:10px 0 0; font-size:0.85rem; font-style:italic; color:var(--ink-soft);" id="plant-scientific"></p>
+
+    <div class="plant-grid" id="plant-grid">
+      <div>
+        <div class="photo-annotated">
+          <div class="photo-annotated__frame">
+            <img id="plant-photo" alt="">
+          </div>
+          <span class="callout callout--tl" id="callout-season"></span>
+          <span class="callout callout--tr" id="callout-color"></span>
+          <span class="callout callout--bl" id="callout-area"></span>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:18px;">
+          <span class="specimen-no" id="plant-specimen-no" style="position:static; display:inline-block;"></span>
+          <p id="plant-credit" style="font-size:0.7rem; color:var(--ink-soft); margin:0;"></p>
+        </div>
+      </div>
+
+      <div>
+        <div class="info-memo">
+          <span class="info-memo__tab">図鑑メモ</span>
+          <dl>
+            <dt>科名</dt><dd id="info-family"></dd>
+            <dt>花期</dt><dd id="info-months"></dd>
+            <dt>エリア</dt><dd id="info-areas"></dd>
+            <dt>山名</dt><dd id="info-peaks"></dd>
+            <dt>花の色</dt><dd id="info-colors"></dd>
+          </dl>
+        </div>
+
+        <div style="margin-top:20px;">
+          <p id="plant-story" style="font-size:0.98rem; line-height:1.9;"></p>
+        </div>
+      </div>
+    </div>
+
+    <section class="community">
+      <div class="community__header">
+        <div>
+          <h2 style="margin:0; color:var(--green-900);">🌿 みんなの発見</h2>
+          <p class="community__lead">山で見つけたこの花の写真を投稿してみよう。ログイン不要、ニックネームだけでOK。</p>
+        </div>
+      </div>
+
+      <form class="community-form" id="submission-form">
+        <div>
+          <label for="submit-nickname">ニックネーム</label>
+          <input type="text" id="submit-nickname" placeholder="例：やまびこ" required maxlength="40">
+        </div>
+        <div>
+          <label for="submit-caption">ひとこと（任意）</label>
+          <input type="text" id="submit-caption" placeholder="例：燧ヶ岳の登山道で見つけました" maxlength="200">
+        </div>
+        <div class="community-form__file">
+          <label for="submit-file">写真</label>
+          <input type="file" id="submit-file" accept="image/*" capture="environment" required>
+        </div>
+        <button type="submit" class="btn btn--cta community-form__submit" style="padding:10px 22px; font-size:0.9rem;">投稿する</button>
+        <p class="status-msg" id="submission-status" style="grid-column: 1 / -1; margin:0;"></p>
+      </form>
+
+      <div class="gallery" id="community-gallery"></div>
+      <p class="community-empty" id="community-empty" hidden>まだ投稿がありません。最初の発見者になりませんか？</p>
+    </section>
+
+  </article>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>&copy; 2026 高山植物早見図鑑</p>
+    <nav>
+      <a href="about.html">このサイトについて・画像の出典</a>
+      <a href="privacy.html">プライバシーポリシー</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/wikimedia.js"></script>
+<script src="js/community.js"></script>
+<script src="js/plant-detail.js"></script>
+<script src="js/register-sw.js"></script>
+</body>
+</html>

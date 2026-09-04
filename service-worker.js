@@ -3,7 +3,7 @@
  * アプリ本体とWikimedia Commonsの画像をキャッシュするService Worker。
  * Pl@ntNet APIによる画像識別は都度通信が必要な機能のため、意図的にキャッシュしない。
  */
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const APP_SHELL_CACHE = `app-shell-${CACHE_VERSION}`;
 const IMAGE_CACHE = `wikimedia-images-${CACHE_VERSION}`;
 
@@ -12,11 +12,14 @@ const APP_SHELL_FILES = [
   "./index.html",
   "./about.html",
   "./privacy.html",
+  "./plant.html",
   "./css/style.css",
   "./js/config.js",
   "./js/wikimedia.js",
   "./js/app.js",
   "./js/image-search.js",
+  "./js/community.js",
+  "./js/plant-detail.js",
   "./js/register-sw.js",
   "./data/plants.json",
   "./manifest.json",

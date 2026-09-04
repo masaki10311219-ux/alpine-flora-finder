@@ -503,3 +503,300 @@ a { color: inherit; }
 
 .page h1 { color: var(--green-900); }
 .page h2 { color: var(--green-700); font-size: 1.1rem; margin-top: 32px; }
+
+/* ===== 図鑑風コンポーネント ===== */
+
+.paper {
+  background-image: radial-gradient(rgba(35, 77, 49, 0.06) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.specimen-no {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  background: rgba(250, 248, 242, 0.92);
+  color: var(--green-700);
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(47, 107, 66, 0.25);
+  letter-spacing: 0.03em;
+}
+
+.card__detail-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--green-700);
+  text-decoration: none;
+  border-bottom: 1px solid var(--green-600);
+}
+
+.card__detail-link:hover { color: var(--accent); border-color: var(--accent); }
+
+/* リボン見出し */
+.ribbon {
+  position: relative;
+  display: inline-block;
+  background: var(--green-700);
+  color: var(--white);
+  padding: 10px 22px 10px 16px;
+  font-family: "Shippori Mincho", "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  line-height: 1.3;
+  box-shadow: 3px 3px 0 rgba(35, 77, 49, 0.18);
+}
+
+.ribbon::after {
+  content: "";
+  position: absolute;
+  right: -11px;
+  top: 0;
+  border-style: solid;
+  border-width: 21px 0 21px 11px;
+  border-color: transparent transparent transparent var(--green-700);
+}
+
+.ribbon__sub {
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans JP", sans-serif;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+
+/* ハイライトマーカー */
+.highlight {
+  background: linear-gradient(180deg, transparent 58%, #f5da6a 58%);
+  padding: 0 2px;
+  font-weight: 700;
+}
+
+/* いきものメモ風の情報ボックス */
+.info-memo {
+  position: relative;
+  background: var(--white);
+  border: 1.5px dashed var(--green-600);
+  border-radius: 10px;
+  padding: 18px 18px 14px;
+  margin-top: 12px;
+}
+
+.info-memo__tab {
+  position: absolute;
+  top: -13px;
+  left: 14px;
+  background: var(--green-900);
+  color: var(--white);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 999px;
+}
+
+.info-memo dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 14px;
+  margin: 6px 0 0;
+  font-size: 0.86rem;
+}
+
+.info-memo dt {
+  color: var(--green-700);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.info-memo dd { margin: 0; color: var(--ink); }
+
+/* 注釈付き写真（フィールドサイン風） */
+.photo-annotated {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: visible;
+}
+
+.photo-annotated__frame {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 3px solid var(--white);
+  box-shadow: 0 0 0 1px var(--border), var(--shadow-hover);
+  aspect-ratio: 4 / 3;
+  background: var(--green-100);
+}
+
+.photo-annotated__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.callout {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--green-900);
+  white-space: nowrap;
+}
+
+.callout::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--white);
+  box-shadow: 0 0 0 1px var(--accent);
+  flex-shrink: 0;
+}
+
+.callout--tl { top: -14px; left: 6%; }
+.callout--tr { top: -14px; right: 6%; flex-direction: row-reverse; }
+.callout--bl { bottom: -14px; left: 6%; }
+.callout--br { bottom: -14px; right: 6%; flex-direction: row-reverse; }
+
+@media (max-width: 640px) {
+  .callout { font-size: 0.7rem; }
+}
+
+.plant-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 40px;
+  margin-top: 28px;
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .plant-grid { grid-template-columns: 1fr; gap: 48px 0; }
+}
+
+/* ===== コミュニティ投稿・コメント ===== */
+
+.community {
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px dashed var(--border);
+}
+
+.community__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.community__lead { color: var(--ink-soft); font-size: 0.85rem; margin: 4px 0 0; }
+
+.community-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 560px) {
+  .community-form { grid-template-columns: 1fr; }
+}
+
+.community-form label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--green-700);
+  margin-bottom: 4px;
+}
+
+.community-form input[type="text"] {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: var(--cream);
+}
+
+.community-form__file {
+  grid-column: 1 / -1;
+}
+
+.community-form__submit {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+.gallery-tile {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.gallery-tile img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  background: var(--green-100);
+}
+
+.gallery-tile__body { padding: 8px 10px 10px; }
+.gallery-tile__name { font-size: 0.78rem; font-weight: 700; color: var(--green-900); margin: 0; }
+.gallery-tile__date { font-size: 0.68rem; color: var(--ink-soft); margin: 1px 0 6px; }
+
+.gallery-tile__comments-btn {
+  font-size: 0.72rem;
+  color: var(--green-700);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.comment-list { margin: 8px 0 0; padding: 0; list-style: none; }
+.comment-list li {
+  font-size: 0.76rem;
+  padding: 5px 0;
+  border-top: 1px solid var(--border);
+  color: var(--ink);
+}
+.comment-list li:first-child { border-top: none; }
+.comment-list .comment__name { font-weight: 700; color: var(--green-700); }
+
+.comment-form { display: flex; gap: 6px; margin-top: 8px; }
+.comment-form input {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.76rem;
+}
+
+.community-empty { color: var(--ink-soft); font-size: 0.85rem; }

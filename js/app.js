@@ -178,15 +178,17 @@
     }
   }
 
-  function renderCard(plant) {
+  function renderCard(plant, specimenIndex) {
     const node = els.template.content.cloneNode(true);
     const img = node.querySelector(".card__img");
     img.dataset.scientific = plant.scientific;
     img.alt = `${plant.name}（${plant.scientific}）の写真`;
+    node.querySelector(".card__specimen-no").textContent = `No.${String(specimenIndex + 1).padStart(3, "0")}`;
     node.querySelector(".card__name").textContent = plant.name;
     node.querySelector(".card__kanji").textContent = plant.kanji ? `（${plant.kanji}）` : "";
     node.querySelector(".card__scientific").textContent = plant.scientific;
     node.querySelector(".card__desc").textContent = plant.desc;
+    node.querySelector(".card__detail-link").href = `plant.html?id=${encodeURIComponent(plant.id)}`;
 
     const tags = node.querySelector(".card__tags");
     const monthLabel = plant.months.length
@@ -235,7 +237,7 @@
     const results = currentResults();
     els.grid.innerHTML = "";
     const frag = document.createDocumentFragment();
-    results.forEach(plant => frag.appendChild(renderCard(plant)));
+    results.forEach(plant => frag.appendChild(renderCard(plant, state.plants.indexOf(plant))));
     els.grid.appendChild(frag);
 
     els.empty.hidden = results.length !== 0;
