@@ -4,12 +4,14 @@
  */
 (() => {
   const BEST_KEY = "alpineFloraQuiz.best";
+  const DIFFICULTY_LABEL = { easy: "かんたん", normal: "ふつう", hard: "むずかしい" };
 
   const els = {
     start: document.getElementById("quiz-start"),
     play: document.getElementById("quiz-play"),
     result: document.getElementById("quiz-result"),
     lengthButtons: document.querySelectorAll(".quiz-length"),
+    difficultyButtons: document.querySelectorAll(".quiz-difficulty"),
     beginBtn: document.getElementById("quiz-begin"),
     bestText: document.getElementById("quiz-best"),
     progressText: document.getElementById("quiz-progress-text"),
@@ -30,6 +32,7 @@
 
   let plants = [];
   let questionCount = 10;
+  let difficulty = "normal";
   let quiz = [];
   let current = 0;
   let score = 0;
@@ -49,27 +52,50 @@
     return a;
   }
 
-  function pickRandom(arr, n, exclude) {
-    const pool = arr.filter(p => p !== exclude);
-    return shuffle(pool).slice(0, n);
+  // 難易度によって「まぎらわしい選択肢」の選び方を変える。
+  // かんたん：科が違う（見た目も系統も遠い）植物から選ぶ
+  // ふつう　：完全ランダム
+  // むずかしい：同じ科、または同じ色を持つ植物を優先（見分けにくい）
+  function distractorPool(correct) {
+    const others = plants.filter(p => p.id !== correct.id);
+
+    if (difficulty === "easy") {
+      const pool = others.filter(p => p.family !== correct.family);
+      return pool.length >= 3 ? pool : others;
+    }
+
+    if (difficulty === "hard") {
+      let pool = others.filter(p => p.family === correct.family);
+      if (pool.length < 3) {
+        pool = others.filter(p => p.colors.some(c => correct.colors.includes(c)));
+      }
+      return pool.length >= 3 ? pool : others;
+    }
+
+    return others;
+  }
+
+  function pickRandom(arr, n) {
+    return shuffle(arr).slice(0, n);
   }
 
   function buildQuestion() {
     const types = ["photo-name", "name-month", "name-area"];
     const type = types[Math.floor(Math.random() * types.length)];
     const correct = plants[Math.floor(Math.random() * plants.length)];
+    const pool = distractorPool(correct);
 
     if (type === "photo-name") {
-      const distractors = pickRandom(plants, 3, correct);
+      const distractors = pickRandom(pool, 3);
       const options = shuffle([correct, ...distractors]).map(p => ({ label: p.name, correct: p.id === correct.id }));
-      return { type, correct, prompt: "この花の名前は？", options, showPhoto: true, subjectText: null };
+      return { type, correct, prompt: "この花の名前は？", options, revealName: false };
     }
 
     if (type === "name-month") {
       const correctLabel = monthLabel(correct.months);
-      const others = plants.filter(p => p.id !== correct.id && monthLabel(p.months) !== correctLabel);
+      const candidates = pool.filter(p => monthLabel(p.months) !== correctLabel);
       const distractorLabels = [];
-      shuffle(others).some(p => {
+      shuffle(candidates).some(p => {
         const label = monthLabel(p.months);
         if (!distractorLabels.includes(label)) distractorLabels.push(label);
         return distractorLabels.length >= 3;
@@ -82,16 +108,15 @@
         type, correct,
         prompt: "この花が咲くのは何月ごろ？",
         options,
-        showPhoto: false,
-        subjectText: `${correct.name}（${correct.kanji || correct.scientific}）`
+        revealName: true
       };
     }
 
     // name-area
     const correctArea = correct.areas[Math.floor(Math.random() * correct.areas.length)];
-    const others = plants.filter(p => p.id !== correct.id && !p.areas.includes(correctArea));
+    const candidates = pool.filter(p => !p.areas.includes(correctArea));
     const distractorAreas = [];
-    shuffle(others).some(p => {
+    shuffle(candidates).some(p => {
       const area = p.areas[0];
       if (area && !distractorAreas.includes(area)) distractorAreas.push(area);
       return distractorAreas.length >= 3;
@@ -104,8 +129,7 @@
       type, correct,
       prompt: "この花が見られるエリアは？",
       options,
-      showPhoto: false,
-      subjectText: `${correct.name}（${correct.kanji || correct.scientific}）`
+      revealName: true
     };
   }
 
@@ -128,18 +152,19 @@
     els.feedback.hidden = true;
     els.nextBtn.hidden = true;
 
-    if (q.showPhoto) {
-      els.photoWrap.hidden = false;
-      els.subject.hidden = true;
-      els.photo.src = WikimediaImages.FALLBACK_IMG;
-      els.photo.alt = "";
-      WikimediaImages.fetchImage(q.correct.scientific).then(({ url }) => {
-        els.photo.src = url;
-      });
-    } else {
-      els.photoWrap.hidden = true;
+    // どの出題形式でも必ず写真を表示する（名前を当てる問題では名前だけ隠す）
+    els.photoWrap.hidden = false;
+    els.photo.src = WikimediaImages.FALLBACK_IMG;
+    els.photo.alt = "";
+    WikimediaImages.fetchImage(q.correct.scientific).then(({ url }) => {
+      els.photo.src = url;
+    });
+
+    if (q.revealName) {
       els.subject.hidden = false;
-      els.subject.textContent = q.subjectText;
+      els.subject.textContent = `${q.correct.name}（${q.correct.kanji || q.correct.scientific}）`;
+    } else {
+      els.subject.hidden = true;
     }
 
     els.options.innerHTML = "";
@@ -204,15 +229,19 @@
     els.resultComment.textContent = comment;
 
     const best = loadBest();
-    const key = String(total);
+    const key = bestKey(total, difficulty);
     const prevBest = best[key] || 0;
     if (score > prevBest) {
       best[key] = score;
       saveBest(best);
       els.resultBest.textContent = "🎉 自己ベスト更新！";
     } else {
-      els.resultBest.textContent = `自己ベスト（${total}問）：${best[key]}問正解`;
+      els.resultBest.textContent = `自己ベスト（${DIFFICULTY_LABEL[difficulty]}・${total}問）：${best[key]}問正解`;
     }
+  }
+
+  function bestKey(count, level) {
+    return `${count}-${level}`;
   }
 
   function loadBest() {
@@ -233,10 +262,10 @@
 
   function updateBestOnStartScreen() {
     const best = loadBest();
-    const key = String(questionCount);
+    const key = bestKey(questionCount, difficulty);
     if (best[key]) {
       els.bestText.hidden = false;
-      els.bestText.textContent = `自己ベスト（${questionCount}問）：${best[key]}問正解`;
+      els.bestText.textContent = `自己ベスト（${DIFFICULTY_LABEL[difficulty]}・${questionCount}問）：${best[key]}問正解`;
     } else {
       els.bestText.hidden = true;
     }
@@ -251,6 +280,15 @@
         els.lengthButtons.forEach(b => b.classList.remove("is-active"));
         btn.classList.add("is-active");
         questionCount = Number(btn.dataset.count);
+        updateBestOnStartScreen();
+      });
+    });
+
+    els.difficultyButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        els.difficultyButtons.forEach(b => b.classList.remove("is-active"));
+        btn.classList.add("is-active");
+        difficulty = btn.dataset.difficulty;
         updateBestOnStartScreen();
       });
     });
