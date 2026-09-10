@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高山植物クイズ | 高山植物早見図鑑</title>
+<meta name="description" content="写真や花期から高山植物の名前を当てる4択クイズ。遊びながら高山植物を覚えられます。">
+<link rel="preconnect" href="https://commons.wikimedia.org">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="theme-color" content="#2f6b42">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="paper">
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="./">
+      <span class="logo-mark" aria-hidden="true">🌸</span>
+      <span class="logo-text">高山植物<span class="logo-sub">早見図鑑</span></span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html#image-search">写真から探す</a>
+      <a href="index.html#search">絞り込みで探す</a>
+      <a href="quiz.html">花クイズ</a>
+      <a href="about.html">このサイトについて</a>
+    </nav>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__track">
+    <span>🌸 ALPINE FLORA FINDER</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>📷 写真から植物識別</span>
+    <span>🌸 ALPINE FLORA FINDER</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>📷 写真から植物識別</span>
+  </div>
+</div>
+
+<main class="wrap quiz-page">
+
+  <section id="quiz-start" class="quiz-panel">
+    <h1 class="ribbon">🌸 高山植物クイズ</h1>
+    <p class="quiz-lead">写真や花期から、高山植物の名前を当てよう。4択クイズで遊びながら覚えられます。</p>
+
+    <div class="quiz-lengths" role="group" aria-label="問題数を選ぶ">
+      <button type="button" class="chip quiz-length" data-count="5">5問</button>
+      <button type="button" class="chip quiz-length is-active" data-count="10">10問</button>
+      <button type="button" class="chip quiz-length" data-count="20">20問</button>
+    </div>
+
+    <p class="quiz-best" id="quiz-best" hidden></p>
+
+    <button type="button" id="quiz-begin" class="btn btn--cta">クイズをはじめる</button>
+  </section>
+
+  <section id="quiz-play" class="quiz-panel" hidden>
+    <div class="quiz-progress">
+      <span id="quiz-progress-text"></span>
+      <span id="quiz-score-text"></span>
+    </div>
+
+    <div class="quiz-card" id="quiz-card">
+      <p class="quiz-question" id="quiz-question"></p>
+      <div class="photo-annotated quiz-photo" id="quiz-photo-wrap" hidden>
+        <div class="photo-annotated__frame">
+          <img id="quiz-photo" alt="">
+        </div>
+      </div>
+      <p class="quiz-subject" id="quiz-subject" hidden></p>
+    </div>
+
+    <div class="quiz-options" id="quiz-options"></div>
+
+    <p class="quiz-feedback" id="quiz-feedback" hidden></p>
+
+    <button type="button" id="quiz-next" class="btn btn--cta" hidden>次の問題へ →</button>
+  </section>
+
+  <section id="quiz-result" class="quiz-panel" hidden>
+    <h2 class="ribbon" id="quiz-result-ribbon">結果発表</h2>
+    <p class="quiz-result-score" id="quiz-result-score"></p>
+    <p class="quiz-result-comment" id="quiz-result-comment"></p>
+    <p class="quiz-best" id="quiz-result-best"></p>
+    <div class="quiz-result-actions">
+      <button type="button" id="quiz-retry" class="btn btn--cta">もう一度挑戦する</button>
+      <a href="index.html#search" class="btn btn--ghost">図鑑一覧にもどる</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>&copy; 2026 高山植物早見図鑑</p>
+    <nav>
+      <a href="about.html">このサイトについて・画像の出典</a>
+      <a href="privacy.html">プライバシーポリシー</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/wikimedia.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/register-sw.js"></script>
+</body>
+</html>
