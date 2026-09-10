@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>山トークカード | 高山植物早見図鑑</title>
+<meta name="description" content="登山合コンや飲み会で使える話題カードをランダムに1枚ずつ引けるアイスブレイクゲーム。定番トークから恋愛トーク、山あるあるまで。">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="theme-color" content="#2f6b42">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="paper">
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="./">
+      <span class="logo-mark" aria-hidden="true">🌸</span>
+      <span class="logo-text">高山植物<span class="logo-sub">早見図鑑</span></span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html#image-search">写真から探す</a>
+      <a href="index.html#search">絞り込みで探す</a>
+      <a href="quiz.html">花クイズ</a>
+      <a href="topic.html">山トークカード</a>
+      <a href="about.html">このサイトについて</a>
+    </nav>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__track">
+    <span>🌸 ALPINE FLORA FINDER</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>🗣️ 山トークカードで話題に困らない</span>
+    <span>🌸 ALPINE FLORA FINDER</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>🗣️ 山トークカードで話題に困らない</span>
+  </div>
+</div>
+
+<main class="wrap topic-page">
+
+  <h1 class="ribbon">🗣️ 山トークカード</h1>
+  <p class="quiz-lead">登山合コン・飲み会で話題に困ったら。カードを引くだけで登山ネタが1枚出てきます。</p>
+
+  <div class="topic-filters chip-row" id="topic-filters" role="group" aria-label="出すカテゴリーを選ぶ"></div>
+
+  <div class="topic-card" id="topic-card">
+    <span class="topic-card__badge" id="topic-badge">定番</span>
+    <p class="topic-card__text" id="topic-text">「引く」ボタンを押してカードをめくろう</p>
+  </div>
+
+  <button type="button" id="topic-draw" class="btn btn--cta topic-draw-btn">🎴 カードを引く</button>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>&copy; 2026 高山植物早見図鑑</p>
+    <nav>
+      <a href="about.html">このサイトについて・画像の出典</a>
+      <a href="privacy.html">プライバシーポリシー</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/topic-game.js"></script>
+<script src="js/register-sw.js"></script>
+</body>
+</html>
