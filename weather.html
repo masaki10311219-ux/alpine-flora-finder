@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>山の天気マップ | 高山植物早見図鑑</title>
+<meta name="description" content="全国の主要な山域の現在の天気をリアルタイムで一覧表示。雲量・降水量・風速から「今、天気の良い山域」がひと目でわかります。">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="theme-color" content="#2f6b42">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.open-meteo.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="paper">
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="./">
+      <span class="logo-mark" aria-hidden="true">🌸</span>
+      <span class="logo-text">高山植物<span class="logo-sub">早見図鑑</span></span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html#image-search">写真から探す</a>
+      <a href="index.html#search">絞り込みで探す</a>
+      <a href="weather.html">山の天気</a>
+      <a href="quiz.html">花クイズ</a>
+      <a href="topic.html">山トークカード</a>
+      <a href="about.html">このサイトについて</a>
+    </nav>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__track">
+    <span>🌸 ALPINE FLORA FINDER</span><span>⛰️ 全国の山の天気をリアルタイムでチェック</span><span>🌿 高山植物図鑑</span><span>☀️ 今、晴れている山域はどこ？</span>
+    <span>🌸 ALPINE FLORA FINDER</span><span>⛰️ 全国の山の天気をリアルタイムでチェック</span><span>🌿 高山植物図鑑</span><span>☀️ 今、晴れている山域はどこ？</span>
+  </div>
+</div>
+
+<main class="wrap weather-page">
+
+  <h1 class="ribbon">⛰️ 山の天気マップ</h1>
+  <p class="quiz-lead">全国の主要な山域の現在の天気をリアルタイム表示。雲量・降水・風速から算出したスコア順に並べているので、上位ほど「今、登山・撮影向きの天気」です。</p>
+
+  <div class="weather-toolbar">
+    <p class="weather-updated" id="weather-updated"></p>
+    <button type="button" id="weather-refresh" class="btn btn--ghost">🔄 更新</button>
+  </div>
+
+  <p class="weather-status" id="weather-status" hidden></p>
+
+  <div class="weather-grid" id="weather-grid"></div>
+
+  <p class="weather-disclaimer">※ データは <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> の気象モデルによる現在値の推定です。実際の山岳の天候は急変することがあります。登山の可否は現地情報・気象庁の予報も必ず確認してください。<br>※ この機能は通信が必要です。電波が無い場所では使えません。</p>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>&copy; 2026 高山植物早見図鑑</p>
+    <nav>
+      <a href="about.html">このサイトについて・画像の出典</a>
+      <a href="privacy.html">プライバシーポリシー</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/bg-blobs.js"></script>
+<script src="js/weather.js"></script>
+<script src="js/register-sw.js"></script>
+</body>
+</html>
