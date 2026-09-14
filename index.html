@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>高山植物図鑑 | 花の時期・エリア・色から早見検索</title>
-<meta name="description" content="高山植物を花期・エリア・色・名前から検索できる早見図鑑。写真からの植物識別（画像検索）にも対応。オフラインでも一部利用可。">
+<title>山美和 -Yamabiyori- | 高山植物図鑑・山の天気・コース検索</title>
+<meta name="description" content="高山植物を花期・エリア・色・名前から検索できる図鑑に加え、全国の山域の天気やコースタイム・獲得標高からの山さがしもできる登山総合サイト。写真からの植物識別（画像検索）にも対応。">
 <link rel="preconnect" href="https://commons.wikimedia.org">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -21,7 +21,7 @@
   <div class="wrap header-inner">
     <a class="logo" href="./">
       <span class="logo-mark" aria-hidden="true">🌸</span>
-      <span class="logo-text">高山植物<span class="logo-sub">早見図鑑</span></span>
+      <span class="logo-text">山美和<span class="logo-sub">-Yamabiyori-</span></span>
     </a>
     <nav class="site-nav">
       <a href="#image-search">写真から探す</a>
@@ -37,18 +37,22 @@
 
 <div class="ticker" aria-hidden="true">
   <div class="ticker__track">
-    <span>🌸 ALPINE FLORA FINDER</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>📷 写真から植物識別</span>
-    <span>🌸 ALPINE FLORA FINDER</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>📷 写真から植物識別</span>
+    <span>🌸 山美和 -Yamabiyori-</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>📷 写真から植物識別</span>
+    <span>🌸 山美和 -Yamabiyori-</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>📷 写真から植物識別</span>
   </div>
 </div>
 
 <section class="hero">
   <div class="wrap hero__grid">
     <div class="hero__text">
-      <p class="hero__eyebrow" data-flow>Alpine Flora Finder</p>
+      <p class="hero__eyebrow" data-flow>Yamabiyori</p>
       <h1 data-flow>山で見つけた花、<br>その場ですぐわかる。</h1>
       <p>写真を撮るか、時期・エリア・色・名前から検索。一度開いておけば、電波が無い場所でも一部の機能は使えます。</p>
-      <a href="#image-search" class="btn btn--cta">📷 写真で今すぐ調べる</a>
+      <div class="hero__cta-row">
+        <a href="#image-search" class="btn btn--cta">📷 写真で今すぐ調べる</a>
+        <a href="weather.html" class="btn btn--ghost">☀️ 山の天気を見る</a>
+        <a href="course-search.html" class="btn btn--ghost">⏱️ コースを探す</a>
+      </div>
     </div>
     <div class="hero__mosaic" aria-hidden="true">
       <div class="hero__tile hero__tile--a"><img data-hero-scientific="Dicentra peregrina" alt="" loading="eager"></div>
@@ -147,8 +151,14 @@
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
-    <p>&copy; 2026 高山植物早見図鑑</p>
-    <nav>
+    <p>&copy; 2026 山美和 -Yamabiyori-</p>
+    <nav aria-label="サイト機能">
+      <a href="weather.html">山の天気</a>
+      <a href="course-search.html">コース検索</a>
+      <a href="quiz.html">花クイズ</a>
+      <a href="topic.html">山トークカード</a>
+    </nav>
+    <nav aria-label="サイトについて">
       <a href="about.html">このサイトについて・画像の出典</a>
       <a href="privacy.html">プライバシーポリシー</a>
     </nav>

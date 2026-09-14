@@ -268,6 +268,12 @@ a { color: inherit; }
   font-weight: 500;
 }
 
+.hero__cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 /* ===== 見出しの1文字ずつ流れるアニメーション ===== */
 [data-flow] .char {
   display: inline-block;
@@ -753,6 +759,15 @@ body.is-flow-in [data-flow] .char {
 .info-memo dd { border-bottom: 1px dotted var(--border-strong); }
 .info-memo dl > dt:last-of-type,
 .info-memo dl > dd:last-of-type { border-bottom: none; }
+
+.plant-related-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.plant-related-links .btn { padding: 10px 18px; font-size: 0.85rem; }
 
 /* ===== 注釈付き写真（フィールドサイン風） ===== */
 .photo-annotated {
