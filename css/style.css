@@ -1354,3 +1354,116 @@ body.is-flow-in [data-flow] .char {
   font-size: 0.78rem;
   line-height: 1.7;
 }
+
+/* ===== コース検索 ===== */
+.course-page { padding-top: 48px; padding-bottom: 56px; }
+
+.course-filters {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 24px;
+  margin: 8px 0 18px;
+}
+
+.course-filter { flex: 1 1 240px; min-width: 220px; }
+
+.course-filter__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.course-filter__value {
+  font-weight: 700;
+  color: var(--green-900);
+  font-size: 0.92rem;
+}
+
+.course-filters input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--border-strong);
+  outline: none;
+}
+
+.course-filters input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--white);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+.course-filters input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--white);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+
+.course-count {
+  margin: 0 0 18px;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.course-status {
+  color: var(--ink-soft);
+  font-weight: 600;
+  grid-column: 1 / -1;
+}
+
+.course-status--error { color: var(--accent); }
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 22px;
+}
+
+.course-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow .3s var(--ease), transform .3s var(--ease);
+}
+
+.course-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-4px); }
+
+.course-card__name { margin: 0 0 4px; font-size: 1.02rem; }
+
+.course-card__area { margin: 0 0 14px; color: var(--ink-soft); font-size: 0.8rem; }
+
+.course-card__stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 14px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+  margin-bottom: 16px;
+}
+
+.course-card__link { margin-top: auto; }
