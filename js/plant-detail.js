@@ -42,7 +42,7 @@
     if (index === -1) {
       els.loading.hidden = true;
       els.notFound.hidden = false;
-      document.title = "見つかりませんでした | 高山植物早見図鑑";
+      document.title = "見つかりませんでした | 山美和 -Yamabiyori-";
       return;
     }
 
@@ -52,7 +52,7 @@
   }
 
   function renderPlant(plant, index) {
-    document.title = `${plant.name}（${plant.kanji || plant.scientific}）| 高山植物早見図鑑`;
+    document.title = `${plant.name}（${plant.kanji || plant.scientific}）| 山美和 -Yamabiyori-`;
     els.name.textContent = plant.name;
     els.kanji.textContent = plant.kanji ? `${plant.kanji} / ${plant.scientific}` : plant.scientific;
     els.scientific.textContent = plant.scientific;

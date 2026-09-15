@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コース検索（コースタイム・獲得標高） | 山美和 -Yamabiyori-</title>
+<meta name="description" content="コースタイムと獲得標高の上限を指定して、条件に合う登山コースを探せます。気になる山はYAMAPで詳細なルート・最新レポートを確認できます。">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="theme-color" content="#2f6b42">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="paper">
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="./">
+      <span class="logo-mark" aria-hidden="true">🌸</span>
+      <span class="logo-text">山美和<span class="logo-sub">-Yamabiyori-</span></span>
+    </a>
+    <nav class="site-nav">
+      <a href="index.html#image-search">写真から探す</a>
+      <a href="index.html#search">絞り込みで探す</a>
+      <a href="weather.html">山の天気</a>
+      <a href="course-search.html">コース検索</a>
+      <a href="quiz.html">花クイズ</a>
+      <a href="topic.html">山トークカード</a>
+      <a href="about.html">このサイトについて</a>
+    </nav>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__track">
+    <span>🌸 山美和 -Yamabiyori-</span><span>⏱️ コースタイムと獲得標高で山を探す</span><span>🌿 高山植物図鑑</span><span>🗺️ 気になる山はYAMAPで詳細チェック</span>
+    <span>🌸 山美和 -Yamabiyori-</span><span>⏱️ コースタイムと獲得標高で山を探す</span><span>🌿 高山植物図鑑</span><span>🗺️ 気になる山はYAMAPで詳細チェック</span>
+  </div>
+</div>
+
+<main class="wrap course-page">
+
+  <h1 class="ribbon">⏱️ コース検索</h1>
+  <p class="quiz-lead">「コースタイム◯時間以内」「獲得標高◯m以下」でスライダーを動かして、条件に合う山をまず絞り込み。気になる山が見つかったら「YAMAPで見る」から詳しいルート・最新の山行レポートを確認できます。</p>
+
+  <div class="course-filters">
+    <div class="course-filter">
+      <div class="course-filter__head">
+        <span class="filter-group__label">コースタイム</span>
+        <span class="course-filter__value" id="filter-time-value"></span>
+      </div>
+      <input type="range" id="filter-time" min="2" max="12" step="0.5" value="12">
+    </div>
+    <div class="course-filter">
+      <div class="course-filter__head">
+        <span class="filter-group__label">獲得標高</span>
+        <span class="course-filter__value" id="filter-gain-value"></span>
+      </div>
+      <input type="range" id="filter-gain" min="150" max="2200" step="50" value="2200">
+    </div>
+    <button type="button" id="course-reset" class="btn btn--ghost">条件をリセット</button>
+  </div>
+
+  <p class="course-count" id="course-count"></p>
+
+  <div class="course-grid" id="course-grid"></div>
+
+  <p class="weather-disclaimer">※ コースタイム・獲得標高は一般的な標準コースタイムをもとにした目安値です。天候・体力・ルート状況により実際の所要時間は変わります。<br>※ 「YAMAPで見る」は<a href="https://yamap.com/" target="_blank" rel="noopener">YAMAP</a>の山検索結果を新しいタブで開きます（当サイトとYAMAPは提携しているものではありません）。</p>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>&copy; 2026 山美和 -Yamabiyori-</p>
+    <nav aria-label="サイト機能">
+      <a href="weather.html">山の天気</a>
+      <a href="course-search.html">コース検索</a>
+      <a href="quiz.html">花クイズ</a>
+      <a href="topic.html">山トークカード</a>
+    </nav>
+    <nav aria-label="サイトについて">
+      <a href="about.html">このサイトについて・画像の出典</a>
+      <a href="privacy.html">プライバシーポリシー</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/bg-blobs.js"></script>
+<script src="js/course-search.js"></script>
+<script src="js/register-sw.js"></script>
+</body>
+</html>

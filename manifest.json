@@ -1,7 +1,7 @@
 {
-  "name": "高山植物早見図鑑",
-  "short_name": "高山植物図鑑",
-  "description": "時期・エリア・色・名前・写真から高山植物をすぐに探せる図鑑。オフラインでも一部機能を利用可能。",
+  "name": "山美和 -Yamabiyori-",
+  "short_name": "山美和",
+  "description": "時期・エリア・色・名前・写真から高山植物をすぐに探せる図鑑に、山の天気・コース検索も。オフラインでも一部機能を利用可能。",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

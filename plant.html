@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>植物図鑑ページ | 高山植物早見図鑑</title>
+<title>植物図鑑ページ | 山美和 -Yamabiyori-</title>
 <meta name="description" content="高山植物1種ごとの詳しい図鑑ページ。見分け方のポイントと、みんなが山で見つけた写真も見られます。">
 <link rel="preconnect" href="https://commons.wikimedia.org">
 <link rel="manifest" href="manifest.json">
@@ -21,11 +21,13 @@
   <div class="wrap header-inner">
     <a class="logo" href="./">
       <span class="logo-mark" aria-hidden="true">🌸</span>
-      <span class="logo-text">高山植物<span class="logo-sub">早見図鑑</span></span>
+      <span class="logo-text">山美和<span class="logo-sub">-Yamabiyori-</span></span>
     </a>
     <nav class="site-nav">
       <a href="index.html#image-search">写真から探す</a>
       <a href="index.html#search">絞り込みで探す</a>
+      <a href="weather.html">山の天気</a>
+      <a href="course-search.html">コース検索</a>
       <a href="quiz.html">花クイズ</a>
       <a href="topic.html">山トークカード</a>
       <a href="about.html">このサイトについて</a>
@@ -35,8 +37,8 @@
 
 <div class="ticker" aria-hidden="true">
   <div class="ticker__track">
-    <span>🌸 ALPINE FLORA FINDER</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>📷 写真から植物識別</span>
-    <span>🌸 ALPINE FLORA FINDER</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>📷 写真から植物識別</span>
+    <span>🌸 山美和 -Yamabiyori-</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>📷 写真から植物識別</span>
+    <span>🌸 山美和 -Yamabiyori-</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>📷 写真から植物識別</span>
   </div>
 </div>
 
@@ -87,6 +89,11 @@
         <div style="margin-top:20px;">
           <p id="plant-story" style="font-size:0.98rem; line-height:1.9;"></p>
         </div>
+
+        <div class="plant-related-links">
+          <a href="weather.html" class="btn btn--ghost">☀️ 山の天気を見る</a>
+          <a href="course-search.html" class="btn btn--ghost">⏱️ 登山コースを探す</a>
+        </div>
       </div>
     </div>
 
@@ -124,8 +131,14 @@
 
 <footer class="site-footer">
   <div class="wrap footer-inner">
-    <p>&copy; 2026 高山植物早見図鑑</p>
-    <nav>
+    <p>&copy; 2026 山美和 -Yamabiyori-</p>
+    <nav aria-label="サイト機能">
+      <a href="weather.html">山の天気</a>
+      <a href="course-search.html">コース検索</a>
+      <a href="quiz.html">花クイズ</a>
+      <a href="topic.html">山トークカード</a>
+    </nav>
+    <nav aria-label="サイトについて">
       <a href="about.html">このサイトについて・画像の出典</a>
       <a href="privacy.html">プライバシーポリシー</a>
     </nav>
