@@ -61,6 +61,8 @@
 
   <p class="weather-status" id="weather-status" hidden></p>
 
+  <div class="weather-area-chips chip-row" id="weather-area-chips" role="group" aria-label="エリアで絞り込む"></div>
+
   <section class="weather-map-section">
     <div class="weather-map-wrap">
       <svg id="weather-map" class="weather-map" viewBox="0 0 560 640" role="img" aria-label="全国の山域の天気マップ"></svg>
@@ -72,7 +74,15 @@
 
   <div class="weather-grid" id="weather-grid"></div>
 
-  <p class="weather-disclaimer">※ データは <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> の気象モデルによる推定です。先の日付ほど予報の精度は下がります。実際の山岳の天候は急変することがあります。登山の可否は直前に現地情報・気象庁の予報も必ず確認してください。<br>※ 地図はおおよその位置関係を示す簡易的なものです（正確な地形図ではありません）。<br>※ この機能は通信が必要です。電波が無い場所では使えません。</p>
+  <p class="weather-disclaimer">※ データは <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> の気象モデルによる推定です。先の日付ほど予報の精度は下がります。実際の山岳の天候は急変することがあります。登山の可否は直前に現地情報・気象庁の予報も必ず確認してください。<br>※ 地図の海岸線は<a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a>の公開データをもとにした簡易的なもので、正確な地形図ではありません。<br>※ この機能は通信が必要です。電波が無い場所では使えません。</p>
+
+  <div class="weather-external-links">
+    <p class="weather-external-links__title">より専門的な山岳気象情報はこちら</p>
+    <div class="weather-external-links__row">
+      <a href="https://tenki.jp/mountain/" target="_blank" rel="noopener" class="btn btn--ghost">tenki.jp 山の天気 →</a>
+      <a href="https://www.jma.go.jp/bosai/forecast/" target="_blank" rel="noopener" class="btn btn--ghost">気象庁 天気予報 →</a>
+    </div>
+  </div>
 
 </main>
 

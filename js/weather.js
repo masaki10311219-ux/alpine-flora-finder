@@ -59,6 +59,8 @@
   const els = {};
   let entries = [];
   let mode = "now";
+  let area = "all";
+  let japanMap = null;
 
   document.addEventListener("DOMContentLoaded", () => {
     els.grid = document.getElementById("weather-grid");
@@ -68,6 +70,7 @@
     els.map = document.getElementById("weather-map");
     els.legend = document.getElementById("weather-map-legend");
     els.heading = document.getElementById("weather-recommend-heading");
+    els.areaChips = document.getElementById("weather-area-chips");
     els.modeChips = document.querySelectorAll(".weather-mode");
 
     if (!els.grid) return;
@@ -122,7 +125,13 @@
     els.grid.setAttribute("aria-busy", "true");
 
     try {
-      const mountains = await fetch("data/mountains.json").then((r) => r.json());
+      const [mountains, mapData] = await Promise.all([
+        fetch("data/mountains.json").then((r) => r.json()),
+        japanMap ? Promise.resolve(japanMap) : fetch("data/japan-outline.json").then((r) => r.json())
+      ]);
+      japanMap = mapData;
+      renderAreaChips(mountains);
+
       const lats = mountains.map((m) => m.lat).join(",");
       const lons = mountains.map((m) => m.lon).join(",");
       const url = `${API_BASE}?latitude=${lats}&longitude=${lons}&current=${CURRENT_FIELDS}&daily=${DAILY_FIELDS}&timezone=Asia%2FTokyo&forecast_days=${FORECAST_DAYS}`;
@@ -178,82 +187,96 @@
     els.status.hidden = !text;
   }
 
+  function renderAreaChips(mountains) {
+    if (!els.areaChips || els.areaChips.dataset.built) return;
+    const areas = Array.from(new Set(mountains.map((m) => m.area)));
+    els.areaChips.innerHTML = [
+      `<button type="button" class="chip weather-area is-active" data-area="all">すべて</button>`,
+      ...areas.map((a) => `<button type="button" class="chip weather-area" data-area="${escapeHTML(a)}">${escapeHTML(a)}</button>`)
+    ].join("");
+    els.areaChips.querySelectorAll(".weather-area").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        area = chip.dataset.area;
+        els.areaChips.querySelectorAll(".weather-area").forEach((c) => c.classList.toggle("is-active", c === chip));
+        renderAll();
+      });
+    });
+    els.areaChips.dataset.built = "1";
+  }
+
   function renderAll() {
     if (!entries.length) return;
-    const sorted = [...entries].sort((a, b) => a.scores[mode] - b.scores[mode]);
-    if (els.heading) els.heading.textContent = `🗾 ${MODE_META[mode].heading} TOP3`;
+    const filtered = area === "all" ? entries : entries.filter((e) => e.mountain.area === area);
+    const sorted = [...filtered].sort((a, b) => a.scores[mode] - b.scores[mode]);
+    const areaLabel = area === "all" ? "" : `（${area}）`;
+    if (els.heading) els.heading.textContent = `🗾 ${MODE_META[mode].heading}${areaLabel} TOP3`;
     renderMap(sorted);
     renderCards(sorted);
   }
 
-  /* ===== 日本地図（緯度経度を単純投影したスキャッターマップ） ===== */
-  function projection(mountains) {
-    const lats = mountains.map((m) => m.lat);
-    const lons = mountains.map((m) => m.lon);
-    const latMin = Math.min(...lats), latMax = Math.max(...lats);
-    const lonMin = Math.min(...lons), lonMax = Math.max(...lons);
-    const meanLat = (latMin + latMax) / 2;
-    const cosFactor = Math.cos((meanLat * Math.PI) / 180);
+  /* ===== 日本地図（Natural Earthの海岸線データを簡易投影） ===== */
+  function project(lat, lon) {
+    const p = japanMap.projection;
+    const x = p.pad + (lon - p.lonMin) * p.cosFactor * p.scale + p.offX;
+    const y = p.pad + (p.latMax - lat) * p.scale + p.offY;
+    return { x, y };
+  }
 
-    const W = 560, H = 640, PAD = 60;
-    const spanLat = latMax - latMin || 1;
-    const spanLonAdj = (lonMax - lonMin) * cosFactor || 1;
-    const scale = Math.min((W - PAD * 2) / spanLonAdj, (H - PAD * 2) / spanLat);
+  function computeViewBox(filtered) {
+    const full = japanMap.viewBox;
+    if (area === "all" || !filtered.length) return full;
 
-    return (lat, lon) => {
-      const x = PAD + ((lon - lonMin) * cosFactor) * scale + (W - PAD * 2 - spanLonAdj * scale) / 2;
-      const y = PAD + (latMax - lat) * scale + (H - PAD * 2 - spanLat * scale) / 2;
-      return { x, y };
-    };
+    const pts = filtered.map((e) => project(e.mountain.lat, e.mountain.lon));
+    const MARGIN = 70, MIN_SIZE = 170;
+    let minX = Math.min(...pts.map((p) => p.x)) - MARGIN;
+    let maxX = Math.max(...pts.map((p) => p.x)) + MARGIN;
+    let minY = Math.min(...pts.map((p) => p.y)) - MARGIN;
+    let maxY = Math.max(...pts.map((p) => p.y)) + MARGIN;
+
+    if (maxX - minX < MIN_SIZE) { const cx = (minX + maxX) / 2; minX = cx - MIN_SIZE / 2; maxX = cx + MIN_SIZE / 2; }
+    if (maxY - minY < MIN_SIZE) { const cy = (minY + maxY) / 2; minY = cy - MIN_SIZE / 2; maxY = cy + MIN_SIZE / 2; }
+
+    minX = Math.max(full[0], minX);
+    minY = Math.max(full[1], minY);
+    maxX = Math.min(full[0] + full[2], maxX);
+    maxY = Math.min(full[1] + full[3], maxY);
+    return [minX, minY, maxX - minX, maxY - minY];
   }
 
   function renderMap(sorted) {
-    if (!els.map) return;
-    const mountains = entries.map((e) => e.mountain);
-    const project = projection(mountains);
-
+    if (!els.map || !japanMap) return;
     const svgNS = "http://www.w3.org/2000/svg";
     els.map.innerHTML = "";
-    els.map.setAttribute("viewBox", "0 0 560 640");
+    els.map.setAttribute("viewBox", computeViewBox(sorted).join(" "));
 
-    // 装飾用のふわっとした島影（正確な海岸線ではなく雰囲気を出すための背景ブロブ）
-    const islandBlobs = [
-      { cx: 430, cy: 90, rx: 90, ry: 70, rot: -20 },
-      { cx: 260, cy: 320, rx: 60, ry: 230, rot: 24 },
-      { cx: 130, cy: 560, rx: 55, ry: 70, rot: -10 },
-      { cx: 90, cy: 480, rx: 30, ry: 40, rot: 10 }
-    ];
-    const blobGroup = document.createElementNS(svgNS, "g");
-    blobGroup.setAttribute("opacity", "0.35");
-    islandBlobs.forEach((b) => {
-      const el = document.createElementNS(svgNS, "ellipse");
-      el.setAttribute("cx", b.cx);
-      el.setAttribute("cy", b.cy);
-      el.setAttribute("rx", b.rx);
-      el.setAttribute("ry", b.ry);
-      el.setAttribute("transform", `rotate(${b.rot} ${b.cx} ${b.cy})`);
-      el.setAttribute("fill", "var(--green-100)");
-      blobGroup.appendChild(el);
+    const landGroup = document.createElementNS(svgNS, "g");
+    Object.values(japanMap.paths).forEach((d) => {
+      const path = document.createElementNS(svgNS, "path");
+      path.setAttribute("d", d);
+      path.setAttribute("class", "weather-map__land");
+      landGroup.appendChild(path);
     });
-    els.map.appendChild(blobGroup);
+    els.map.appendChild(landGroup);
 
+    const selectedNames = new Set(sorted.map((e) => e.mountain.name));
     const rankOf = new Map(sorted.map((e, i) => [e.mountain.name, i]));
+    const labelCandidates = [];
 
     entries.forEach((entry) => {
       const { x, y } = project(entry.mountain.lat, entry.mountain.lon);
-      const score = entry.scores[mode];
-      const band = bandFor(score);
+      const isSelected = area === "all" || selectedNames.has(entry.mountain.name);
+      const band = bandFor(entry.scores[mode]);
       const rank = rankOf.get(entry.mountain.name);
-      const isBest = rank < 3;
+      const isBest = isSelected && rank !== undefined && rank < 3;
 
       const g = document.createElementNS(svgNS, "g");
-      g.setAttribute("class", "weather-map__marker");
+      g.setAttribute("class", "weather-map__marker" + (isSelected ? "" : " weather-map__marker--dim"));
       g.setAttribute("tabindex", "0");
       g.setAttribute("role", "button");
-      g.setAttribute("aria-label", `${entry.mountain.name}（${band.label}）`);
+      g.setAttribute("aria-label", `${entry.mountain.name}（${isSelected ? band.label : "対象エリア外"}）`);
 
       const title = document.createElementNS(svgNS, "title");
-      title.textContent = `${entry.mountain.name}（${band.label}）`;
+      title.textContent = `${entry.mountain.name}（${entry.mountain.area}）${isSelected ? "・" + band.label : ""}`;
       g.appendChild(title);
 
       if (isBest) {
@@ -269,27 +292,55 @@
       dot.setAttribute("cx", x);
       dot.setAttribute("cy", y);
       dot.setAttribute("r", isBest ? 8 : 6);
-      dot.setAttribute("fill", band.color);
+      dot.setAttribute("fill", isSelected ? band.color : "#c9c3ba");
       dot.setAttribute("stroke", "#fff");
       dot.setAttribute("stroke-width", "2");
       g.appendChild(dot);
 
-      if (isBest) {
-        const label = document.createElementNS(svgNS, "text");
-        label.setAttribute("x", x + 12);
-        label.setAttribute("y", y + 4);
-        label.setAttribute("class", "weather-map__label weather-map__label--best");
-        label.textContent = entry.mountain.name.replace(/（.*/, "");
-        g.appendChild(label);
+      const showLabel = isBest || (area !== "all" && isSelected);
+      if (showLabel) {
+        labelCandidates.push({ x: x + 12, y, text: entry.mountain.name.replace(/（.*/, ""), isBest });
       }
 
-      g.addEventListener("click", () => focusCard(entry.mountain.name));
+      const activate = () => {
+        if (!isSelected) {
+          area = entry.mountain.area;
+          els.areaChips?.querySelectorAll(".weather-area").forEach((c) => c.classList.toggle("is-active", c.dataset.area === area));
+          renderAll();
+        }
+        focusCard(entry.mountain.name);
+      };
+      g.addEventListener("click", activate);
       g.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); focusCard(entry.mountain.name); }
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); }
       });
 
       els.map.appendChild(g);
     });
+
+    renderLabels(labelCandidates, svgNS);
+  }
+
+  // ラベルが密集する場合に縦方向へずらして重なりを避ける
+  function renderLabels(candidates, svgNS) {
+    const MIN_GAP = 13;
+    const sortedLabels = [...candidates].sort((a, b) => a.y - b.y);
+    sortedLabels.forEach((label, i) => {
+      if (i === 0) return;
+      const prev = sortedLabels[i - 1];
+      if (label.y - prev.y < MIN_GAP) label.y = prev.y + MIN_GAP;
+    });
+
+    const labelGroup = document.createElementNS(svgNS, "g");
+    sortedLabels.forEach(({ x, y, text, isBest }) => {
+      const label = document.createElementNS(svgNS, "text");
+      label.setAttribute("x", x);
+      label.setAttribute("y", y + 4);
+      label.setAttribute("class", "weather-map__label" + (isBest ? " weather-map__label--best" : ""));
+      label.textContent = text;
+      labelGroup.appendChild(label);
+    });
+    els.map.appendChild(labelGroup);
   }
 
   function focusCard(name) {
