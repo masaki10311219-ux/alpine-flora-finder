@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>山の天気マップ | 山美和 -Yamabiyori-</title>
-<meta name="description" content="全国の主要な山域の現在の天気をリアルタイムで一覧表示。雲量・降水量・風速から「今、天気の良い山域」がひと目でわかります。">
+<meta name="description" content="全国の主要な山域の天気を日本地図とランキングで表示。今／週末／週間の切り替えで、週末の登山計画に「今、天気の良い山域」がひと目でわかります。">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
@@ -45,18 +45,34 @@
 <main class="wrap weather-page">
 
   <h1 class="ribbon">⛰️ 山の天気マップ</h1>
-  <p class="quiz-lead">全国の主要な山域の現在の天気をリアルタイム表示。雲量・降水・風速から算出したスコア順に並べているので、上位ほど「今、登山・撮影向きの天気」です。</p>
+  <p class="quiz-lead">全国の主要な山域の天気を日本地図とランキングでチェック。「今」「週末」「週間」を切り替えて、週末の登山計画にも使えます。</p>
 
   <div class="weather-toolbar">
-    <p class="weather-updated" id="weather-updated"></p>
-    <button type="button" id="weather-refresh" class="btn btn--ghost">🔄 更新</button>
+    <div class="weather-mode-chips chip-row" role="group" aria-label="ランキング基準を選ぶ">
+      <button type="button" class="chip weather-mode is-active" data-mode="now">🌤️ 今</button>
+      <button type="button" class="chip weather-mode" data-mode="weekend">🏕️ 週末（次の土日）</button>
+      <button type="button" class="chip weather-mode" data-mode="week">📅 週間（7日間）</button>
+    </div>
+    <div class="weather-toolbar__right">
+      <p class="weather-updated" id="weather-updated"></p>
+      <button type="button" id="weather-refresh" class="btn btn--ghost">🔄 更新</button>
+    </div>
   </div>
 
   <p class="weather-status" id="weather-status" hidden></p>
 
+  <section class="weather-map-section">
+    <div class="weather-map-wrap">
+      <svg id="weather-map" class="weather-map" viewBox="0 0 560 640" role="img" aria-label="全国の山域の天気マップ"></svg>
+    </div>
+    <ul class="weather-map-legend" id="weather-map-legend" aria-label="天気の凡例"></ul>
+  </section>
+
+  <h2 class="section-ribbon" id="weather-recommend-heading">🗾 今のおすすめ山域 TOP3</h2>
+
   <div class="weather-grid" id="weather-grid"></div>
 
-  <p class="weather-disclaimer">※ データは <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> の気象モデルによる現在値の推定です。実際の山岳の天候は急変することがあります。登山の可否は現地情報・気象庁の予報も必ず確認してください。<br>※ この機能は通信が必要です。電波が無い場所では使えません。</p>
+  <p class="weather-disclaimer">※ データは <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> の気象モデルによる推定です。先の日付ほど予報の精度は下がります。実際の山岳の天候は急変することがあります。登山の可否は直前に現地情報・気象庁の予報も必ず確認してください。<br>※ 地図はおおよその位置関係を示す簡易的なものです（正確な地形図ではありません）。<br>※ この機能は通信が必要です。電波が無い場所では使えません。</p>
 
 </main>
 
