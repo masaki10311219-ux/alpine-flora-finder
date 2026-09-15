@@ -1329,8 +1329,16 @@ body.is-flow-in [data-flow] .char {
 
 .weather-map { width: 100%; height: auto; display: block; }
 
+.weather-map__land {
+  fill: var(--green-100);
+  stroke: var(--green-600);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
 .weather-map__marker { cursor: pointer; outline: none; }
 .weather-map__marker:focus-visible circle { stroke: var(--green-900); }
+.weather-map__marker--dim { opacity: 0.55; }
 
 .weather-map__ring {
   fill: none;
@@ -1494,6 +1502,27 @@ body.is-flow-in [data-flow] .char {
   color: var(--ink-soft);
   font-size: 0.78rem;
   line-height: 1.7;
+}
+
+.weather-area-chips { margin: 0 0 20px; }
+
+.weather-external-links {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.weather-external-links__title {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.weather-external-links__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 /* ===== コース検索 ===== */
