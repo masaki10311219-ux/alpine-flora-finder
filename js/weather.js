@@ -1,14 +1,19 @@
 /**
- * 全国の主要山域の天気を Open-Meteo API（無料・APIキー不要）から取得し、
+ * 全国の主要山域の天気を Open-Meteo API（無料・APIキー不要）経由で
+ * 気象庁のメソスケールモデル（MSM・5km解像度、4日先まで）＋全球モデル（GSM）を
+ * シームレスに接続したデータ（models=jma_seamless）から取得し、
  * 1) 日本地図上にマーカーで「おすすめ山域」を表示
  * 2) 今／週末（次の土日）／週間（7日間平均）でランキング基準を切り替え
  * 3) 各山域カードに7日間の簡易予報ストリップを表示
  * することで、週末の登山計画に使えるようにする。
+ * ※ JMAモデルは降水確率（precipitation_probability）を提供しないため、
+ *   日別スコアには代わりに降水量合計（precipitation_sum）を使用する。
  */
 (() => {
   const API_BASE = "https://api.open-meteo.com/v1/forecast";
+  const WEATHER_MODEL = "jma_seamless";
   const CURRENT_FIELDS = "temperature_2m,precipitation,weather_code,cloud_cover,wind_speed_10m";
-  const DAILY_FIELDS = "weather_code,precipitation_probability_max,wind_speed_10m_max,temperature_2m_max,temperature_2m_min";
+  const DAILY_FIELDS = "weather_code,precipitation_sum,wind_speed_10m_max,temperature_2m_max,temperature_2m_min";
   const FORECAST_DAYS = 7;
   const WEEKDAY_LABELS = ["日", "月", "火", "水", "木", "金", "土"];
 
@@ -105,7 +110,7 @@
   function scoreFromDaily(daily, i) {
     const info = weatherInfo(daily.weather_code[i]);
     let score = info.severity * 20;
-    score += (daily.precipitation_probability_max[i] || 0) * 0.6;
+    score += (daily.precipitation_sum[i] || 0) * 2;
     const wind = daily.wind_speed_10m_max[i];
     if (wind >= 50) score += 25;
     else if (wind >= 30) score += 12;
@@ -134,7 +139,7 @@
 
       const lats = mountains.map((m) => m.lat).join(",");
       const lons = mountains.map((m) => m.lon).join(",");
-      const url = `${API_BASE}?latitude=${lats}&longitude=${lons}&current=${CURRENT_FIELDS}&daily=${DAILY_FIELDS}&timezone=Asia%2FTokyo&forecast_days=${FORECAST_DAYS}`;
+      const url = `${API_BASE}?latitude=${lats}&longitude=${lons}&current=${CURRENT_FIELDS}&daily=${DAILY_FIELDS}&timezone=Asia%2FTokyo&forecast_days=${FORECAST_DAYS}&models=${WEATHER_MODEL}`;
 
       const results = await fetch(url).then((r) => {
         if (!r.ok) throw new Error(`weather API error: ${r.status}`);
