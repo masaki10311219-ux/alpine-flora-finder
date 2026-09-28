@@ -1,8 +1,10 @@
 /**
- * 全国の主要山域の天気を Open-Meteo API（無料・APIキー不要）経由で
- * 気象庁のメソスケールモデル（MSM・5km解像度、4日先まで）＋全球モデル（GSM）を
- * シームレスに接続したデータ（models=jma_seamless）から取得し、
- * 1) 日本地図上にマーカーで「おすすめ山域」を表示
+ * 全国の主要山域の天気を Open-Meteo API（無料・APIキー不要）経由で取得する。
+ * 現在天気は気象庁（MSM/GSM）・ECMWF・GFS・ICONの4モデルを同時取得し、
+ * 表示モデルを切り替えて比較できるようにする（Windyのモデル切り替えに相当）。
+ * 週末・週間の日別予報は、日本の山岳地形に対して高解像度な気象庁モデル
+ * （models=jma_seamless）のみで算出する（他モデルは日別データを取得しない）。
+ * 1) 日本地図上にマーカーで「おすすめ山域」を表示、クリックでその場に天気詳細＋モデル比較を表示
  * 2) 今／週末（次の土日）／週間（7日間平均）でランキング基準を切り替え
  * 3) 各山域カードに7日間の簡易予報ストリップを表示
  * することで、週末の登山計画に使えるようにする。
@@ -11,8 +13,14 @@
  */
 (() => {
   const API_BASE = "https://api.open-meteo.com/v1/forecast";
-  const WEATHER_MODEL = "jma_seamless";
-  const CURRENT_FIELDS = "temperature_2m,precipitation,weather_code,cloud_cover,wind_speed_10m";
+  const MODELS = ["jma_seamless", "ecmwf_ifs025", "gfs_seamless", "icon_seamless"];
+  const MODEL_META = {
+    jma_seamless: { short: "気象庁", full: "気象庁 MSM/GSM（日本）" },
+    ecmwf_ifs025: { short: "ECMWF", full: "ECMWF IFS（欧州）" },
+    gfs_seamless: { short: "GFS", full: "GFS（米国）" },
+    icon_seamless: { short: "ICON", full: "ICON（ドイツ）" }
+  };
+  const HOURLY_FIELDS = "temperature_2m,precipitation,weather_code,cloud_cover,wind_speed_10m";
   const DAILY_FIELDS = "weather_code,precipitation_sum,wind_speed_10m_max,temperature_2m_max,temperature_2m_min";
   const FORECAST_DAYS = 7;
   const WEEKDAY_LABELS = ["日", "月", "火", "水", "木", "金", "土"];
@@ -65,7 +73,9 @@
   let entries = [];
   let mode = "now";
   let area = "all";
+  let selectedModel = "jma_seamless";
   let japanMap = null;
+  let activeDetailName = null;
 
   document.addEventListener("DOMContentLoaded", () => {
     els.grid = document.getElementById("weather-grid");
@@ -77,6 +87,10 @@
     els.heading = document.getElementById("weather-recommend-heading");
     els.areaChips = document.getElementById("weather-area-chips");
     els.modeChips = document.querySelectorAll(".weather-mode");
+    els.modelChips = document.querySelectorAll(".weather-model-choice");
+    els.detailPanel = document.getElementById("weather-detail-panel");
+    els.detailBody = document.getElementById("weather-detail-body");
+    els.detailClose = document.getElementById("weather-detail-close");
 
     if (!els.grid) return;
 
@@ -87,6 +101,17 @@
         els.modeChips.forEach((c) => c.classList.toggle("is-active", c === chip));
         renderAll();
       });
+    });
+    els.modelChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        selectedModel = chip.dataset.model;
+        els.modelChips.forEach((c) => c.classList.toggle("is-active", c === chip));
+        renderAll();
+      });
+    });
+    els.detailClose?.addEventListener("click", () => {
+      activeDetailName = null;
+      els.detailPanel.hidden = true;
     });
 
     renderLegend();
@@ -121,6 +146,27 @@
     return new Date(`${dateStr}T00:00:00+09:00`).getDay();
   }
 
+  // 日本時間の「今」に最も近い時刻のインデックスを hourly.time から探す
+  function tokyoHourString(date) {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Tokyo", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", hour12: false
+    }).formatToParts(date);
+    const get = (t) => parts.find((p) => p.type === t).value;
+    let hour = get("hour");
+    if (hour === "24") hour = "00";
+    return `${get("year")}-${get("month")}-${get("day")}T${hour}:00`;
+  }
+
+  function nearestHourIndex(times) {
+    const target = tokyoHourString(new Date());
+    const exact = times.indexOf(target);
+    if (exact !== -1) return exact;
+    for (let i = times.length - 1; i >= 0; i--) {
+      if (times[i] <= target) return i;
+    }
+    return 0;
+  }
+
   function bandFor(score) {
     return SCORE_BANDS.find((b) => score <= b.max);
   }
@@ -139,17 +185,30 @@
 
       const lats = mountains.map((m) => m.lat).join(",");
       const lons = mountains.map((m) => m.lon).join(",");
-      const url = `${API_BASE}?latitude=${lats}&longitude=${lons}&current=${CURRENT_FIELDS}&daily=${DAILY_FIELDS}&timezone=Asia%2FTokyo&forecast_days=${FORECAST_DAYS}&models=${WEATHER_MODEL}`;
+      const hourlyUrl = `${API_BASE}?latitude=${lats}&longitude=${lons}&hourly=${HOURLY_FIELDS}&forecast_days=1&timezone=Asia%2FTokyo&models=${MODELS.join(",")}`;
+      const dailyUrl = `${API_BASE}?latitude=${lats}&longitude=${lons}&daily=${DAILY_FIELDS}&timezone=Asia%2FTokyo&forecast_days=${FORECAST_DAYS}&models=jma_seamless`;
 
-      const results = await fetch(url).then((r) => {
-        if (!r.ok) throw new Error(`weather API error: ${r.status}`);
-        return r.json();
-      });
+      const [hourlyResults, dailyResults] = await Promise.all([
+        fetch(hourlyUrl).then((r) => { if (!r.ok) throw new Error(`weather API error: ${r.status}`); return r.json(); }),
+        fetch(dailyUrl).then((r) => { if (!r.ok) throw new Error(`weather API error: ${r.status}`); return r.json(); })
+      ]);
 
       entries = mountains.map((mountain, i) => {
-        const current = results[i]?.current;
-        const daily = results[i]?.daily;
-        if (!current || !daily) return null;
+        const hourly = hourlyResults[i]?.hourly;
+        const daily = dailyResults[i]?.daily;
+        if (!hourly || !daily) return null;
+
+        const idx = nearestHourIndex(hourly.time);
+        const currentByModel = {};
+        MODELS.forEach((m) => {
+          currentByModel[m] = {
+            temperature_2m: hourly[`temperature_2m_${m}`]?.[idx],
+            precipitation: hourly[`precipitation_${m}`]?.[idx],
+            weather_code: hourly[`weather_code_${m}`]?.[idx],
+            cloud_cover: hourly[`cloud_cover_${m}`]?.[idx],
+            wind_speed_10m: hourly[`wind_speed_10m_${m}`]?.[idx]
+          };
+        });
 
         const dailyScores = daily.time.map((_, di) => scoreFromDaily(daily, di));
         const weekendIdx = daily.time
@@ -163,10 +222,10 @@
 
         return {
           mountain,
-          current,
+          currentByModel,
           daily,
           dailyScores,
-          scores: { now: scoreFromCurrent(current), weekend: weekendScore, week: weekScore }
+          scores: { weekend: weekendScore, week: weekScore }
         };
       }).filter(Boolean);
 
@@ -209,14 +268,23 @@
     els.areaChips.dataset.built = "1";
   }
 
+  // 「今」は表示中の気象モデルでその場スコアを計算し直す（モデル比較の切り替えに追従）
+  function scoreOf(entry, m) {
+    return m === "now" ? scoreFromCurrent(entry.currentByModel[selectedModel]) : entry.scores[m];
+  }
+
   function renderAll() {
     if (!entries.length) return;
     const filtered = area === "all" ? entries : entries.filter((e) => e.mountain.area === area);
-    const sorted = [...filtered].sort((a, b) => a.scores[mode] - b.scores[mode]);
+    const sorted = [...filtered].sort((a, b) => scoreOf(a, mode) - scoreOf(b, mode));
     const areaLabel = area === "all" ? "" : `（${area}）`;
     if (els.heading) els.heading.textContent = `🗾 ${MODE_META[mode].heading}${areaLabel} TOP3`;
     renderMap(sorted);
     renderCards(sorted);
+    if (activeDetailName) {
+      const entry = entries.find((e) => e.mountain.name === activeDetailName);
+      if (entry) showDetailPanel(entry);
+    }
   }
 
   /* ===== 日本地図（Natural Earthの海岸線データを簡易投影） ===== */
@@ -270,7 +338,7 @@
     entries.forEach((entry) => {
       const { x, y } = project(entry.mountain.lat, entry.mountain.lon);
       const isSelected = area === "all" || selectedNames.has(entry.mountain.name);
-      const band = bandFor(entry.scores[mode]);
+      const band = bandFor(scoreOf(entry, mode));
       const rank = rankOf.get(entry.mountain.name);
       const isBest = isSelected && rank !== undefined && rank < 3;
 
@@ -280,8 +348,9 @@
       g.setAttribute("role", "button");
       g.setAttribute("aria-label", `${entry.mountain.name}（${isSelected ? band.label : "対象エリア外"}）`);
 
+      const nowInfo = weatherInfo(entry.currentByModel[selectedModel].weather_code);
       const title = document.createElementNS(svgNS, "title");
-      title.textContent = `${entry.mountain.name}（${entry.mountain.area}）${isSelected ? "・" + band.label : ""}`;
+      title.textContent = `${entry.mountain.name}（${entry.mountain.area}）${isSelected ? "・" + band.label : ""} ${nowInfo.emoji}${formatNum(entry.currentByModel[selectedModel].temperature_2m)}℃ ・クリックで詳細`;
       g.appendChild(title);
 
       if (isBest) {
@@ -313,7 +382,7 @@
           els.areaChips?.querySelectorAll(".weather-area").forEach((c) => c.classList.toggle("is-active", c.dataset.area === area));
           renderAll();
         }
-        focusCard(entry.mountain.name);
+        showDetailPanel(entry);
       };
       g.addEventListener("click", activate);
       g.addEventListener("keydown", (e) => {
@@ -356,6 +425,67 @@
     setTimeout(() => card.classList.remove("is-highlighted"), 1600);
   }
 
+  // 地図をクリックすると、その場（マップの直下）で天気詳細とモデル比較を表示する
+  function showDetailPanel(entry) {
+    if (!els.detailPanel || !els.detailBody) return;
+    activeDetailName = entry.mountain.name;
+    const current = entry.currentByModel[selectedModel];
+    const info = weatherInfo(current.weather_code);
+
+    els.detailBody.innerHTML = `
+      <div class="weather-card__top">
+        <span class="weather-card__icon" aria-hidden="true">${info.emoji}</span>
+        <div>
+          <h3 class="weather-card__name">${escapeHTML(entry.mountain.name)}</h3>
+          <p class="weather-card__meta">${escapeHTML(entry.mountain.area)} ・ 標高${entry.mountain.elevation.toLocaleString()}m</p>
+        </div>
+      </div>
+      <p class="weather-card__condition">${escapeHTML(info.label)}（${MODEL_META[selectedModel].short}）</p>
+      <div class="weather-card__stats">
+        <div class="weather-stat">
+          <span class="weather-stat__label">気温</span>
+          <span class="weather-stat__value">${formatNum(current.temperature_2m)}℃</span>
+        </div>
+        <div class="weather-stat">
+          <span class="weather-stat__label">風速</span>
+          <span class="weather-stat__value">${formatNum(current.wind_speed_10m)}km/h</span>
+        </div>
+        <div class="weather-stat">
+          <span class="weather-stat__label">雲量</span>
+          <span class="weather-stat__value">${formatNum(current.cloud_cover)}%</span>
+        </div>
+        <div class="weather-stat">
+          <span class="weather-stat__label">降水量</span>
+          <span class="weather-stat__value">${formatNum(current.precipitation)}mm</span>
+        </div>
+      </div>
+      ${buildModelCompareRow(entry.currentByModel)}
+      <button type="button" class="btn btn--ghost weather-detail-panel__jump">この山域の週間予報を見る ↓</button>
+    `;
+    els.detailPanel.hidden = false;
+    els.detailBody.querySelector(".weather-detail-panel__jump").addEventListener("click", () => focusCard(entry.mountain.name));
+  }
+
+  function buildModelCompareRow(currentByModel) {
+    const items = MODELS.map((m) => {
+      const c = currentByModel[m];
+      const info = weatherInfo(c.weather_code);
+      return `
+        <div class="model-compare__item${m === selectedModel ? " is-selected" : ""}">
+          <span class="model-compare__label">${MODEL_META[m].short}</span>
+          <span class="model-compare__icon" aria-hidden="true">${info.emoji}</span>
+          <span class="model-compare__temp">${formatNum(c.temperature_2m)}℃</span>
+        </div>
+      `;
+    }).join("");
+    return `
+      <div class="model-compare">
+        <p class="model-compare__title">モデル比較（現在）</p>
+        <div class="model-compare__row">${items}</div>
+      </div>
+    `;
+  }
+
   function renderLegend() {
     if (!els.legend) return;
     els.legend.innerHTML = SCORE_BANDS.map(
@@ -370,7 +500,8 @@
   }
 
   function buildCard(entry, index) {
-    const { mountain, current, daily, dailyScores } = entry;
+    const { mountain, daily, dailyScores } = entry;
+    const current = entry.currentByModel[selectedModel];
     const info = weatherInfo(current.weather_code);
     const isBest = index < 3;
     const meta = MODE_META[mode];
@@ -392,7 +523,7 @@
           <p class="weather-card__meta">${escapeHTML(mountain.area)} ・ 標高${mountain.elevation.toLocaleString()}m</p>
         </div>
       </div>
-      <p class="weather-card__condition">${escapeHTML(info.label)}</p>
+      <p class="weather-card__condition">${escapeHTML(info.label)}（${MODEL_META[selectedModel].short}）</p>
       <div class="weather-card__stats">
         <div class="weather-stat">
           <span class="weather-stat__label">気温</span>
@@ -411,6 +542,7 @@
           <span class="weather-stat__value">${formatNum(current.precipitation)}mm</span>
         </div>
       </div>
+      ${buildModelCompareRow(entry.currentByModel)}
       <div class="weather-forecast-strip">${buildForecastStrip(daily, dailyScores)}</div>
     `;
     return card;
