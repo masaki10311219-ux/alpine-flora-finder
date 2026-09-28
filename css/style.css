@@ -1296,6 +1296,29 @@ body.is-flow-in [data-flow] .char {
   color: var(--white);
 }
 
+.weather-model-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin: 0 0 20px;
+}
+
+.weather-model-row__label { font-size: 0.85rem; font-weight: 700; color: var(--ink-soft); }
+
+.weather-model-chips .chip.is-active {
+  background: var(--purple);
+  border-color: var(--purple);
+  color: var(--ink);
+}
+
+.weather-model-row__note {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  flex-basis: 100%;
+}
+
 .weather-updated { margin: 0; color: var(--ink-soft); font-size: 0.85rem; font-weight: 600; }
 
 .weather-status {
@@ -1328,6 +1351,13 @@ body.is-flow-in [data-flow] .char {
 }
 
 .weather-map { width: 100%; height: auto; display: block; }
+
+.weather-map-hint {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  text-align: center;
+}
 
 .weather-map__land {
   fill: var(--green-100);
@@ -1464,6 +1494,76 @@ body.is-flow-in [data-flow] .char {
 .weather-stat__label { font-size: 0.72rem; color: var(--ink-soft); font-weight: 600; }
 
 .weather-stat__value { font-size: 0.95rem; font-weight: 700; }
+
+/* ===== モデル比較（気象庁・ECMWF・GFS・ICON） ===== */
+.model-compare {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.model-compare__title {
+  margin: 0 0 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.model-compare__row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.model-compare__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 2px;
+  border-radius: 10px;
+  background: var(--green-100);
+}
+
+.model-compare__item.is-selected {
+  background: var(--purple);
+}
+
+.model-compare__label { font-size: 0.62rem; font-weight: 700; color: var(--ink-soft); }
+
+.model-compare__icon { font-size: 1rem; line-height: 1; }
+
+.model-compare__temp { font-size: 0.76rem; font-weight: 700; }
+
+/* ===== 地図クリックで表示する天気詳細パネル ===== */
+.weather-detail-panel {
+  position: relative;
+  background: var(--white);
+  border: 2px solid var(--purple);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 20px 18px;
+  margin-bottom: 26px;
+}
+
+.weather-detail-panel__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: var(--green-100);
+  color: var(--ink-soft);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.weather-detail-panel__close:hover { background: var(--border-strong); }
+
+.weather-detail-panel__jump { margin-top: 16px; }
 
 .weather-forecast-strip {
   display: grid;

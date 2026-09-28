@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>山の天気マップ | 山美和 -Yamabiyori-</title>
-<meta name="description" content="全国の主要な山域の天気を日本地図とランキングで表示。今／週末／週間の切り替えで、週末の登山計画に「今、天気の良い山域」がひと目でわかります。">
+<meta name="description" content="全国の主要な山域の天気を日本地図とランキングで表示。気象庁・ECMWF・GFS・ICONの天気モデルを比較でき、今／週末／週間の切り替えで週末の登山計画にも使えます。">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
@@ -45,7 +45,7 @@
 <main class="wrap weather-page">
 
   <h1 class="ribbon">⛰️ 山の天気マップ</h1>
-  <p class="quiz-lead">全国の主要な山域の天気を日本地図とランキングでチェック。「今」「週末」「週間」を切り替えて、週末の登山計画にも使えます。</p>
+  <p class="quiz-lead">全国の主要な山域の天気を日本地図とランキングでチェック。気象庁・ECMWF・GFS・ICONの天気モデルを比較でき、「今」「週末」「週間」の切り替えで週末の登山計画にも使えます。</p>
 
   <div class="weather-toolbar">
     <div class="weather-mode-chips chip-row" role="group" aria-label="ランキング基準を選ぶ">
@@ -59,6 +59,17 @@
     </div>
   </div>
 
+  <div class="weather-model-row">
+    <span class="weather-model-row__label">表示モデル:</span>
+    <div class="weather-model-chips chip-row" role="group" aria-label="表示する気象モデルを選ぶ">
+      <button type="button" class="chip weather-model-choice is-active" data-model="jma_seamless">気象庁(JMA)</button>
+      <button type="button" class="chip weather-model-choice" data-model="ecmwf_ifs025">ECMWF(欧州)</button>
+      <button type="button" class="chip weather-model-choice" data-model="gfs_seamless">GFS(米国)</button>
+      <button type="button" class="chip weather-model-choice" data-model="icon_seamless">ICON(独)</button>
+    </div>
+    <p class="weather-model-row__note">※「週末」「週間」のランキングは気象庁(JMA)データを使用します</p>
+  </div>
+
   <p class="weather-status" id="weather-status" hidden></p>
 
   <div class="weather-area-chips chip-row" id="weather-area-chips" role="group" aria-label="エリアで絞り込む"></div>
@@ -66,15 +77,21 @@
   <section class="weather-map-section">
     <div class="weather-map-wrap">
       <svg id="weather-map" class="weather-map" viewBox="0 0 560 640" role="img" aria-label="全国の山域の天気マップ"></svg>
+      <p class="weather-map-hint">🖱️ マーカーをクリックすると、その場で天気の詳細とモデル比較が見られます</p>
     </div>
     <ul class="weather-map-legend" id="weather-map-legend" aria-label="天気の凡例"></ul>
   </section>
+
+  <div class="weather-detail-panel" id="weather-detail-panel" hidden>
+    <button type="button" class="weather-detail-panel__close" id="weather-detail-close" aria-label="閉じる">×</button>
+    <div id="weather-detail-body"></div>
+  </div>
 
   <h2 class="section-ribbon" id="weather-recommend-heading">🗾 今のおすすめ山域 TOP3</h2>
 
   <div class="weather-grid" id="weather-grid"></div>
 
-  <p class="weather-disclaimer">※ データは<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>経由で取得した気象庁のメソスケールモデル（MSM・5km解像度、4日先まで）と全球モデル（GSM）による推定です。先の日付ほど予報の精度は下がります。実際の山岳の天候は急変することがあります。登山の可否は直前に現地情報・気象庁の予報も必ず確認してください。<br>※ 地図の海岸線は<a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a>の公開データをもとにした簡易的なもので、正確な地形図ではありません。<br>※ この機能は通信が必要です。電波が無い場所では使えません。</p>
+  <p class="weather-disclaimer">※ データは<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>経由で取得した各気象機関の予報モデルによる推定です。現在天気は気象庁(MSM/GSM)・ECMWF・GFS・ICONの4モデルを比較でき、表示モデルを切り替えるとランキング・地図の色分けも切り替えたモデルの値で再計算されます。「週末」「週間」の日別予報は、日本の地形に対して高解像度な気象庁モデルのみで算出しています。先の日付ほど予報の精度は下がります。実際の山岳の天候は急変することがあります。登山の可否は直前に現地情報・気象庁の予報も必ず確認してください。<br>※ 地図の海岸線は<a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a>の公開データをもとにした簡易的なもので、正確な地形図ではありません。<br>※ この機能は通信が必要です。電波が無い場所では使えません。</p>
 
   <div class="weather-external-links">
     <p class="weather-external-links__title">より専門的な山岳気象情報はこちら</p>
