@@ -1,581 +1,632 @@
 /**
- * 全国の主要山域の天気を Open-Meteo API（無料・APIキー不要）経由で取得する。
- * 現在天気は気象庁（MSM/GSM）・ECMWF・GFS・ICONの4モデルを同時取得し、
- * 表示モデルを切り替えて比較できるようにする（Windyのモデル切り替えに相当）。
- * 週末・週間の日別予報は、日本の山岳地形に対して高解像度な気象庁モデル
- * （models=jma_seamless）のみで算出する（他モデルは日別データを取得しない）。
- * 1) 日本地図上にマーカーで「おすすめ山域」を表示、クリックでその場に天気詳細＋モデル比較を表示
- * 2) 今／週末（次の土日）／週間（7日間平均）でランキング基準を切り替え
- * 3) 各山域カードに7日間の簡易予報ストリップを表示
- * することで、週末の登山計画に使えるようにする。
- * ※ JMAモデルは降水確率（precipitation_probability）を提供しないため、
- *   日別スコアには代わりに降水量合計（precipitation_sum）を使用する。
+ * 山の天気：①天気の良いエリアを探す → ②そのエリアのおすすめの山を選ぶ、の2段階で
+ * 週末〜2週間先の山行計画を立てられるようにする。お気に入りの山はページ上部でウォッチできる。
+ *
+ * 予報は Open-Meteo（APIキー不要）から全山まとめて1回で取得する。
+ * 日本の地形に強い気象庁モデル（MSM/GSM、約11日先まで）を優先し、
+ * それ以降の日は ECMWF で補完して14日分にする。
+ * 山ごとの「モデル比較」（気象庁・ECMWF・GFS・ICON）は、詳細を開いたときだけ追加取得する。
  */
 (() => {
-  const API_BASE = "https://api.open-meteo.com/v1/forecast";
-  const MODELS = ["jma_seamless", "ecmwf_ifs025", "gfs_seamless", "icon_seamless"];
-  const MODEL_META = {
-    jma_seamless: { short: "気象庁", full: "気象庁 MSM/GSM（日本）" },
-    ecmwf_ifs025: { short: "ECMWF", full: "ECMWF IFS（欧州）" },
-    gfs_seamless: { short: "GFS", full: "GFS（米国）" },
-    icon_seamless: { short: "ICON", full: "ICON（ドイツ）" }
-  };
-  const HOURLY_FIELDS = "temperature_2m,precipitation,weather_code,cloud_cover,wind_speed_10m";
-  const DAILY_FIELDS = "weather_code,precipitation_sum,wind_speed_10m_max,temperature_2m_max,temperature_2m_min";
-  const FORECAST_DAYS = 7;
-  const WEEKDAY_LABELS = ["日", "月", "火", "水", "木", "金", "土"];
-
-  const WEATHER_CODE_MAP = {
-    0: { emoji: "☀️", label: "快晴", severity: 0 },
-    1: { emoji: "🌤️", label: "ほぼ晴れ", severity: 1 },
-    2: { emoji: "⛅", label: "晴れ時々曇り", severity: 2 },
-    3: { emoji: "☁️", label: "曇り", severity: 3 },
-    45: { emoji: "🌫️", label: "霧", severity: 4 },
-    48: { emoji: "🌫️", label: "霧氷", severity: 4 },
-    51: { emoji: "🌦️", label: "霧雨（弱い）", severity: 4 },
-    53: { emoji: "🌦️", label: "霧雨", severity: 5 },
-    55: { emoji: "🌦️", label: "霧雨（強い）", severity: 5 },
-    56: { emoji: "🌧️", label: "着氷性の霧雨", severity: 5 },
-    57: { emoji: "🌧️", label: "着氷性の霧雨（強い）", severity: 5 },
-    61: { emoji: "🌧️", label: "雨（弱い）", severity: 5 },
-    63: { emoji: "🌧️", label: "雨", severity: 6 },
-    65: { emoji: "🌧️", label: "雨（強い）", severity: 7 },
-    66: { emoji: "🌨️", label: "着氷性の雨", severity: 6 },
-    67: { emoji: "🌨️", label: "着氷性の雨（強い）", severity: 7 },
-    71: { emoji: "🌨️", label: "雪（弱い）", severity: 5 },
-    73: { emoji: "🌨️", label: "雪", severity: 6 },
-    75: { emoji: "❄️", label: "雪（強い）", severity: 7 },
-    77: { emoji: "❄️", label: "霧雪", severity: 5 },
-    80: { emoji: "🌦️", label: "にわか雨（弱い）", severity: 5 },
-    81: { emoji: "🌧️", label: "にわか雨", severity: 6 },
-    82: { emoji: "⛈️", label: "にわか雨（激しい）", severity: 7 },
-    85: { emoji: "🌨️", label: "にわか雪（弱い）", severity: 5 },
-    86: { emoji: "❄️", label: "にわか雪（強い）", severity: 6 },
-    95: { emoji: "⛈️", label: "雷雨", severity: 8 },
-    96: { emoji: "⛈️", label: "雷雨（雹を伴う）", severity: 9 },
-    99: { emoji: "⛈️", label: "雷雨（雹・激しい）", severity: 9 }
-  };
-
-  const MODE_META = {
-    now: { label: "今", badgeIcon: "🌞", badgeText: "狙い目", heading: "今のおすすめ山域" },
-    weekend: { label: "週末", badgeIcon: "🏕️", badgeText: "週末おすすめ", heading: "今週末のおすすめ山域" },
-    week: { label: "週間", badgeIcon: "📅", badgeText: "週間おすすめ", heading: "今週のおすすめ山域" }
-  };
-
-  const SCORE_BANDS = [
-    { max: 30, color: "#4d7c62", label: "最高" },
-    { max: 70, color: "#6fa384", label: "良い" },
-    { max: 120, color: "#e7c79c", label: "普通" },
-    { max: Infinity, color: "#c98b83", label: "荒れ模様" }
+  const API = "https://api.open-meteo.com/v1/forecast";
+  const DAYS = 14;
+  const DAILY = "weather_code,precipitation_sum,wind_speed_10m_max,temperature_2m_max,temperature_2m_min";
+  const PRIMARY = "jma_seamless";
+  const FALLBACK = "ecmwf_ifs025";
+  const COMPARE_MODELS = [
+    { key: "jma_seamless", label: "気象庁" },
+    { key: "ecmwf_ifs025", label: "ECMWF" },
+    { key: "gfs_seamless", label: "GFS" },
+    { key: "icon_seamless", label: "ICON" }
   ];
+  const FAV_KEY = "yamabiyori:favorites";
+  const CACHE_KEY = "yamabiyori:weather-cache";
+  const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
 
+  const WEATHER = {
+    0: ["☀️", "快晴", 0], 1: ["🌤️", "晴れ", 1], 2: ["⛅", "晴れ時々曇り", 2], 3: ["☁️", "曇り", 3],
+    45: ["🌫️", "霧", 4], 48: ["🌫️", "霧氷", 4],
+    51: ["🌦️", "霧雨", 4], 53: ["🌦️", "霧雨", 5], 55: ["🌦️", "強い霧雨", 5], 56: ["🌧️", "着氷性の霧雨", 5], 57: ["🌧️", "着氷性の霧雨", 5],
+    61: ["🌧️", "小雨", 5], 63: ["🌧️", "雨", 6], 65: ["🌧️", "強い雨", 7], 66: ["🌨️", "着氷性の雨", 6], 67: ["🌨️", "着氷性の強い雨", 7],
+    71: ["🌨️", "小雪", 5], 73: ["🌨️", "雪", 6], 75: ["❄️", "大雪", 7], 77: ["❄️", "霧雪", 5],
+    80: ["🌦️", "にわか雨", 5], 81: ["🌧️", "にわか雨", 6], 82: ["⛈️", "激しいにわか雨", 7],
+    85: ["🌨️", "にわか雪", 5], 86: ["❄️", "強いにわか雪", 6],
+    95: ["⛈️", "雷雨", 8], 96: ["⛈️", "雷雨・雹", 9], 99: ["⛈️", "激しい雷雨・雹", 9]
+  };
+
+  const GRADES = [
+    { max: 30, mark: "◎", label: "好天", color: "#4d7c62", tint: "#d9eadd" },
+    { max: 70, mark: "○", label: "まずまず", color: "#6fa384", tint: "#e8f2eb" },
+    { max: 120, mark: "△", label: "いまいち", color: "#c9a46b", tint: "#f6ecdb" },
+    { max: Infinity, mark: "×", label: "荒れ模様", color: "#c98b83", tint: "#f5e1de" }
+  ];
+  const GOOD_DAY_MAX = 70;
+
+  const state = {
+    mountains: [],
+    areas: [],
+    japanMap: null,
+    days: [],
+    fc: new Map(),
+    periods: {},
+    period: "weekend1",
+    area: null,
+    areaPinned: false,
+    favorites: loadFavorites(),
+    compareCache: new Map()
+  };
   const els = {};
-  let entries = [];
-  let mode = "now";
-  let area = "all";
-  let selectedModel = "jma_seamless";
-  let japanMap = null;
-  let activeDetailName = null;
 
   document.addEventListener("DOMContentLoaded", () => {
-    els.grid = document.getElementById("weather-grid");
-    els.updated = document.getElementById("weather-updated");
-    els.refresh = document.getElementById("weather-refresh");
-    els.status = document.getElementById("weather-status");
-    els.map = document.getElementById("weather-map");
-    els.legend = document.getElementById("weather-map-legend");
-    els.heading = document.getElementById("weather-recommend-heading");
-    els.areaChips = document.getElementById("weather-area-chips");
-    els.modeChips = document.querySelectorAll(".weather-mode");
-    els.modelChips = document.querySelectorAll(".weather-model-choice");
-    els.detailPanel = document.getElementById("weather-detail-panel");
-    els.detailBody = document.getElementById("weather-detail-body");
-    els.detailClose = document.getElementById("weather-detail-close");
+    els.status = document.getElementById("wx-status");
+    els.updated = document.getElementById("wx-updated");
+    els.refresh = document.getElementById("wx-refresh");
+    els.periodChips = document.getElementById("wx-period");
+    els.map = document.getElementById("wx-map");
+    els.rank = document.getElementById("wx-area-rank");
+    els.table = document.getElementById("wx-area-table");
+    els.areaSection = document.getElementById("wx-area-section");
+    els.areaTitle = document.getElementById("wx-area-title");
+    els.areaNote = document.getElementById("wx-area-note");
+    els.mtnList = document.getElementById("wx-mtn-list");
+    els.favList = document.getElementById("wx-fav-list");
+    els.favEmpty = document.getElementById("wx-fav-empty");
+    if (!els.mtnList) return;
 
-    if (!els.grid) return;
+    els.refresh?.addEventListener("click", () => load());
+    els.periodChips.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-period]");
+      if (btn) setPeriod(btn.dataset.period);
+    });
+    els.table.addEventListener("click", (e) => {
+      const head = e.target.closest("[data-day]");
+      if (head) { setPeriod(`day:${head.dataset.day}`); return; }
+      const row = e.target.closest("[data-area]");
+      if (row) setArea(row.dataset.area, true);
+    });
+    els.rank.addEventListener("click", (e) => {
+      const row = e.target.closest("[data-area]");
+      if (row) setArea(row.dataset.area, true);
+    });
+    [els.mtnList, els.favList].forEach((list) => list.addEventListener("click", onMountainListClick));
 
-    els.refresh?.addEventListener("click", () => loadWeather());
-    els.modeChips.forEach((chip) => {
-      chip.addEventListener("click", () => {
-        mode = chip.dataset.mode;
-        els.modeChips.forEach((c) => c.classList.toggle("is-active", c === chip));
-        renderAll();
-      });
-    });
-    els.modelChips.forEach((chip) => {
-      chip.addEventListener("click", () => {
-        selectedModel = chip.dataset.model;
-        els.modelChips.forEach((c) => c.classList.toggle("is-active", c === chip));
-        renderAll();
-      });
-    });
-    els.detailClose?.addEventListener("click", () => {
-      activeDetailName = null;
-      els.detailPanel.hidden = true;
-    });
-
-    renderLegend();
-    loadWeather();
+    load();
   });
 
-  function weatherInfo(code) {
-    return WEATHER_CODE_MAP[code] || { emoji: "❓", label: "不明", severity: 3 };
+  /* ===== データ取得 ===== */
+  async function load() {
+    setStatus("予報を読み込み中…");
+    try {
+      const [mountains, areas, japanMap] = await Promise.all([
+        getJSON("data/mountains.json"),
+        getJSON("data/areas.json"),
+        state.japanMap ? state.japanMap : getJSON("data/japan-outline.json")
+      ]);
+      state.mountains = mountains;
+      state.areas = areas;
+      state.japanMap = japanMap;
+    } catch (err) {
+      console.error(err);
+      setStatus("ページのデータを読み込めませんでした。再読み込みしてください。", true);
+      return;
+    }
+
+    try {
+      const lats = state.mountains.map((m) => m.lat).join(",");
+      const lons = state.mountains.map((m) => m.lon).join(",");
+      const url = `${API}?latitude=${lats}&longitude=${lons}&daily=${DAILY}&timezone=Asia%2FTokyo&forecast_days=${DAYS}&models=${PRIMARY},${FALLBACK}`;
+      const results = await getJSON(url);
+      const list = Array.isArray(results) ? results : [results];
+      state.days = list[0].daily.time;
+      state.fc = new Map();
+      state.mountains.forEach((m, i) => {
+        const daily = list[i]?.daily;
+        if (daily) state.fc.set(m.name, mergeModels(daily));
+      });
+      saveCache();
+      setUpdated(new Date(), false);
+      setStatus("");
+    } catch (err) {
+      console.error(err);
+      if (restoreCache()) {
+        setStatus("最新の予報を取得できなかったため、前回取得した予報を表示しています（電波のある場所で「更新」してください）。", true);
+      } else {
+        setStatus("天気予報を取得できませんでした。電波状況を確認して「更新」を押してください。", true);
+        return;
+      }
+    }
+
+    state.periods = buildPeriods(state.days);
+    if (!state.periods[state.period]?.days.length && !state.period.startsWith("day:")) state.period = "weekend1";
+    renderAll();
   }
 
-  function scoreFromCurrent(current) {
-    const info = weatherInfo(current.weather_code);
-    let score = info.severity * 20;
-    score += (current.cloud_cover || 0) * 0.3;
-    score += (current.precipitation || 0) * 15;
-    if (current.wind_speed_10m >= 50) score += 25;
-    else if (current.wind_speed_10m >= 30) score += 12;
-    return score;
+  function getJSON(url) {
+    return fetch(url).then((r) => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}: ${url}`);
+      return r.json();
+    });
   }
 
-  function scoreFromDaily(daily, i) {
-    const info = weatherInfo(daily.weather_code[i]);
-    let score = info.severity * 20;
-    score += (daily.precipitation_sum[i] || 0) * 2;
-    const wind = daily.wind_speed_10m_max[i];
+  // 気象庁モデルを優先し、値が無い日（約11日目以降）は ECMWF で補完する
+  function mergeModels(daily) {
+    const fields = ["weather_code", "precipitation_sum", "wind_speed_10m_max", "temperature_2m_max", "temperature_2m_min"];
+    const out = { source: [] };
+    fields.forEach((f) => (out[f] = []));
+    daily.time.forEach((_, d) => {
+      const usePrimary = daily[`weather_code_${PRIMARY}`]?.[d] != null;
+      const model = usePrimary ? PRIMARY : FALLBACK;
+      out.source.push(usePrimary ? "jma" : "ecmwf");
+      fields.forEach((f) => out[f].push(daily[`${f}_${model}`]?.[d] ?? null));
+    });
+    out.score = daily.time.map((_, d) => dayScore(out, d));
+    return out;
+  }
+
+  function dayScore(fc, d) {
+    const code = fc.weather_code[d];
+    if (code == null) return null;
+    let score = weatherInfo(code).severity * 20;
+    score += (fc.precipitation_sum[d] || 0) * 2;
+    const wind = fc.wind_speed_10m_max[d] || 0;
     if (wind >= 50) score += 25;
     else if (wind >= 30) score += 12;
     return score;
   }
 
-  function dayOfWeek(dateStr) {
-    return new Date(`${dateStr}T00:00:00+09:00`).getDay();
-  }
-
-  // 日本時間の「今」に最も近い時刻のインデックスを hourly.time から探す
-  function tokyoHourString(date) {
-    const parts = new Intl.DateTimeFormat("en-CA", {
-      timeZone: "Asia/Tokyo", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", hour12: false
-    }).formatToParts(date);
-    const get = (t) => parts.find((p) => p.type === t).value;
-    let hour = get("hour");
-    if (hour === "24") hour = "00";
-    return `${get("year")}-${get("month")}-${get("day")}T${hour}:00`;
-  }
-
-  function nearestHourIndex(times) {
-    const target = tokyoHourString(new Date());
-    const exact = times.indexOf(target);
-    if (exact !== -1) return exact;
-    for (let i = times.length - 1; i >= 0; i--) {
-      if (times[i] <= target) return i;
-    }
-    return 0;
-  }
-
-  function bandFor(score) {
-    return SCORE_BANDS.find((b) => score <= b.max);
-  }
-
-  async function loadWeather() {
-    setStatus("読み込み中…");
-    els.grid.setAttribute("aria-busy", "true");
-
+  function saveCache() {
     try {
-      const [mountains, mapData] = await Promise.all([
-        fetch("data/mountains.json").then((r) => r.json()),
-        japanMap ? Promise.resolve(japanMap) : fetch("data/japan-outline.json").then((r) => r.json())
-      ]);
-      japanMap = mapData;
-      renderAreaChips(mountains);
+      localStorage.setItem(CACHE_KEY, JSON.stringify({
+        fetchedAt: Date.now(),
+        days: state.days,
+        fc: Object.fromEntries(state.fc)
+      }));
+    } catch (_) { /* 保存できなくても表示には影響しない */ }
+  }
 
-      const lats = mountains.map((m) => m.lat).join(",");
-      const lons = mountains.map((m) => m.lon).join(",");
-      const hourlyUrl = `${API_BASE}?latitude=${lats}&longitude=${lons}&hourly=${HOURLY_FIELDS}&forecast_days=1&timezone=Asia%2FTokyo&models=${MODELS.join(",")}`;
-      const dailyUrl = `${API_BASE}?latitude=${lats}&longitude=${lons}&daily=${DAILY_FIELDS}&timezone=Asia%2FTokyo&forecast_days=${FORECAST_DAYS}&models=jma_seamless`;
+  function restoreCache() {
+    try {
+      const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+      if (!cached?.days?.length) return false;
+      state.days = cached.days;
+      state.fc = new Map(Object.entries(cached.fc));
+      setUpdated(new Date(cached.fetchedAt), true);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
 
-      const [hourlyResults, dailyResults] = await Promise.all([
-        fetch(hourlyUrl).then((r) => { if (!r.ok) throw new Error(`weather API error: ${r.status}`); return r.json(); }),
-        fetch(dailyUrl).then((r) => { if (!r.ok) throw new Error(`weather API error: ${r.status}`); return r.json(); })
-      ]);
+  /* ===== 期間 ===== */
+  function buildPeriods(days) {
+    const dows = days.map(dayOfWeek);
+    const sat = dows.indexOf(6);
+    const within = (arr) => arr.filter((i) => i >= 0 && i < days.length);
+    let w1, w2;
+    if (dows[0] === 0) {
+      w1 = [0];
+      w2 = within([sat, sat + 1]);
+    } else {
+      w1 = within([sat, sat + 1]);
+      w2 = within([sat + 7, sat + 8]);
+    }
+    return {
+      weekend1: { label: "今週末", days: w1 },
+      weekend2: { label: "来週末", days: w2 },
+      all: { label: `${days.length}日間`, days: days.map((_, i) => i) }
+    };
+  }
 
-      entries = mountains.map((mountain, i) => {
-        const hourly = hourlyResults[i]?.hourly;
-        const daily = dailyResults[i]?.daily;
-        if (!hourly || !daily) return null;
+  function currentPeriod() {
+    if (state.period.startsWith("day:")) {
+      const d = Number(state.period.slice(4));
+      return { key: state.period, label: dayLabel(d), days: [d], single: true };
+    }
+    return { key: state.period, ...state.periods[state.period] };
+  }
 
-        const idx = nearestHourIndex(hourly.time);
-        const currentByModel = {};
-        MODELS.forEach((m) => {
-          currentByModel[m] = {
-            temperature_2m: hourly[`temperature_2m_${m}`]?.[idx],
-            precipitation: hourly[`precipitation_${m}`]?.[idx],
-            weather_code: hourly[`weather_code_${m}`]?.[idx],
-            cloud_cover: hourly[`cloud_cover_${m}`]?.[idx],
-            wind_speed_10m: hourly[`wind_speed_10m_${m}`]?.[idx]
-          };
-        });
+  function setPeriod(key) {
+    state.period = key;
+    if (!state.areaPinned) state.area = null;
+    renderAll();
+  }
 
-        const dailyScores = daily.time.map((_, di) => scoreFromDaily(daily, di));
-        const weekendIdx = daily.time
-          .map((d, di) => ({ di, dow: dayOfWeek(d) }))
-          .filter((d) => d.dow === 0 || d.dow === 6)
-          .map((d) => d.di);
-        const weekendScore = weekendIdx.length
-          ? weekendIdx.reduce((sum, di) => sum + dailyScores[di], 0) / weekendIdx.length
-          : dailyScores[0];
-        const weekScore = dailyScores.reduce((sum, s) => sum + s, 0) / dailyScores.length;
+  function setArea(name, scroll) {
+    state.area = name;
+    state.areaPinned = true;
+    renderAll();
+    if (scroll) els.areaSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
-        return {
-          mountain,
-          currentByModel,
-          daily,
-          dailyScores,
-          scores: { weekend: weekendScore, week: weekScore }
-        };
-      }).filter(Boolean);
+  /* ===== スコア計算 ===== */
+  function mean(arr) {
+    const v = arr.filter((x) => x != null);
+    return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
+  }
 
-      renderAll();
-      setStatus("");
+  function mountainPeriodScore(name, days) {
+    const fc = state.fc.get(name);
+    return fc ? mean(days.map((d) => fc.score[d])) : null;
+  }
 
-      const now = new Date();
-      const hh = String(now.getHours()).padStart(2, "0");
-      const mm = String(now.getMinutes()).padStart(2, "0");
-      if (els.updated) els.updated.textContent = `最終更新: ${hh}:${mm}`;
+  function areaMountains(area) {
+    return state.mountains.filter((m) => m.area === area && state.fc.has(m.name));
+  }
+
+  function areaDayScore(area, d) {
+    return mean(areaMountains(area).map((m) => state.fc.get(m.name).score[d]));
+  }
+
+  function areaPeriodScore(area, days) {
+    return mean(days.map((d) => areaDayScore(area, d)));
+  }
+
+  // その日のエリア代表アイコン：スコアが中央値の山の天気
+  function areaDayCode(area, d) {
+    const scored = areaMountains(area)
+      .map((m) => ({ s: state.fc.get(m.name).score[d], c: state.fc.get(m.name).weather_code[d] }))
+      .filter((x) => x.s != null)
+      .sort((a, b) => a.s - b.s);
+    return scored.length ? scored[Math.floor((scored.length - 1) / 2)].c : null;
+  }
+
+  function goodDays(scoreFn, days) {
+    return days.filter((d) => { const s = scoreFn(d); return s != null && s <= GOOD_DAY_MAX; }).length;
+  }
+
+  function rankedAreas(period) {
+    return state.areas
+      .map((a) => ({ ...a, score: areaPeriodScore(a.name, period.days) }))
+      .filter((a) => a.score != null)
+      .sort((a, b) => a.score - b.score);
+  }
+
+  /* ===== 描画 ===== */
+  function renderAll() {
+    const period = currentPeriod();
+    const areas = rankedAreas(period);
+    if (!areas.length) return;
+    if (!state.area || !areas.some((a) => a.name === state.area)) state.area = areas[0].name;
+
+    renderPeriodChips(period);
+    renderMap(period, areas);
+    renderRank(period, areas);
+    renderTable(period, areas);
+    renderAreaMountains(period);
+    renderFavorites(period);
+  }
+
+  function renderPeriodChips(period) {
+    const chips = ["weekend1", "weekend2", "all"].map((key) => {
+      const p = state.periods[key];
+      if (!p?.days.length) return "";
+      const range = key === "all" ? "" : `<span class="wx-chip-sub">${rangeLabel(p.days)}</span>`;
+      return `<button type="button" class="chip${period.key === key ? " is-active" : ""}" data-period="${key}">${p.label}${range}</button>`;
+    });
+    if (period.single) chips.push(`<button type="button" class="chip is-active" data-period="${period.key}">${period.label}</button>`);
+    els.periodChips.innerHTML = chips.join("");
+  }
+
+  function renderMap(period, areas) {
+    const svgNS = "http://www.w3.org/2000/svg";
+    const map = state.japanMap;
+    const svg = els.map;
+    svg.innerHTML = "";
+    svg.setAttribute("viewBox", map.viewBox.join(" "));
+    const el = (tag, attrs, parent) => {
+      const node = document.createElementNS(svgNS, tag);
+      Object.entries(attrs).forEach(([k, v]) => node.setAttribute(k, v));
+      (parent || svg).appendChild(node);
+      return node;
+    };
+
+    const land = el("g", {});
+    Object.values(map.paths).forEach((d) => el("path", { d, class: "wx-map__land" }, land));
+
+    const scoreOf = new Map(areas.map((a) => [a.name, a.score]));
+    const W = 96, H = 52;
+    const lines = el("g", {});
+    const boxes = el("g", {});
+
+    state.areas.forEach((a) => {
+      const pts = areaMountains(a.name).map((m) => project(m.lat, m.lon));
+      if (!pts.length) return;
+      const cx = mean(pts.map((p) => p.x));
+      const cy = mean(pts.map((p) => p.y));
+      const score = scoreOf.get(a.name);
+      const grade = gradeFor(score);
+      const selected = a.name === state.area;
+      const inside = Math.abs(cx - a.labelX) < W / 2 && Math.abs(cy - a.labelY) < H / 2;
+
+      if (!inside) {
+        el("line", { x1: cx, y1: cy, x2: a.labelX, y2: a.labelY, class: "wx-map__leader" }, lines);
+        el("circle", { cx, cy, r: selected ? 6 : 4.5, fill: grade.color, stroke: "#fff", "stroke-width": 1.5 }, lines);
+      }
+
+      const g = el("g", {
+        class: "wx-map__box" + (selected ? " is-selected" : ""),
+        tabindex: 0, role: "button",
+        "aria-label": `${a.name}：${grade.label}`
+      }, boxes);
+      el("rect", { x: a.labelX - W / 2, y: a.labelY - H / 2, width: W, height: H, rx: 10, fill: selected ? grade.tint : "#fff", stroke: grade.color, "stroke-width": selected ? 3.5 : 2 }, g);
+      const name = el("text", { x: a.labelX, y: a.labelY - 8, class: "wx-map__name" }, g);
+      name.textContent = a.short;
+      const sub = el("text", { x: a.labelX, y: a.labelY + 16, class: "wx-map__sub" }, g);
+      sub.textContent = `${periodIcons(period, (d) => areaDayCode(a.name, d))} ${grade.mark}`;
+
+      const pick = () => setArea(a.name, true);
+      g.addEventListener("click", pick);
+      g.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+    });
+  }
+
+  function renderRank(period, areas) {
+    els.rank.innerHTML = areas.map((a, i) => {
+      const grade = gradeFor(a.score);
+      const detail = period.days.length > 2
+        ? `<span class="wx-rank__good">好天 ${goodDays((d) => areaDayScore(a.name, d), period.days)}日</span>`
+        : `<span class="wx-rank__icons">${periodIcons(period, (d) => areaDayCode(a.name, d))}</span>`;
+      return `
+        <li>
+          <button type="button" class="wx-rank__row${a.name === state.area ? " is-selected" : ""}" data-area="${esc(a.name)}">
+            <span class="wx-rank__no">${i + 1}</span>
+            <span class="wx-rank__name">${esc(a.name)}</span>
+            ${detail}
+            ${gradeBadge(grade)}
+            <span class="wx-rank__go" aria-hidden="true">›</span>
+          </button>
+        </li>`;
+    }).join("");
+  }
+
+  function renderTable(period, areas) {
+    const inPeriod = new Set(period.days);
+    const head = state.days.map((date, d) => {
+      const dow = dayOfWeek(date);
+      const cls = ["wx-th-day", dow === 6 ? "is-sat" : "", dow === 0 ? "is-sun" : "", inPeriod.has(d) ? "is-period" : ""].join(" ");
+      return `<th scope="col" class="${cls}"><button type="button" data-day="${d}" title="${dayLabel(d)}の天気で並べる">${shortDate(date)}<span>${WEEKDAYS[dow]}</span></button></th>`;
+    }).join("");
+    const rows = areas.map((a) => {
+      const cells = state.days.map((date, d) => {
+        const score = areaDayScore(a.name, d);
+        const grade = gradeFor(score);
+        const code = areaDayCode(a.name, d);
+        const dow = dayOfWeek(date);
+        const cls = ["wx-td-day", inPeriod.has(d) ? "is-period" : "", dow === 0 || dow === 6 ? "is-weekend" : ""].join(" ");
+        return `<td class="${cls}" style="background:${grade.tint}" title="${esc(a.name)} ${dayLabel(d)}：${grade.label}">${code == null ? "―" : weatherInfo(code).emoji}</td>`;
+      }).join("");
+      return `<tr data-area="${esc(a.name)}" class="${a.name === state.area ? "is-selected" : ""}"><th scope="row">${esc(a.short)}</th>${cells}</tr>`;
+    }).join("");
+    els.table.innerHTML = `<thead><tr><th scope="col" class="wx-th-corner">エリア</th>${head}</tr></thead><tbody>${rows}</tbody>`;
+  }
+
+  function renderAreaMountains(period) {
+    const area = state.areas.find((a) => a.name === state.area);
+    const ranked = areaMountains(state.area)
+      .map((m) => ({ m, score: mountainPeriodScore(m.name, period.days) }))
+      .sort((a, b) => (a.score ?? Infinity) - (b.score ?? Infinity));
+    els.areaTitle.textContent = area.name;
+    els.areaNote.textContent = `${period.label}${period.days.length <= 2 && !period.single ? `（${rangeLabel(period.days)}）` : ""}の天気が良い順`;
+    els.mtnList.innerHTML = ranked.map(({ m, score }, i) => mountainRow(m, score, period, { rank: i + 1, recommend: i < 3 && score != null && score <= GOOD_DAY_MAX })).join("");
+  }
+
+  function renderFavorites(period) {
+    const favs = state.favorites.map((n) => state.mountains.find((m) => m.name === n)).filter(Boolean);
+    els.favEmpty.hidden = favs.length > 0;
+    els.favList.innerHTML = favs.map((m) => mountainRow(m, mountainPeriodScore(m.name, period.days), period, { showArea: true })).join("");
+  }
+
+  function mountainRow(m, score, period, opts = {}) {
+    const fc = state.fc.get(m.name);
+    const grade = gradeFor(score);
+    const fav = state.favorites.includes(m.name);
+    const inPeriod = new Set(period.days);
+    const summary = period.days.length > 2
+      ? `<span class="wx-mtn__good">好天 ${goodDays((d) => fc?.score[d], period.days)}日</span>`
+      : `<span class="wx-mtn__icons">${periodIcons(period, (d) => fc?.weather_code[d])}</span>`;
+
+    const strip = state.days.map((date, d) => {
+      const code = fc?.weather_code[d];
+      const dow = dayOfWeek(date);
+      const cls = ["wx-day", dow === 0 || dow === 6 ? "is-weekend" : "", inPeriod.has(d) ? "is-period" : ""].join(" ");
+      return `<div class="${cls}" title="${dayLabel(d)} ${code == null ? "" : weatherInfo(code).label}">
+          <span class="wx-day__w">${d === 0 ? "今日" : WEEKDAYS[dow]}</span>
+          <span class="wx-day__i">${code == null ? "―" : weatherInfo(code).emoji}</span>
+          <span class="wx-day__dot" style="background:${gradeFor(fc?.score[d]).color}"></span>
+        </div>`;
+    }).join("");
+
+    return `
+      <article class="wx-mtn${opts.recommend ? " is-recommend" : ""}" data-name="${esc(m.name)}">
+        <div class="wx-mtn__head">
+          ${opts.rank ? `<span class="wx-mtn__rank">${opts.rank}</span>` : ""}
+          <div class="wx-mtn__title">
+            <h3 class="wx-mtn__name">${esc(m.name)}${opts.recommend ? `<span class="wx-badge">おすすめ</span>` : ""}</h3>
+            <p class="wx-mtn__meta">${opts.showArea ? `${esc(m.area)} ・ ` : ""}標高${m.elevation.toLocaleString()}m</p>
+          </div>
+          <div class="wx-mtn__summary">${summary}${gradeBadge(grade)}</div>
+          <button type="button" class="wx-fav-btn${fav ? " is-on" : ""}" data-fav="${esc(m.name)}" aria-pressed="${fav}" aria-label="${fav ? "お気に入りから外す" : "お気に入りに追加してウォッチする"}">${fav ? "★" : "☆"}</button>
+        </div>
+        <div class="wx-strip">${strip}</div>
+        <details class="wx-mtn__more">
+          <summary>詳しい予報・天気モデルの比較</summary>
+          ${detailTable(fc)}
+          <button type="button" class="btn btn--ghost wx-compare-btn" data-compare="${esc(m.name)}">気象庁・ECMWF・GFS・ICONを比較する</button>
+          <div class="wx-compare" data-compare-out="${esc(m.name)}"></div>
+          <a class="wx-ext" href="https://yamap.com/search/mountains?query=${encodeURIComponent(m.name.replace(/（.*/, ""))}" target="_blank" rel="noopener">YAMAPで${esc(m.name.replace(/（.*/, ""))}の情報を見る →</a>
+        </details>
+      </article>`;
+  }
+
+  function detailTable(fc) {
+    if (!fc) return "";
+    const head = state.days.map((date, d) => `<th scope="col" class="${dayClass(date)}">${shortDate(date)}<span>${WEEKDAYS[dayOfWeek(date)]}${fc.source[d] === "ecmwf" ? "＊" : ""}</span></th>`).join("");
+    const row = (label, fn) => `<tr><th scope="row">${label}</th>${state.days.map((_, d) => `<td>${fn(d)}</td>`).join("")}</tr>`;
+    const hasEcmwf = fc.source.includes("ecmwf");
+    return `
+      <div class="wx-scroll">
+        <table class="wx-detail">
+          <thead><tr><th></th>${head}</tr></thead>
+          <tbody>
+            ${row("天気", (d) => fc.weather_code[d] == null ? "―" : `<span class="wx-ico" title="${weatherInfo(fc.weather_code[d]).label}">${weatherInfo(fc.weather_code[d]).emoji}</span>`)}
+            ${row("気温", (d) => `<span class="t-max">${num(fc.temperature_2m_max[d])}</span><span class="t-min">${num(fc.temperature_2m_min[d])}</span>`)}
+            ${row("降水", (d) => `${num(fc.precipitation_sum[d])}<small>mm</small>`)}
+            ${row("風速", (d) => `${num(fc.wind_speed_10m_max[d])}<small>km/h</small>`)}
+          </tbody>
+        </table>
+      </div>
+      <p class="wx-note">山頂付近の予報（気温℃は最高／最低）。${hasEcmwf ? "＊の日は気象庁モデルの予報期間外のため ECMWF で補完しています。" : ""}</p>`;
+  }
+
+  /* ===== お気に入り・モデル比較 ===== */
+  function onMountainListClick(e) {
+    const favBtn = e.target.closest("[data-fav]");
+    if (favBtn) { toggleFavorite(favBtn.dataset.fav); return; }
+    const cmpBtn = e.target.closest("[data-compare]");
+    if (cmpBtn) loadComparison(cmpBtn.dataset.compare, cmpBtn);
+  }
+
+  function toggleFavorite(name) {
+    const i = state.favorites.indexOf(name);
+    if (i === -1) state.favorites.push(name);
+    else state.favorites.splice(i, 1);
+    try { localStorage.setItem(FAV_KEY, JSON.stringify(state.favorites)); } catch (_) { /* 保存不可でも今回の表示は続ける */ }
+
+    const on = state.favorites.includes(name);
+    document.querySelectorAll(`[data-fav="${CSS.escape(name)}"]`).forEach((b) => {
+      b.classList.toggle("is-on", on);
+      b.textContent = on ? "★" : "☆";
+      b.setAttribute("aria-pressed", on);
+      b.setAttribute("aria-label", on ? "お気に入りから外す" : "お気に入りに追加してウォッチする");
+    });
+    renderFavorites(currentPeriod());
+  }
+
+  function loadFavorites() {
+    try {
+      const v = JSON.parse(localStorage.getItem(FAV_KEY) || "[]");
+      return Array.isArray(v) ? v : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  async function loadComparison(name, btn) {
+    const outs = document.querySelectorAll(`[data-compare-out="${CSS.escape(name)}"]`);
+    const m = state.mountains.find((x) => x.name === name);
+    if (!m) return;
+    btn.disabled = true;
+    outs.forEach((o) => (o.innerHTML = `<p class="wx-note">読み込み中…</p>`));
+    try {
+      let data = state.compareCache.get(name);
+      if (!data) {
+        const url = `${API}?latitude=${m.lat}&longitude=${m.lon}&daily=weather_code,temperature_2m_max&timezone=Asia%2FTokyo&forecast_days=${DAYS}&models=${COMPARE_MODELS.map((x) => x.key).join(",")}`;
+        data = (await getJSON(url)).daily;
+        state.compareCache.set(name, data);
+      }
+      outs.forEach((o) => (o.innerHTML = comparisonTable(data)));
+      btn.hidden = true;
     } catch (err) {
       console.error(err);
-      setStatus("天気データの取得に失敗しました。電波状況を確認して再読み込みしてください。", true);
-    } finally {
-      els.grid.removeAttribute("aria-busy");
+      outs.forEach((o) => (o.innerHTML = `<p class="wx-note is-error">モデル比較を取得できませんでした。電波状況を確認してもう一度お試しください。</p>`));
+      btn.disabled = false;
     }
+  }
+
+  function comparisonTable(daily) {
+    const head = daily.time.map((date) => `<th scope="col" class="${dayClass(date)}">${shortDate(date)}<span>${WEEKDAYS[dayOfWeek(date)]}</span></th>`).join("");
+    const rows = COMPARE_MODELS.map(({ key, label }) => {
+      const cells = daily.time.map((_, d) => {
+        const code = daily[`weather_code_${key}`]?.[d];
+        const t = daily[`temperature_2m_max_${key}`]?.[d];
+        return code == null
+          ? `<td class="is-empty">―</td>`
+          : `<td><span title="${weatherInfo(code).label}">${weatherInfo(code).emoji}</span><small>${num(t)}°</small></td>`;
+      }).join("");
+      return `<tr><th scope="row">${label}</th>${cells}</tr>`;
+    }).join("");
+    return `
+      <div class="wx-scroll">
+        <table class="wx-detail wx-detail--compare"><thead><tr><th></th>${head}</tr></thead><tbody>${rows}</tbody></table>
+      </div>
+      <p class="wx-note">各モデルの天気と最高気温。モデルによって予報が分かれる日は、天気が崩れる可能性も考えておきましょう。「―」はそのモデルの予報期間外です。</p>`;
+  }
+
+  /* ===== 表示用ユーティリティ ===== */
+  function project(lat, lon) {
+    const p = state.japanMap.projection;
+    return {
+      x: p.pad + (lon - p.lonMin) * p.cosFactor * p.scale + p.offX,
+      y: p.pad + (p.latMax - lat) * p.scale + p.offY
+    };
+  }
+
+  function weatherInfo(code) {
+    const w = WEATHER[code];
+    return w ? { emoji: w[0], label: w[1], severity: w[2] } : { emoji: "❓", label: "不明", severity: 3 };
+  }
+
+  function gradeFor(score) {
+    if (score == null) return { mark: "―", label: "データなし", color: "#c9c3ba", tint: "#f3f0ec" };
+    return GRADES.find((g) => score <= g.max);
+  }
+
+  function gradeBadge(grade) {
+    return `<span class="wx-grade" style="--grade:${grade.color};--grade-tint:${grade.tint}">${grade.mark} ${grade.label}</span>`;
+  }
+
+  function periodIcons(period, codeFn) {
+    return period.days.slice(0, 2).map((d) => {
+      const c = codeFn(d);
+      return c == null ? "―" : weatherInfo(c).emoji;
+    }).join("");
+  }
+
+  function dayOfWeek(dateStr) {
+    const [y, m, d] = dateStr.split("-").map(Number);
+    return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+  }
+
+  function shortDate(dateStr) {
+    const [, mo, da] = dateStr.split("-");
+    return `${Number(mo)}/${Number(da)}`;
+  }
+
+  function dayLabel(d) {
+    const date = state.days[d];
+    return date ? `${shortDate(date)}(${WEEKDAYS[dayOfWeek(date)]})` : "";
+  }
+
+  function rangeLabel(days) {
+    if (!days.length) return "";
+    const first = shortDate(state.days[days[0]]);
+    const last = shortDate(state.days[days[days.length - 1]]);
+    return days.length === 1 ? first : `${first}〜${last}`;
+  }
+
+  function dayClass(dateStr) {
+    const dow = dayOfWeek(dateStr);
+    return dow === 6 ? "is-sat" : dow === 0 ? "is-sun" : "";
+  }
+
+  function num(n) {
+    return n == null || Number.isNaN(n) ? "―" : Math.round(n * 10) / 10;
+  }
+
+  function esc(str) {
+    return String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
   function setStatus(text, isError = false) {
-    if (!els.status) return;
     els.status.textContent = text;
-    els.status.classList.toggle("weather-status--error", isError);
+    els.status.classList.toggle("is-error", isError);
     els.status.hidden = !text;
   }
 
-  function renderAreaChips(mountains) {
-    if (!els.areaChips || els.areaChips.dataset.built) return;
-    const areas = Array.from(new Set(mountains.map((m) => m.area)));
-    els.areaChips.innerHTML = [
-      `<button type="button" class="chip weather-area is-active" data-area="all">すべて</button>`,
-      ...areas.map((a) => `<button type="button" class="chip weather-area" data-area="${escapeHTML(a)}">${escapeHTML(a)}</button>`)
-    ].join("");
-    els.areaChips.querySelectorAll(".weather-area").forEach((chip) => {
-      chip.addEventListener("click", () => {
-        area = chip.dataset.area;
-        els.areaChips.querySelectorAll(".weather-area").forEach((c) => c.classList.toggle("is-active", c === chip));
-        renderAll();
-      });
-    });
-    els.areaChips.dataset.built = "1";
-  }
-
-  // 「今」は表示中の気象モデルでその場スコアを計算し直す（モデル比較の切り替えに追従）
-  function scoreOf(entry, m) {
-    return m === "now" ? scoreFromCurrent(entry.currentByModel[selectedModel]) : entry.scores[m];
-  }
-
-  function renderAll() {
-    if (!entries.length) return;
-    const filtered = area === "all" ? entries : entries.filter((e) => e.mountain.area === area);
-    const sorted = [...filtered].sort((a, b) => scoreOf(a, mode) - scoreOf(b, mode));
-    const areaLabel = area === "all" ? "" : `（${area}）`;
-    if (els.heading) els.heading.textContent = `🗾 ${MODE_META[mode].heading}${areaLabel} TOP3`;
-    renderMap(sorted);
-    renderCards(sorted);
-    if (activeDetailName) {
-      const entry = entries.find((e) => e.mountain.name === activeDetailName);
-      if (entry) showDetailPanel(entry);
-    }
-  }
-
-  /* ===== 日本地図（Natural Earthの海岸線データを簡易投影） ===== */
-  function project(lat, lon) {
-    const p = japanMap.projection;
-    const x = p.pad + (lon - p.lonMin) * p.cosFactor * p.scale + p.offX;
-    const y = p.pad + (p.latMax - lat) * p.scale + p.offY;
-    return { x, y };
-  }
-
-  function computeViewBox(filtered) {
-    const full = japanMap.viewBox;
-    if (area === "all" || !filtered.length) return full;
-
-    const pts = filtered.map((e) => project(e.mountain.lat, e.mountain.lon));
-    const MARGIN = 70, MIN_SIZE = 170;
-    let minX = Math.min(...pts.map((p) => p.x)) - MARGIN;
-    let maxX = Math.max(...pts.map((p) => p.x)) + MARGIN;
-    let minY = Math.min(...pts.map((p) => p.y)) - MARGIN;
-    let maxY = Math.max(...pts.map((p) => p.y)) + MARGIN;
-
-    if (maxX - minX < MIN_SIZE) { const cx = (minX + maxX) / 2; minX = cx - MIN_SIZE / 2; maxX = cx + MIN_SIZE / 2; }
-    if (maxY - minY < MIN_SIZE) { const cy = (minY + maxY) / 2; minY = cy - MIN_SIZE / 2; maxY = cy + MIN_SIZE / 2; }
-
-    minX = Math.max(full[0], minX);
-    minY = Math.max(full[1], minY);
-    maxX = Math.min(full[0] + full[2], maxX);
-    maxY = Math.min(full[1] + full[3], maxY);
-    return [minX, minY, maxX - minX, maxY - minY];
-  }
-
-  function renderMap(sorted) {
-    if (!els.map || !japanMap) return;
-    const svgNS = "http://www.w3.org/2000/svg";
-    els.map.innerHTML = "";
-    els.map.setAttribute("viewBox", computeViewBox(sorted).join(" "));
-
-    const landGroup = document.createElementNS(svgNS, "g");
-    Object.values(japanMap.paths).forEach((d) => {
-      const path = document.createElementNS(svgNS, "path");
-      path.setAttribute("d", d);
-      path.setAttribute("class", "weather-map__land");
-      landGroup.appendChild(path);
-    });
-    els.map.appendChild(landGroup);
-
-    const selectedNames = new Set(sorted.map((e) => e.mountain.name));
-    const rankOf = new Map(sorted.map((e, i) => [e.mountain.name, i]));
-    const labelCandidates = [];
-
-    entries.forEach((entry) => {
-      const { x, y } = project(entry.mountain.lat, entry.mountain.lon);
-      const isSelected = area === "all" || selectedNames.has(entry.mountain.name);
-      const band = bandFor(scoreOf(entry, mode));
-      const rank = rankOf.get(entry.mountain.name);
-      const isBest = isSelected && rank !== undefined && rank < 3;
-
-      const g = document.createElementNS(svgNS, "g");
-      g.setAttribute("class", "weather-map__marker" + (isSelected ? "" : " weather-map__marker--dim"));
-      g.setAttribute("tabindex", "0");
-      g.setAttribute("role", "button");
-      g.setAttribute("aria-label", `${entry.mountain.name}（${isSelected ? band.label : "対象エリア外"}）`);
-
-      const nowInfo = weatherInfo(entry.currentByModel[selectedModel].weather_code);
-      const title = document.createElementNS(svgNS, "title");
-      title.textContent = `${entry.mountain.name}（${entry.mountain.area}）${isSelected ? "・" + band.label : ""} ${nowInfo.emoji}${formatNum(entry.currentByModel[selectedModel].temperature_2m)}℃ ・クリックで詳細`;
-      g.appendChild(title);
-
-      if (isBest) {
-        const ring = document.createElementNS(svgNS, "circle");
-        ring.setAttribute("cx", x);
-        ring.setAttribute("cy", y);
-        ring.setAttribute("r", 13);
-        ring.setAttribute("class", "weather-map__ring");
-        g.appendChild(ring);
-      }
-
-      const dot = document.createElementNS(svgNS, "circle");
-      dot.setAttribute("cx", x);
-      dot.setAttribute("cy", y);
-      dot.setAttribute("r", isBest ? 8 : 6);
-      dot.setAttribute("fill", isSelected ? band.color : "#c9c3ba");
-      dot.setAttribute("stroke", "#fff");
-      dot.setAttribute("stroke-width", "2");
-      g.appendChild(dot);
-
-      const showLabel = isBest || (area !== "all" && isSelected);
-      if (showLabel) {
-        labelCandidates.push({ x: x + 12, y, text: entry.mountain.name.replace(/（.*/, ""), isBest });
-      }
-
-      const activate = () => {
-        if (!isSelected) {
-          area = entry.mountain.area;
-          els.areaChips?.querySelectorAll(".weather-area").forEach((c) => c.classList.toggle("is-active", c.dataset.area === area));
-          renderAll();
-        }
-        showDetailPanel(entry);
-      };
-      g.addEventListener("click", activate);
-      g.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); }
-      });
-
-      els.map.appendChild(g);
-    });
-
-    renderLabels(labelCandidates, svgNS);
-  }
-
-  // ラベルが密集する場合に縦方向へずらして重なりを避ける
-  function renderLabels(candidates, svgNS) {
-    const MIN_GAP = 13;
-    const sortedLabels = [...candidates].sort((a, b) => a.y - b.y);
-    sortedLabels.forEach((label, i) => {
-      if (i === 0) return;
-      const prev = sortedLabels[i - 1];
-      if (label.y - prev.y < MIN_GAP) label.y = prev.y + MIN_GAP;
-    });
-
-    const labelGroup = document.createElementNS(svgNS, "g");
-    sortedLabels.forEach(({ x, y, text, isBest }) => {
-      const label = document.createElementNS(svgNS, "text");
-      label.setAttribute("x", x);
-      label.setAttribute("y", y + 4);
-      label.setAttribute("class", "weather-map__label" + (isBest ? " weather-map__label--best" : ""));
-      label.textContent = text;
-      labelGroup.appendChild(label);
-    });
-    els.map.appendChild(labelGroup);
-  }
-
-  function focusCard(name) {
-    const card = els.grid.querySelector(`[data-mountain-name="${CSS.escape(name)}"]`);
-    if (!card) return;
-    card.scrollIntoView({ behavior: "smooth", block: "center" });
-    card.classList.add("is-highlighted");
-    setTimeout(() => card.classList.remove("is-highlighted"), 1600);
-  }
-
-  // 地図をクリックすると、その場（マップの直下）で天気詳細とモデル比較を表示する
-  function showDetailPanel(entry) {
-    if (!els.detailPanel || !els.detailBody) return;
-    activeDetailName = entry.mountain.name;
-    const current = entry.currentByModel[selectedModel];
-    const info = weatherInfo(current.weather_code);
-
-    els.detailBody.innerHTML = `
-      <div class="weather-card__top">
-        <span class="weather-card__icon" aria-hidden="true">${info.emoji}</span>
-        <div>
-          <h3 class="weather-card__name">${escapeHTML(entry.mountain.name)}</h3>
-          <p class="weather-card__meta">${escapeHTML(entry.mountain.area)} ・ 標高${entry.mountain.elevation.toLocaleString()}m</p>
-        </div>
-      </div>
-      <p class="weather-card__condition">${escapeHTML(info.label)}（${MODEL_META[selectedModel].short}）</p>
-      <div class="weather-card__stats">
-        <div class="weather-stat">
-          <span class="weather-stat__label">気温</span>
-          <span class="weather-stat__value">${formatNum(current.temperature_2m)}℃</span>
-        </div>
-        <div class="weather-stat">
-          <span class="weather-stat__label">風速</span>
-          <span class="weather-stat__value">${formatNum(current.wind_speed_10m)}km/h</span>
-        </div>
-        <div class="weather-stat">
-          <span class="weather-stat__label">雲量</span>
-          <span class="weather-stat__value">${formatNum(current.cloud_cover)}%</span>
-        </div>
-        <div class="weather-stat">
-          <span class="weather-stat__label">降水量</span>
-          <span class="weather-stat__value">${formatNum(current.precipitation)}mm</span>
-        </div>
-      </div>
-      ${buildModelCompareRow(entry.currentByModel)}
-      <button type="button" class="btn btn--ghost weather-detail-panel__jump">この山域の週間予報を見る ↓</button>
-    `;
-    els.detailPanel.hidden = false;
-    els.detailBody.querySelector(".weather-detail-panel__jump").addEventListener("click", () => focusCard(entry.mountain.name));
-  }
-
-  function buildModelCompareRow(currentByModel) {
-    const items = MODELS.map((m) => {
-      const c = currentByModel[m];
-      const info = weatherInfo(c.weather_code);
-      return `
-        <div class="model-compare__item${m === selectedModel ? " is-selected" : ""}">
-          <span class="model-compare__label">${MODEL_META[m].short}</span>
-          <span class="model-compare__icon" aria-hidden="true">${info.emoji}</span>
-          <span class="model-compare__temp">${formatNum(c.temperature_2m)}℃</span>
-        </div>
-      `;
-    }).join("");
-    return `
-      <div class="model-compare">
-        <p class="model-compare__title">モデル比較（現在）</p>
-        <div class="model-compare__row">${items}</div>
-      </div>
-    `;
-  }
-
-  function renderLegend() {
-    if (!els.legend) return;
-    els.legend.innerHTML = SCORE_BANDS.map(
-      (b) => `<li><span class="weather-map-legend__dot" style="background:${b.color}"></span>${b.label}</li>`
-    ).join("");
-  }
-
-  /* ===== カード一覧 ===== */
-  function renderCards(sorted) {
-    els.grid.innerHTML = "";
-    sorted.forEach((entry, i) => els.grid.appendChild(buildCard(entry, i)));
-  }
-
-  function buildCard(entry, index) {
-    const { mountain, daily, dailyScores } = entry;
-    const current = entry.currentByModel[selectedModel];
-    const info = weatherInfo(current.weather_code);
-    const isBest = index < 3;
-    const meta = MODE_META[mode];
-
-    const card = document.createElement("article");
-    card.className = "weather-card" + (isBest ? " weather-card--best" : "");
-    card.dataset.mountainName = mountain.name;
-
-    const rankBadge = isBest
-      ? `<span class="weather-card__badge">${meta.badgeIcon} ${meta.badgeText} No.${index + 1}</span>`
-      : "";
-
-    card.innerHTML = `
-      ${rankBadge}
-      <div class="weather-card__top">
-        <span class="weather-card__icon" aria-hidden="true">${info.emoji}</span>
-        <div>
-          <h3 class="weather-card__name">${escapeHTML(mountain.name)}</h3>
-          <p class="weather-card__meta">${escapeHTML(mountain.area)} ・ 標高${mountain.elevation.toLocaleString()}m</p>
-        </div>
-      </div>
-      <p class="weather-card__condition">${escapeHTML(info.label)}（${MODEL_META[selectedModel].short}）</p>
-      <div class="weather-card__stats">
-        <div class="weather-stat">
-          <span class="weather-stat__label">気温</span>
-          <span class="weather-stat__value">${formatNum(current.temperature_2m)}℃</span>
-        </div>
-        <div class="weather-stat">
-          <span class="weather-stat__label">風速</span>
-          <span class="weather-stat__value">${formatNum(current.wind_speed_10m)}km/h</span>
-        </div>
-        <div class="weather-stat">
-          <span class="weather-stat__label">雲量</span>
-          <span class="weather-stat__value">${formatNum(current.cloud_cover)}%</span>
-        </div>
-        <div class="weather-stat">
-          <span class="weather-stat__label">降水量</span>
-          <span class="weather-stat__value">${formatNum(current.precipitation)}mm</span>
-        </div>
-      </div>
-      ${buildModelCompareRow(entry.currentByModel)}
-      <div class="weather-forecast-strip">${buildForecastStrip(daily, dailyScores)}</div>
-    `;
-    return card;
-  }
-
-  function buildForecastStrip(daily, dailyScores) {
-    return daily.time.map((dateStr, i) => {
-      const dow = dayOfWeek(dateStr);
-      const isWeekend = dow === 0 || dow === 6;
-      const isToday = i === 0;
-      const info = weatherInfo(daily.weather_code[i]);
-      const band = bandFor(dailyScores[i]);
-      const classes = ["weather-forecast-day"];
-      if (isWeekend) classes.push("weather-forecast-day--weekend");
-      if (isToday) classes.push("weather-forecast-day--today");
-      return `
-        <div class="${classes.join(" ")}" title="${escapeHTML(info.label)}">
-          <span class="weather-forecast-day__label">${isToday ? "今日" : WEEKDAY_LABELS[dow]}</span>
-          <span class="weather-forecast-day__icon">${info.emoji}</span>
-          <span class="weather-forecast-day__dot" style="background:${band.color}"></span>
-        </div>
-      `;
-    }).join("");
-  }
-
-  function formatNum(n) {
-    if (n === null || n === undefined || Number.isNaN(n)) return "―";
-    return Math.round(n * 10) / 10;
-  }
-
-  function escapeHTML(str) {
-    const div = document.createElement("div");
-    div.textContent = str;
-    return div.innerHTML;
+  function setUpdated(date, cached) {
+    const hh = String(date.getHours()).padStart(2, "0");
+    const mm = String(date.getMinutes()).padStart(2, "0");
+    const md = `${date.getMonth() + 1}/${date.getDate()}`;
+    els.updated.textContent = `${cached ? "前回取得" : "最終更新"}: ${md} ${hh}:${mm}`;
   }
 })();
