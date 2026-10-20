@@ -836,65 +836,11 @@ body.is-flow-in [data-flow] .char {
   .plant-grid { grid-template-columns: 1fr; gap: 48px 0; }
 }
 
-/* ===== Image search ===== */
-.image-search {
-  padding: 64px 0;
-  margin-top: 20px;
-}
-
-.image-search__lead { color: var(--ink-soft); margin: 16px 0 20px; font-weight: 500; }
-
-.image-search__panel {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 24px;
-  align-items: start;
-}
-
-@media (max-width: 700px) {
-  .image-search__panel { grid-template-columns: 1fr; }
-}
-
-.upload-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: 1px dashed var(--border-strong);
-  border-radius: var(--radius);
-  aspect-ratio: 1;
-  cursor: pointer;
-  background: var(--white);
-  color: var(--green-700);
-  text-align: center;
-  padding: 12px;
-  overflow: hidden;
-  font-weight: 700;
-  box-shadow: var(--shadow);
-}
-
-.upload-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; }
-.upload-box__icon { font-size: 2rem; }
-.upload-box__text { font-size: 0.85rem; }
-
-.image-search__result { min-height: 60px; }
-.image-search__disclaimer { font-size: 0.78rem; color: var(--ink-soft); margin-top: 18px; }
-
-.id-candidate {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 12px 14px;
-  margin-bottom: 10px;
-  background: var(--white);
-  box-shadow: var(--shadow);
-}
-
-.id-candidate__name { font-weight: 700; color: var(--ink); }
-.id-candidate__score { float: right; color: var(--accent); font-weight: 700; font-size: 0.85rem; }
-.id-candidate__scientific { font-size: 0.8rem; font-style: italic; color: var(--ink-soft); }
-.id-candidate__match { margin-top: 6px; font-size: 0.8rem; }
-.id-candidate__match a { color: var(--green-700); font-weight: 700; }
+/* ===== トップ：登る山から予習する ===== */
+.mountain-pick { padding: 8px 0 32px; }
+.mountain-pick__lead { color: var(--ink-soft); margin: 16px 0 16px; font-weight: 500; }
+.mountain-pick__chips .chip { text-decoration: none; padding: 9px 16px; font-size: 0.9rem; }
+.mountain-pick__more { display: inline-block; margin-top: 18px; text-decoration: none; }
 
 .status-msg { color: var(--ink-soft); font-size: 0.88rem; font-weight: 500; }
 .status-msg.is-error { color: var(--accent); }
@@ -979,123 +925,12 @@ body.is-flow-in [data-flow] .char {
 .page h1 { color: var(--ink); font-family: var(--font-body); font-weight: 800; }
 .page h2 { color: var(--green-700); font-size: 1.1rem; margin-top: 32px; font-family: var(--font-body); font-weight: 700; }
 
-/* ===== コミュニティ投稿・コメント ===== */
-.community {
-  margin-top: 44px;
-  padding-top: 32px;
-  border-top: 1px solid var(--border-strong);
-}
-
-.community__header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 18px;
-}
-
-.community__lead { color: var(--ink-soft); font-size: 0.85rem; margin: 10px 0 0; font-weight: 500; }
-
-.community-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  background: var(--white);
-  border-radius: var(--radius);
-  padding: 18px;
-  margin-bottom: 22px;
-  box-shadow: var(--shadow);
-}
-
-@media (max-width: 560px) {
-  .community-form { grid-template-columns: 1fr; }
-}
-
-.community-form label {
-  display: block;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--green-700);
-  margin-bottom: 4px;
-}
-
-.community-form input[type="text"] {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--border-strong);
-  border-radius: 8px;
-  font-size: 0.9rem;
-  background: var(--white);
-  font-family: var(--font-body);
-}
-
-.community-form__file {
-  grid-column: 1 / -1;
-}
-
-.community-form__submit {
-  grid-column: 1 / -1;
-  justify-self: start;
-}
-
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 16px;
-}
-
-.gallery-tile {
-  background: var(--white);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-
-.gallery-tile img {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  display: block;
-  background: var(--green-100);
-}
-
-.gallery-tile__body { padding: 8px 10px 10px; }
-.gallery-tile__name { font-size: 0.78rem; font-weight: 700; color: var(--ink); margin: 0; }
-.gallery-tile__date { font-size: 0.68rem; color: var(--ink-soft); margin: 1px 0 6px; }
-
-.gallery-tile__comments-btn {
-  font-size: 0.72rem;
-  color: var(--green-700);
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  font-weight: 700;
-  font-family: var(--font-body);
-}
-
-.comment-list { margin: 8px 0 0; padding: 0; list-style: none; }
-.comment-list li {
-  font-size: 0.76rem;
-  padding: 5px 0;
-  border-top: 1px dotted var(--border-strong);
-  color: var(--ink);
-}
-.comment-list li:first-child { border-top: none; }
-.comment-list .comment__name { font-weight: 700; color: var(--green-700); }
-
-.comment-form { display: flex; gap: 6px; margin-top: 8px; }
-.comment-form input {
-  flex: 1;
-  padding: 6px 8px;
-  border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  font-size: 0.76rem;
-  font-family: var(--font-body);
-}
-
-.community-empty { color: var(--ink-soft); font-size: 0.85rem; font-weight: 500; }
+/* ===== 植物の詳細：この花に会える山 ===== */
+.plant-mountains { margin-top: 44px; padding-top: 32px; border-top: 1px solid var(--border); }
+.plant-mountains__lead { color: var(--ink-soft); font-size: 0.85rem; margin: 12px 0 14px; font-weight: 500; }
+.plant-mountains .chip { text-decoration: none; }
+.plant-mountains .chip.is-here { background: var(--accent-2); border-color: var(--accent-2); color: var(--ink); }
+.plant-mountains__empty { color: var(--ink-soft); font-size: 0.85rem; font-weight: 500; }
 
 /* ===== 花クイズ ===== */
 .quiz-page {
@@ -1107,6 +942,8 @@ body.is-flow-in [data-flow] .char {
 .quiz-panel { text-align: center; }
 
 .quiz-lead { color: var(--ink-soft); font-weight: 500; margin: 18px 0 24px; }
+.quiz-scope { margin: -12px 0 20px; font-size: 0.85rem; font-weight: 600; }
+.quiz-scope a { color: var(--green-900); }
 
 .quiz-lengths {
   display: flex;
@@ -1518,6 +1355,8 @@ body.is-flow-in [data-flow] .char {
 .wx-mtn__title { min-width: 0; }
 .wx-mtn__name { margin: 0; font-size: 1rem; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
 .wx-mtn__meta { margin: 2px 0 0; font-size: 0.75rem; color: var(--ink-soft); }
+.wx-mtn__flora { color: var(--green-900); font-weight: 700; text-decoration: none; white-space: nowrap; }
+.wx-mtn__flora:hover { text-decoration: underline; }
 
 .wx-badge {
   display: inline-block;
@@ -1645,6 +1484,213 @@ body.is-flow-in [data-flow] .char {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+/* ===== 山の図鑑（登る山の花とキノコの予習・復習） ===== */
+.mf-page { padding-top: 48px; padding-bottom: 56px; }
+
+.mf-controls,
+.mf-summary {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+
+.mf-label { display: block; margin: 0 0 8px; font-size: 0.85rem; font-weight: 700; }
+.mf-controls .mf-label:not(:first-child) { margin-top: 14px; }
+
+.mf-select {
+  width: 100%;
+  max-width: 420px;
+  padding: 11px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.mf-quick { margin-top: 10px; align-items: center; }
+.mf-quick__label { font-size: 0.78rem; font-weight: 700; color: var(--ink-soft); }
+.mf-quick .chip.is-active,
+.mf-months-chips .chip.is-active,
+.mf-filter .chip.is-active { background: var(--green-700); border-color: var(--green-700); color: var(--white); }
+
+.mf-summary__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.mf-summary__name { margin: 0; font-size: 1.35rem; }
+.mf-summary__meta { margin: 0; font-size: 0.82rem; color: var(--ink-soft); }
+.mf-summary__count { margin: 8px 0 12px; font-size: 0.9rem; }
+.mf-summary__count strong { font-size: 1.15rem; color: var(--green-900); }
+.mf-summary__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.mf-summary__actions .btn { padding: 11px 20px; font-size: 0.9rem; }
+
+.mf-progress { display: grid; gap: 6px; max-width: 460px; }
+.mf-progress__item { display: grid; grid-template-columns: 92px 1fr auto; align-items: center; gap: 10px; font-size: 0.8rem; font-weight: 700; }
+.mf-progress__bar { height: 8px; border-radius: 999px; background: var(--green-100); overflow: hidden; }
+.mf-progress__bar span { display: block; height: 100%; background: var(--green-700); border-radius: 999px; transition: width .3s var(--ease); }
+.mf-progress__num { color: var(--ink-soft); }
+
+.mf-tabs { display: flex; gap: 8px; margin: 24px 0 12px; border-bottom: 2px solid var(--border); }
+
+.mf-tab {
+  padding: 10px 18px;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  background: none;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.mf-tab.is-active { color: var(--ink); border-bottom-color: var(--green-700); }
+
+.mf-warning {
+  margin: 0 0 14px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  background: #fbe9e6;
+  border: 1px solid #e6b3ab;
+  color: #7a3b33;
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+.mf-filter { margin-bottom: 16px; }
+
+.mf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 18px;
+}
+
+.mf-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 2px solid transparent;
+  transition: border-color .2s var(--ease);
+}
+
+.mf-card.is-seen { border-color: var(--green-600); }
+
+.mf-card__media { position: relative; aspect-ratio: 4 / 3; background: var(--green-100); }
+.mf-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.mf-card__here {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--accent-2);
+  color: var(--ink);
+  font-size: 0.7rem;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+}
+
+.mf-tox {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+}
+
+.mf-tox.is-deadly { background: #b3261e; color: #fff; }
+.mf-tox.is-toxic { background: #e08a3c; color: #fff; }
+.mf-tox.is-edible { background: rgba(255, 255, 255, 0.92); color: var(--ink-soft); }
+
+.mf-card__credit {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  max-width: 100%;
+  padding: 2px 6px;
+  border-top-left-radius: 6px;
+  background: rgba(43, 41, 38, 0.6);
+  font-size: 0.6rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mf-card__credit:empty { display: none; }
+.mf-card__credit a { color: #fff; }
+
+.mf-card__body { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 16px; flex: 1; }
+.mf-card__name { margin: 0; font-size: 1.05rem; }
+.mf-card__name a { text-decoration: none; }
+.mf-card__name a:hover { text-decoration: underline; }
+.mf-card__sub { margin: 0; font-size: 0.76rem; color: var(--ink-soft); }
+.mf-card__sci { margin: 0; font-size: 0.72rem; font-style: italic; color: var(--ink-soft); }
+.mf-card__desc { margin: 6px 0 0; font-size: 0.82rem; line-height: 1.7; }
+.mf-card__habitat { margin: 4px 0 0; font-size: 0.78rem; color: var(--green-900); }
+.mf-card__alike { margin: 6px 0 0; padding: 8px 10px; list-style: none; border-radius: 10px; background: #fdf3e8; font-size: 0.76rem; line-height: 1.6; }
+
+.mf-months { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; margin-top: 6px; }
+.mf-months span {
+  padding: 2px 0;
+  border-radius: 6px;
+  background: #f3f0ec;
+  color: #b8b1a8;
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.mf-months span.is-on { background: var(--green-100); color: var(--green-900); }
+.mf-months span.is-now { box-shadow: 0 0 0 1.5px var(--ink) inset; }
+
+.mf-card__body > :nth-last-child(2) { margin-bottom: 10px; }
+
+.mf-seen {
+  margin-top: auto;
+  align-self: stretch;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px dashed var(--border-strong);
+  background: var(--white);
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color .15s var(--ease), color .15s var(--ease);
+}
+
+.mf-seen:hover { border-color: var(--green-600); color: var(--green-900); }
+.mf-seen.is-on { border: 1px solid var(--green-700); background: var(--green-700); color: var(--white); }
+.mf-seen small { margin-left: 8px; font-weight: 500; opacity: 0.9; }
+
+.mf-empty { padding: 24px; text-align: center; color: var(--ink-soft); font-weight: 600; }
+.mf-empty .chip { margin-left: 6px; }
+
+@media (max-width: 560px) {
+  .mf-controls,
+  .mf-summary { padding: 14px; }
+  .mf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .mf-card__body { padding: 10px 10px 12px; }
+  .mf-card__desc,
+  .mf-card__sci { display: none; }
+  .mf-card__name { font-size: 0.95rem; }
+  .mf-seen { font-size: 0.75rem; padding: 8px 6px; }
+  .mf-seen small { display: block; margin: 2px 0 0; }
+  .mf-card__alike { font-size: 0.7rem; }
 }
 
 /* ===== コース検索 ===== */

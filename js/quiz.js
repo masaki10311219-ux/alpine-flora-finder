@@ -1,6 +1,7 @@
 /**
  * 高山植物クイズ。data/plants.json からランダムに問題を生成する（固定パターンは持たない）。
  * 出題形式：①写真→名前 ②名前→開花時期 ③名前→エリア　の3種類をランダムに出す。
+ * quiz.html?m=山名 で開くと、その山で見られる花だけを正解として出題する（登る前の予習用）。
  */
 (() => {
   const BEST_KEY = "alpineFloraQuiz.best";
@@ -27,10 +28,15 @@
     resultScore: document.getElementById("quiz-result-score"),
     resultComment: document.getElementById("quiz-result-comment"),
     resultBest: document.getElementById("quiz-result-best"),
-    retryBtn: document.getElementById("quiz-retry")
+    retryBtn: document.getElementById("quiz-retry"),
+    title: document.getElementById("quiz-title"),
+    lead: document.getElementById("quiz-lead"),
+    scope: document.getElementById("quiz-scope")
   };
 
   let plants = [];
+  let targets = [];
+  let scopeKey = "";
   let questionCount = 10;
   let difficulty = "normal";
   let quiz = [];
@@ -82,7 +88,7 @@
   function buildQuestion() {
     const types = ["photo-name", "name-month", "name-area"];
     const type = types[Math.floor(Math.random() * types.length)];
-    const correct = plants[Math.floor(Math.random() * plants.length)];
+    const correct = targets[Math.floor(Math.random() * targets.length)];
     const pool = distractorPool(correct);
 
     if (type === "photo-name") {
@@ -241,7 +247,7 @@
   }
 
   function bestKey(count, level) {
-    return `${count}-${level}`;
+    return `${scopeKey}${count}-${level}`;
   }
 
   function loadBest() {
@@ -274,6 +280,8 @@
   async function init() {
     const res = await fetch("data/plants.json");
     plants = await res.json();
+    targets = plants;
+    await applyMountainScope();
 
     els.lengthButtons.forEach(btn => {
       btn.addEventListener("click", () => {
@@ -302,6 +310,40 @@
     });
 
     updateBestOnStartScreen();
+  }
+
+  // ?m=山名 があれば、その山で見られる花だけを正解として出題する
+  async function applyMountainScope() {
+    const name = new URLSearchParams(location.search).get("m");
+    if (!name || typeof MountainFlora === "undefined") return;
+    let mountain;
+    try {
+      const { mountains } = await MountainFlora.load();
+      mountain = mountains.find((m) => m.name === name);
+    } catch (err) {
+      console.error(err);
+    }
+    if (!mountain) return;
+
+    const back = `<a href="${MountainFlora.pageUrl(mountain)}">← ${escapeHtml(mountain.name)}の山の図鑑へ</a>`;
+    const own = MountainFlora.plantsFor(mountain, plants).map((e) => e.item);
+    els.scope.hidden = false;
+    if (!own.length) {
+      els.scope.innerHTML = `${escapeHtml(mountain.name)}の花のデータがまだ無いため、全国の高山植物から出題します。 ${back}`;
+      return;
+    }
+    targets = own;
+    scopeKey = `${mountain.name}:`;
+    els.title.textContent = `🌸 ${mountain.name}の花クイズ`;
+    els.lead.textContent = `${mountain.name}で見られる${own.length}種の花から出題します。登る前の予習にどうぞ。`;
+    els.scope.innerHTML = `${back} ・ <a href="quiz.html">全国の花から出題する</a>`;
+    document.title = `${mountain.name}の花クイズ | 山美和 -Yamabiyori-`;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
   }
 
   init();

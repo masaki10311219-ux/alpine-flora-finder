@@ -24,8 +24,8 @@
       <span class="logo-text">山美和<span class="logo-sub">-Yamabiyori-</span></span>
     </a>
     <nav class="site-nav">
-      <a href="index.html#image-search">写真から探す</a>
-      <a href="index.html#search">絞り込みで探す</a>
+      <a href="mountain.html">山の図鑑</a>
+      <a href="index.html#search">花を探す</a>
       <a href="weather.html">山の天気</a>
       <a href="course-search.html">コース検索</a>
       <a href="quiz.html">花クイズ</a>
@@ -37,8 +37,8 @@
 
 <div class="ticker" aria-hidden="true">
   <div class="ticker__track">
-    <span>🌸 山美和 -Yamabiyori-</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>📷 写真から植物識別</span>
-    <span>🌸 山美和 -Yamabiyori-</span><span>🏔️ 山で見つけた花、その場でわかる</span><span>🌿 高山植物図鑑</span><span>📷 写真から植物識別</span>
+    <span>🌸 山美和 -Yamabiyori-</span><span>📖 登る山の花とキノコを予習</span><span>🌿 高山植物図鑑</span><span>✓ 見た花を記録して復習</span>
+    <span>🌸 山美和 -Yamabiyori-</span><span>📖 登る山の花とキノコを予習</span><span>🌿 高山植物図鑑</span><span>✓ 見た花を記録して復習</span>
   </div>
 </div>
 
@@ -91,39 +91,18 @@
         </div>
 
         <div class="plant-related-links">
+          <a href="mountain.html" class="btn btn--ghost">📖 山の図鑑で予習する</a>
           <a href="weather.html" class="btn btn--ghost">☀️ 山の天気を見る</a>
           <a href="course-search.html" class="btn btn--ghost">⏱️ 登山コースを探す</a>
         </div>
       </div>
     </div>
 
-    <section class="community">
-      <div class="community__header">
-        <div>
-          <h2 class="section-ribbon">🌿 みんなの発見</h2>
-          <p class="community__lead">山で見つけたこの花の写真を投稿してみよう。ログイン不要、ニックネームだけでOK。</p>
-        </div>
-      </div>
-
-      <form class="community-form" id="submission-form">
-        <div>
-          <label for="submit-nickname">ニックネーム</label>
-          <input type="text" id="submit-nickname" placeholder="例：やまびこ" required maxlength="40">
-        </div>
-        <div>
-          <label for="submit-caption">ひとこと（任意）</label>
-          <input type="text" id="submit-caption" placeholder="例：燧ヶ岳の登山道で見つけました" maxlength="200">
-        </div>
-        <div class="community-form__file">
-          <label for="submit-file">写真</label>
-          <input type="file" id="submit-file" accept="image/*" capture="environment" required>
-        </div>
-        <button type="submit" class="btn btn--cta community-form__submit" style="padding:10px 22px; font-size:0.9rem;">投稿する</button>
-        <p class="status-msg" id="submission-status" style="grid-column: 1 / -1; margin:0;"></p>
-      </form>
-
-      <div class="gallery" id="community-gallery"></div>
-      <p class="community-empty" id="community-empty" hidden>まだ投稿がありません。最初の発見者になりませんか？</p>
+    <section class="plant-mountains">
+      <h2 class="section-ribbon">⛰️ この花に会える山</h2>
+      <p class="plant-mountains__lead">★は代表的な自生地として知られる山です。山を選ぶと、その山で一緒に見られる花やキノコも予習できます。</p>
+      <div class="chip-row" id="plant-mountains"></div>
+      <p class="plant-mountains__empty" id="plant-mountains-empty" hidden>この花が見られる山は、まだ「山の図鑑」に登録されていません。</p>
     </section>
 
   </article>
@@ -133,6 +112,7 @@
   <div class="wrap footer-inner">
     <p>&copy; 2026 山美和 -Yamabiyori-</p>
     <nav aria-label="サイト機能">
+      <a href="mountain.html">山の図鑑</a>
       <a href="weather.html">山の天気</a>
       <a href="course-search.html">コース検索</a>
       <a href="quiz.html">花クイズ</a>
@@ -146,9 +126,8 @@
 </footer>
 
 <script src="js/bg-blobs.js"></script>
-<script src="js/config.js"></script>
 <script src="js/wikimedia.js"></script>
-<script src="js/community.js"></script>
+<script src="js/mountain-flora.js"></script>
 <script src="js/plant-detail.js"></script>
 <script src="js/register-sw.js"></script>
 </body>
