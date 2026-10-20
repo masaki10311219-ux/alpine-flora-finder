@@ -1,0 +1,221 @@
+[
+  {
+    "id": "beni-tengutake", "name": "ベニテングタケ", "kanji": "紅天狗茸", "scientific": "Amanita muscaria", "family": "テングタケ科",
+    "months": [8, 9, 10], "range": "subalpine", "toxicity": "toxic",
+    "habitat": "シラカバ・ダケカンバの林や、亜高山の針葉樹林",
+    "desc": "真っ赤な傘に白いイボ。絵本でおなじみの姿で、高原や亜高山で見つかると思わず写真を撮りたくなる。",
+    "lookalikes": [{ "name": "タマゴタケ", "note": "傘にイボがなく、柄にだんだら模様がある" }]
+  },
+  {
+    "id": "tamagotake", "name": "タマゴタケ", "kanji": "卵茸", "scientific": "Amanita caesareoides", "family": "テングタケ科",
+    "months": [7, 8, 9], "range": "all", "toxicity": "edible",
+    "habitat": "ブナ・ミズナラ・モミなどの林",
+    "desc": "白い卵のような袋（つぼ）を破って、赤い傘が顔を出す。夏の森で出会うと目を引く美しいキノコ。",
+    "lookalikes": [
+      { "name": "ベニテングタケ（毒）", "note": "傘に白いイボがあり、ひだも柄も白い" },
+      { "name": "タマゴタケモドキ（猛毒）", "note": "傘が黄色い。タマゴタケの黄色い型と紛らわしい" }
+    ]
+  },
+  {
+    "id": "doku-tsurutake", "name": "ドクツルタケ", "kanji": "毒鶴茸", "scientific": "Amanita virosa", "family": "テングタケ科",
+    "months": [6, 7, 8, 9, 10], "range": "all", "toxicity": "deadly",
+    "habitat": "広葉樹林・針葉樹林の地上",
+    "desc": "全身が純白で上品に見えるが、1本で命に関わる猛毒。「殺しの天使」とも呼ばれる。白いキノコは食べない、が鉄則。",
+    "lookalikes": [{ "name": "白いハラタケ・シメジの仲間", "note": "白いキノコは素人には見分けられない" }]
+  },
+  {
+    "id": "tengutake", "name": "テングタケ", "kanji": "天狗茸", "scientific": "Amanita pantherina", "family": "テングタケ科",
+    "months": [7, 8, 9, 10], "range": "all", "toxicity": "toxic",
+    "habitat": "広葉樹林・針葉樹林の地上",
+    "desc": "灰褐色の傘に白いイボが散らばる。ベニテングタケの仲間で、こちらも毒。",
+    "lookalikes": []
+  },
+  {
+    "id": "tsukiyotake", "name": "ツキヨタケ", "kanji": "月夜茸", "scientific": "Omphalotus guepiniformis", "family": "ツキヨタケ科",
+    "months": [8, 9, 10], "range": "all", "toxicity": "toxic",
+    "habitat": "ブナなどの枯れ木に重なって生える",
+    "desc": "暗い所でひだが青白く光る。毎年もっとも食中毒が多いキノコの一つ。柄を縦に裂くと、根元に黒紫色のしみがある。",
+    "lookalikes": [
+      { "name": "ムキタケ", "note": "同じブナの倒木に出るので要注意" },
+      { "name": "ヒラタケ・シイタケ", "note": "見た目が似ていて誤食が多い" }
+    ]
+  },
+  {
+    "id": "kaentake", "name": "カエンタケ", "kanji": "火炎茸", "scientific": "Trichoderma cornu-damae", "family": "ボタンタケ科",
+    "months": [6, 7, 8, 9, 10], "range": "all", "toxicity": "deadly",
+    "habitat": "ナラ枯れしたコナラ・ミズナラなどの根元",
+    "desc": "炎のような赤い棒状のキノコ。食べると命に関わり、触るだけでも皮膚がただれることがある。見つけても絶対に触らない。",
+    "lookalikes": [{ "name": "ベニナギナタタケ", "note": "細い棒状で似ているが、カエンタケは太く硬い" }]
+  },
+  {
+    "id": "nigakuritake", "name": "ニガクリタケ", "kanji": "苦栗茸", "scientific": "Hypholoma fasciculare", "family": "モエギタケ科",
+    "months": [5, 6, 7, 8, 9, 10, 11], "range": "all", "toxicity": "toxic",
+    "habitat": "切り株や倒木に束になって生える",
+    "desc": "黄色っぽい傘のキノコが株立ちに出る。ほぼ一年中見られ、死亡例もある毒キノコ。",
+    "lookalikes": [{ "name": "クリタケ", "note": "傘が茶褐色。ニガクリタケは黄色みが強く強い苦味がある" }]
+  },
+  {
+    "id": "kuritake", "name": "クリタケ", "kanji": "栗茸", "scientific": "Hypholoma lateritium", "family": "モエギタケ科",
+    "months": [9, 10, 11], "range": "all", "toxicity": "edible",
+    "habitat": "広葉樹の切り株や倒木",
+    "desc": "栗色の傘が株になって出る秋のキノコ。",
+    "lookalikes": [{ "name": "ニガクリタケ（毒）", "note": "同じ場所に出ることもある。黄色く苦い" }]
+  },
+  {
+    "id": "naratake", "name": "ナラタケ", "kanji": "楢茸", "scientific": "Armillaria mellea subsp. nipponica", "family": "タマバリタケ科",
+    "months": [9, 10], "range": "all", "toxicity": "edible",
+    "habitat": "広葉樹・針葉樹の倒木や切り株",
+    "desc": "秋の山で大量に出ることもある、柄につばのある茶色いキノコ。地方名も多い。生では中毒する。",
+    "lookalikes": [
+      { "name": "ニガクリタケ（毒）", "note": "つばがない" },
+      { "name": "コレラタケ（猛毒）", "note": "小型で倒木に出る。見分けは非常に難しい" }
+    ]
+  },
+  {
+    "id": "korera-take", "name": "コレラタケ", "kanji": "", "scientific": "Galerina marginata", "family": "ヒメノガステル科",
+    "months": [5, 6, 9, 10, 11], "range": "all", "toxicity": "deadly",
+    "habitat": "倒木や切り株、腐った木材",
+    "desc": "地味な茶色の小さなキノコだが、ドクツルタケと同じ種類の猛毒をもつ。",
+    "lookalikes": [{ "name": "ナラタケ・ナメコ", "note": "同じような場所に出て、誤食が起きている" }]
+  },
+  {
+    "id": "hanaiguchi", "name": "ハナイグチ", "kanji": "花猪口", "scientific": "Suillus grevillei", "family": "ヌメリイグチ科",
+    "months": [9, 10], "range": "north", "toxicity": "edible",
+    "habitat": "カラマツ林",
+    "desc": "黄〜橙色でぬめりのある傘。カラマツ林の秋の定番で、信州では「ジコボウ」、北海道では「ラクヨウ」と呼ばれる。",
+    "lookalikes": []
+  },
+  {
+    "id": "doku-yamadori", "name": "ドクヤマドリ", "kanji": "毒山鳥", "scientific": "Boletus venenatus", "family": "イグチ科",
+    "months": [7, 8, 9], "range": "subalpine", "toxicity": "toxic",
+    "habitat": "亜高山帯のコメツガ・シラビソなどの針葉樹林",
+    "desc": "富士山や八ヶ岳など亜高山の森で見られる大きなイグチ。おいしそうな見た目だが毒。",
+    "lookalikes": [{ "name": "ヤマドリタケの仲間", "note": "イグチ類は見分けが難しく、亜高山のものは特に注意" }]
+  },
+  {
+    "id": "kusaurabenitake", "name": "クサウラベニタケ", "kanji": "臭裏紅茸", "scientific": "Entoloma rhodopolium", "family": "イッポンシメジ科",
+    "months": [8, 9, 10], "range": "all", "toxicity": "toxic",
+    "habitat": "広葉樹林の地上",
+    "desc": "灰色〜褐色の地味なキノコ。ツキヨタケ・カキシメジと並んで中毒が多い「毒キノコ御三家」の一つ。",
+    "lookalikes": [{ "name": "ウラベニホテイシメジ・ホンシメジ", "note": "よく似ていて、ベテランでも間違える" }]
+  },
+  {
+    "id": "kakishimeji", "name": "カキシメジ", "kanji": "柿占地", "scientific": "Tricholoma ustale", "family": "キシメジ科",
+    "months": [9, 10, 11], "range": "all", "toxicity": "toxic",
+    "habitat": "広葉樹林やマツの混じる林",
+    "desc": "赤褐色でぬめりのある傘。地味な見た目で食用キノコと間違えられやすく、中毒例が多い。",
+    "lookalikes": [{ "name": "チャナメツムタケなど", "note": "ぬめりのある茶色いキノコは紛らわしい" }]
+  },
+  {
+    "id": "murasaki-shimeji", "name": "ムラサキシメジ", "kanji": "紫占地", "scientific": "Lepista nuda", "family": "キシメジ科",
+    "months": [10, 11], "range": "all", "toxicity": "edible",
+    "habitat": "落ち葉の積もった林",
+    "desc": "全体が淡い紫色の晩秋のキノコ。落ち葉の上に輪を描くように出ることもある。",
+    "lookalikes": [{ "name": "紫色のフウセンタケの仲間", "note": "毒をもつものがある" }]
+  },
+  {
+    "id": "hokoritake", "name": "ホコリタケ", "kanji": "埃茸", "scientific": "Lycoperdon perlatum", "family": "ハラタケ科",
+    "months": [7, 8, 9, 10], "range": "all", "toxicity": "edible",
+    "habitat": "林の中の地上や道ばた",
+    "desc": "丸い頭のキノコ。熟すと頭の穴から煙のように胞子を噴き出す。別名キツネノチャブクロ。",
+    "lookalikes": []
+  },
+  {
+    "id": "maitake", "name": "マイタケ", "kanji": "舞茸", "scientific": "Grifola frondosa", "family": "マイタケ科",
+    "months": [9, 10], "range": "all", "toxicity": "edible",
+    "habitat": "ミズナラなどの大木の根元",
+    "desc": "天然ものは見つけると舞い上がるほどうれしい、ということからの名前。大きな株になる。",
+    "lookalikes": []
+  },
+  {
+    "id": "nameko", "name": "ナメコ", "kanji": "滑子", "scientific": "Pholiota microspora", "family": "モエギタケ科",
+    "months": [9, 10, 11], "range": "all", "toxicity": "edible",
+    "habitat": "ブナなどの倒木",
+    "desc": "強いぬめりのあるオレンジ色の傘。天然ものはブナ林の秋の味覚。",
+    "lookalikes": [{ "name": "コレラタケ（猛毒）", "note": "同じ倒木に出ることがある" }]
+  },
+  {
+    "id": "mukitake", "name": "ムキタケ", "kanji": "剥茸", "scientific": "Sarcomyxa serotina", "family": "ムキタケ科",
+    "months": [10, 11], "range": "all", "toxicity": "edible",
+    "habitat": "ブナなどの倒木",
+    "desc": "晩秋のブナ林の倒木に重なって出る。表皮がつるりとむけるのが名前の由来。",
+    "lookalikes": [{ "name": "ツキヨタケ（毒）", "note": "同じブナの倒木に出る。誤食がとても多い" }]
+  },
+  {
+    "id": "sugi-hiratake", "name": "スギヒラタケ", "kanji": "杉平茸", "scientific": "Pleurocybella porrigens", "family": "ホウライタケ科",
+    "months": [8, 9, 10], "range": "all", "toxicity": "toxic",
+    "habitat": "スギなどの針葉樹の切り株や倒木",
+    "desc": "白い耳のような形。かつては食用とされたが、2004年以降に急性脳症との関連が疑われ、食べないよう呼びかけられている。",
+    "lookalikes": []
+  },
+  {
+    "id": "hana-houkitake", "name": "ハナホウキタケ", "kanji": "花箒茸", "scientific": "Ramaria formosa", "family": "ラッパタケ科",
+    "months": [8, 9, 10], "range": "all", "toxicity": "toxic",
+    "habitat": "広葉樹林の地上",
+    "desc": "ピンク〜オレンジのサンゴのような形。ホウキタケの仲間は見分けがとても難しい。",
+    "lookalikes": [{ "name": "ホウキタケ", "note": "色や形がよく似ている" }]
+  },
+  {
+    "id": "oowaraitake", "name": "オオワライタケ", "kanji": "大笑茸", "scientific": "Gymnopilus junonius", "family": "ヒメノガステル科",
+    "months": [7, 8, 9, 10], "range": "all", "toxicity": "toxic",
+    "habitat": "広葉樹・針葉樹の切り株や枯れ木",
+    "desc": "黄金色の大きなキノコ。名前の通り、幻覚や異常な興奮などの中毒を起こす。",
+    "lookalikes": []
+  },
+  {
+    "id": "chichitake", "name": "チチタケ", "kanji": "乳茸", "scientific": "Lactifluus volemus", "family": "ベニタケ科",
+    "months": [7, 8, 9], "range": "all", "toxicity": "edible",
+    "habitat": "広葉樹林の地上",
+    "desc": "傷をつけると白い乳液がたっぷり出る。栃木県では「ちたけそば」として親しまれている。",
+    "lookalikes": []
+  },
+  {
+    "id": "aka-yamadori", "name": "アカヤマドリ", "kanji": "赤山鳥", "scientific": "Leccinum extremiorientale", "family": "イグチ科",
+    "months": [7, 8, 9], "range": "all", "toxicity": "edible",
+    "habitat": "広葉樹林の地上",
+    "desc": "ひび割れたオレンジ色の大きな傘をもつイグチの仲間。",
+    "lookalikes": []
+  },
+  {
+    "id": "doku-benitake", "name": "ドクベニタケ", "kanji": "毒紅茸", "scientific": "Russula emetica", "family": "ベニタケ科",
+    "months": [7, 8, 9, 10], "range": "all", "toxicity": "toxic",
+    "habitat": "針葉樹林の地上",
+    "desc": "鮮やかな赤い傘と真っ白なひだ。強い辛味があり、食べると吐き気などの中毒を起こす。",
+    "lookalikes": [{ "name": "赤いベニタケの仲間", "note": "色だけでは見分けられない" }]
+  },
+  {
+    "id": "shougenji", "name": "ショウゲンジ", "kanji": "", "scientific": "Cortinarius caperatus", "family": "フウセンタケ科",
+    "months": [9, 10], "range": "north", "toxicity": "edible",
+    "habitat": "亜高山の針葉樹林やアカマツ林",
+    "desc": "黄土色の傘にしわがあり、柄にはつばがある。秋の針葉樹林で見つかる。",
+    "lookalikes": [{ "name": "フウセンタケの仲間", "note": "毒をもつものがあり見分けが難しい" }]
+  },
+  {
+    "id": "amigasatake", "name": "アミガサタケ", "kanji": "編笠茸", "scientific": "Morchella esculenta", "family": "アミガサタケ科",
+    "months": [4, 5], "range": "all", "toxicity": "edible",
+    "habitat": "春の林の縁や、サクラ・イチョウの木の下",
+    "desc": "網目模様の頭をもつ、春だけのキノコ。生で食べると中毒する。",
+    "lookalikes": [{ "name": "シャグマアミガサタケ（猛毒）", "note": "頭が脳みそのようにぐにゃぐにゃしている" }]
+  },
+  {
+    "id": "shaguma-amigasatake", "name": "シャグマアミガサタケ", "kanji": "赤熊編笠茸", "scientific": "Gyromitra esculenta", "family": "フクロシトネタケ科",
+    "months": [4, 5, 6], "range": "north", "toxicity": "deadly",
+    "habitat": "春の針葉樹林（北海道や本州の高地）",
+    "desc": "茶褐色で脳みそのような頭。雪解けのころの針葉樹林に出る猛毒キノコ。",
+    "lookalikes": [{ "name": "アミガサタケ", "note": "網目がはっきりした頭をもつ" }]
+  },
+  {
+    "id": "tamogitake", "name": "タモギタケ", "kanji": "", "scientific": "Pleurotus cornucopiae var. citrinopileatus", "family": "ヒラタケ科",
+    "months": [6, 7, 8, 9], "range": "north", "toxicity": "edible",
+    "habitat": "ニレの仲間の倒木や枯れ木（北海道・東北に多い）",
+    "desc": "鮮やかな黄色い傘が花束のように重なって出る。北国の夏のキノコ。",
+    "lookalikes": []
+  },
+  {
+    "id": "hanabiratake", "name": "ハナビラタケ", "kanji": "花弁茸", "scientific": "Sparassis latifolia", "family": "ハナビラタケ科",
+    "months": [7, 8, 9], "range": "subalpine", "toxicity": "edible",
+    "habitat": "亜高山のカラマツやモミなど針葉樹の根元",
+    "desc": "白いフリルやキャベツのような姿。高い山の針葉樹林で見つかる。",
+    "lookalikes": []
+  }
+]

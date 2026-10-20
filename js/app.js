@@ -290,7 +290,6 @@
   async function init() {
     const res = await fetch("data/plants.json");
     state.plants = await res.json();
-    window.__PLANTS_DATA__ = state.plants;
     buildAreaChips();
     buildPeakChips();
     buildColorChips();

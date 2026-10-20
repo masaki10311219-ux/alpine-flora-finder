@@ -90,6 +90,12 @@
     });
     [els.mtnList, els.favList].forEach((list) => list.addEventListener("click", onMountainListClick));
 
+    const linkedArea = new URLSearchParams(location.search).get("area");
+    if (linkedArea) {
+      state.area = linkedArea;
+      state.areaPinned = true;
+    }
+
     load();
   });
 
@@ -442,7 +448,7 @@
           ${opts.rank ? `<span class="wx-mtn__rank">${opts.rank}</span>` : ""}
           <div class="wx-mtn__title">
             <h3 class="wx-mtn__name">${esc(m.name)}${opts.recommend ? `<span class="wx-badge">おすすめ</span>` : ""}</h3>
-            <p class="wx-mtn__meta">${opts.showArea ? `${esc(m.area)} ・ ` : ""}標高${m.elevation.toLocaleString()}m</p>
+            <p class="wx-mtn__meta">${opts.showArea ? `${esc(m.area)} ・ ` : ""}標高${m.elevation.toLocaleString()}m ・ <a class="wx-mtn__flora" href="mountain.html?m=${encodeURIComponent(m.name)}">🌸 花とキノコ</a></p>
           </div>
           <div class="wx-mtn__summary">${summary}${gradeBadge(grade)}</div>
           <button type="button" class="wx-fav-btn${fav ? " is-on" : ""}" data-fav="${esc(m.name)}" aria-pressed="${fav}" aria-label="${fav ? "お気に入りから外す" : "お気に入りに追加してウォッチする"}">${fav ? "★" : "☆"}</button>

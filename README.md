@@ -1,55 +1,47 @@
 # 山美和 -Yamabiyori-
 
-時期・エリア・色・名前・50音順で高山植物を検索できる静的サイトです。写真からの植物識別（画像検索）、週末〜2週間先のエリア別山岳天気（お気に入りの山のウォッチ・天気モデル比較つき）、コースタイム・獲得標高からのコース検索にも対応しています。
+登る山の高山植物とキノコを、山に行く前に予習し、帰ってから復習するための静的サイトです。時期・エリア・色・名前・50音順での高山植物検索、週末〜2週間先のエリア別山岳天気（お気に入りの山のウォッチ・天気モデル比較つき）、コースタイム・獲得標高からのコース検索にも対応しています。
 
 サーバーサイド処理はなく、GitHub Pages / Cloudflare Pages / Netlify などの無料静的ホスティングでそのまま公開できます。
 
 ## 主な機能
 
-- 名前検索（部分一致）
-- 花期（月）で絞り込み
-- エリアで絞り込み
-- 花の色で絞り込み
-- 50音インデックスでのジャンプ
-- 写真アップロードによる植物識別（[Pl@ntNet API](https://my.plantnet.org/) 連携）
-- 図鑑内データとの自動マッチング
-- 種ごとの図鑑風詳細ページ（`plant.html`）：いきものメモ・注釈付き写真・愛のある紹介文
-- みんなの投稿写真＋コメント機能（ログイン不要・ニックネームのみ、Supabase連携）
+- 山の図鑑（`mountain.html`）：登る山（全国74座）と月を選ぶと、その山で見られる高山植物・キノコの一覧を表示。出会えたものに「見た！」を付けて記録（ブラウザに保存、写真のアップロードなし）
+- 山ごとの花クイズ（`quiz.html?m=山名`）で予習
+- 高山植物の検索：名前（部分一致）・花期・エリア・山名・花の色・50音インデックス
+- 種ごとの図鑑風詳細ページ（`plant.html`）：いきものメモ・注釈付き写真・愛のある紹介文・この花に会える山
+- 山の天気（`weather.html`）：天気の良いエリア→おすすめの山の2ステップ、お気に入りの山のウォッチ
+- コース検索（`course-search.html`）
 - Google AdSense 用の広告枠プレースホルダー
 
 ## ディレクトリ構成
 
 ```
-index.html          トップページ（検索・一覧・画像検索）
-plant.html           植物1種ごとの図鑑風詳細ページ（?id=で指定）
-about.html           このサイトについて／画像出典／投稿ポリシー
-privacy.html         プライバシーポリシー（AdSense審査に必要）
-css/style.css        スタイル（図鑑風コンポーネント含む）
-js/config.js         APIキー・Supabase接続情報の設定
-js/wikimedia.js      Wikimedia Commonsから画像・クレジットを取得
-js/app.js            検索・絞り込み・一覧表示ロジック
-js/image-search.js   Pl@ntNet APIを使った画像検索
-js/community.js      Supabase REST/Storage APIを直接叩く投稿・コメント機能
-js/plant-detail.js   plant.html のレンダリングロジック
-data/plants.json     植物データ（208種、収録項目は下記）
-supabase/schema.sql  投稿・コメント機能用のテーブル／RLS定義（SQL Editorで実行）
-ads.txt              AdSense審査用（内容は取得後に追記）
+index.html            トップページ（高山植物の検索・一覧、山の図鑑への入口）
+mountain.html         山の図鑑（登る山の花とキノコの予習・復習）
+plant.html            植物1種ごとの図鑑風詳細ページ（?id=で指定）
+weather.html          山の天気
+course-search.html    コース検索
+quiz.html             花クイズ（?m=山名 でその山の花だけを出題）
+about.html            このサイトについて／画像出典
+privacy.html          プライバシーポリシー（AdSense審査に必要）
+css/style.css         スタイル
+js/wikimedia.js       Wikimedia Commonsから画像・クレジットを取得
+js/app.js             検索・絞り込み・一覧表示ロジック
+js/mountain-flora.js  山と植物・キノコの対応づけ（山の図鑑・クイズ・詳細ページで共通）
+js/mountain.js        山の図鑑ページ
+js/plant-detail.js    plant.html のレンダリングロジック
+js/weather.js         山の天気ページ
+data/plants.json      植物データ（216種、収録項目は下記）
+data/mushrooms.json   キノコデータ（30種）
+data/mountains.json   山データ（74座、天気・山の図鑑で共通）
+data/areas.json       山の天気の山域と地図上の表示位置
+ads.txt               AdSense審査用（内容は取得後に追記）
 ```
 
 ## セットアップ
 
-### 1. 画像検索（Pl@ntNet API）を有効にする
-
-1. https://my.plantnet.org/ で無料アカウントを作成し、APIキーを取得
-2. `js/config.js` の `PLANTNET_API_KEY` に取得したキーを設定
-
-キー未設定の間は「準備中」の案内が表示されるだけで、エラーにはなりません。
-
-無料枠には呼び出し回数の上限があります。アクセスが増えてきたら有料プランや、
-サーバー経由でキーを隠す構成（Cloudflare Workers等）への切り替えを検討してください。
-（現状はクライアントサイドから直接APIキーを送信するため、キーはブラウザから見える状態になります）
-
-### 2. 広告（Google AdSense）を有効にする
+### 1. 広告（Google AdSense）を有効にする
 
 1. Google AdSenseに申し込み、審査を通過する
    - オリジナルコンテンツであること、プライバシーポリシーの設置（`privacy.html` 用意済み）などが審査条件です
@@ -58,25 +50,11 @@ ads.txt              AdSense審査用（内容は取得後に追記）
 3. `ads.txt` に指定された1行を追記
 4. `index.html` 内の `<div class="ad-slot ...">` を、AdSenseが発行する `<ins class="adsbygoogle">` タグに差し替える
 
-### 3. GitHub Pages で公開する
+### 2. GitHub Pages で公開する
 
 1. リポジトリの Settings → Pages で、公開ブランチを `main`（または該当ブランチ）、ルートディレクトリを `/` に設定
 2. 数分後に `https://<ユーザー名>.github.io/<リポジトリ名>/` で公開されます
    - GitHub Pages は Public リポジトリが前提です（無料プランでは Private だと使えません）
-
-### 4. みんなの投稿写真・コメント機能（Supabase）を有効にする
-
-1. https://supabase.com でプロジェクトを作成（無料枠でOK）
-2. プロジェクトの **SQL Editor** で `supabase/schema.sql` の内容を実行し、`submissions` / `comments` テーブルと `flower-photos` ストレージバケットを作成
-3. プロジェクトの **Settings → API** から `Project URL` と `anon public` キーを取得
-4. `js/config.js` の `SUPABASE_URL` / `SUPABASE_ANON_KEY` に設定
-
-設定が完了するまで、各詳細ページの投稿フォームには「準備中です」と表示され、既存機能には影響しません。
-
-ログイン不要・ニックネームのみで誰でも投稿できる設計のため、`supabase/schema.sql` のRLSポリシーは
-匿名(anon)ロールからの insert/select を許可しています。投稿は承認なしで即時公開され、
-不適切な投稿はコメント欄での報告を前提としたモデレーション方針です（詳細は `about.html` 参照）。
-乱用が増えてきた場合は、投稿頻度の制限（Supabase Edge Functions等でのレート制限）の追加を検討してください。
 
 ## 植物データの追加・編集
 
@@ -87,7 +65,7 @@ ads.txt              AdSense審査用（内容は取得後に追記）
   "id": "一意なID（英数字）",
   "name": "カタカナ表記の標準和名",
   "kanji": "漢字表記（任意）",
-  "scientific": "学名（Wikimedia Commons検索・Pl@ntNetマッチングに使用）",
+  "scientific": "学名（Wikimedia Commonsの画像検索に使用）",
   "family": "科名",
   "months": [7, 8],
   "areas": ["北アルプス", "..."],
@@ -102,30 +80,22 @@ ads.txt              AdSense審査用（内容は取得後に追記）
 
 - 画像は `scientific`（学名）でWikimedia Commonsを検索して自動取得されるため、画像ファイルの用意は不要です。該当画像が無い種はプレースホルダーが表示されます。
 - `areas` / `colors` はサイト側でユニークな値を自動集計してフィルターUIを生成するため、新しい値を追加すればフィルターにも自動的に反映されます。
+- 山の図鑑との対応：`peaks` が山名（または `js/mountain-flora.js` の `PEAK_ALIASES` の呼び名）に一致すると「この山の記録あり」、`areas` が山の山域（同ファイルの `PLANT_AREAS`）に一致すると「このエリアで見られる」として表示されます。
+
+## キノコデータ（data/mushrooms.json）
+
+`range` は分布の目安で、`all`（全国）／`north`（本州中部以北と北海道の山）／`subalpine`（そのうち亜高山帯がある山）。
+`toxicity` は `deadly`（猛毒）／`toxic`（毒）／`edible`（食用とされる）。`lookalikes` には間違えやすいキノコとその見分けのポイントを入れます。
+食毒は安全に関わるため、確かな情報源で確認できたものだけを記載してください。
 
 ## 今後の拡張予定
 
-### ユーザーによる写真投稿・コメント機能
-
-実装済み（`js/community.js` / `js/plant-detail.js` / `supabase/schema.sql`）。ログイン不要・ニックネームのみで投稿でき、
-投稿は承認なしで即時公開、不適切な投稿はコメントでの報告を前提としたモデレーション方針です。
-
-利用にはSupabaseプロジェクトの作成が必要です（上記セットアップ手順4を参照）。Googleログインでの本人確認は
-今回は導入していません。将来的に必要になった場合は、Supabase Auth + Google OAuth（Google Cloud Console側の
-クライアント作成が別途必要）への切り替えを検討してください。
-
 ### 植物データのさらなる拡充
 
-現在208種。Wikipedia日本語版のCategory:高山植物を参照し、学名・分布を確認できた種を中心に拡充した。
+現在216種。九州・四国・近畿・富士周辺はまだ少ないため、これらの山域の固有種・代表種の追加が特に有効。Wikipedia日本語版のCategory:高山植物を参照し、学名・分布を確認できた種を中心に拡充した。
 さらに拡充する場合も、既存データと同様に一次情報（Wikipedia・専門図鑑等）で学名を確認してから追加することを推奨する。
-
-## 開発上の注意（このセッションでの制約）
-
-このコードを作成した開発環境（サンドボックス）はネットワーク送信先が制限されており、
-Wikimedia Commons API・Pl@ntNet APIへの疎通確認はできていません。API仕様に基づいて実装していますが、
-公開後に実際のブラウザから動作確認（画像が表示されるか、画像検索が動くか）を行ってください。
 
 ## 免責
 
-花期・分布は代表的な傾向を簡略化して掲載しています。画像識別結果はAIによる自動推定であり、
-食用・薬用可否や毒性の判断など安全に関わる用途には使用しないでください（`about.html` にも記載）。
+花期・分布は代表的な傾向を簡略化して掲載しています。キノコの食毒を含め、食用・薬用可否や毒性の判断など
+安全に関わる用途には使用しないでください（`about.html` にも記載）。

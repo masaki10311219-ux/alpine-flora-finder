@@ -1,9 +1,8 @@
 /**
- * 山中など電波の無い場所でも「絞り込み検索」と一度表示した植物画像が使えるように、
+ * 山中など電波の無い場所でも図鑑・山の図鑑と一度表示した画像が使えるように、
  * アプリ本体とWikimedia Commonsの画像をキャッシュするService Worker。
- * Pl@ntNet APIによる画像識別は都度通信が必要な機能のため、意図的にキャッシュしない。
  */
-const CACHE_VERSION = "v15";
+const CACHE_VERSION = "v16";
 const APP_SHELL_CACHE = `app-shell-${CACHE_VERSION}`;
 const IMAGE_CACHE = `wikimedia-images-${CACHE_VERSION}`;
 
@@ -17,20 +16,20 @@ const APP_SHELL_FILES = [
   "./topic.html",
   "./weather.html",
   "./course-search.html",
+  "./mountain.html",
   "./css/style.css",
   "./js/bg-blobs.js",
-  "./js/config.js",
   "./js/wikimedia.js",
   "./js/text-flow.js",
   "./js/hero-mosaic.js",
   "./js/scroll-mask.js",
   "./js/app.js",
-  "./js/image-search.js",
-  "./js/community.js",
   "./js/plant-detail.js",
   "./js/quiz.js",
   "./js/topic-game.js",
   "./js/weather.js",
+  "./js/mountain-flora.js",
+  "./js/mountain.js",
   "./js/course-search.js",
   "./js/register-sw.js",
   "./data/plants.json",
@@ -39,6 +38,7 @@ const APP_SHELL_FILES = [
   "./data/courses.json",
   "./data/japan-outline.json",
   "./data/areas.json",
+  "./data/mushrooms.json",
   "./manifest.json",
   "./icon.svg"
 ];
@@ -72,11 +72,6 @@ self.addEventListener("fetch", (event) => {
   // Wikimedia Commonsの画像・APIレスポンスはキャッシュして山中での再表示に使う
   if (url.hostname === "commons.wikimedia.org" || url.hostname === "upload.wikimedia.org") {
     event.respondWith(cacheFirst(req, IMAGE_CACHE));
-    return;
-  }
-
-  // Pl@ntNet APIは常に最新の識別結果が必要なため素通し（オフライン時は失敗する仕様）
-  if (url.hostname === "my-api.plantnet.org") {
     return;
   }
 
