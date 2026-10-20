@@ -1272,330 +1272,354 @@ body.is-flow-in [data-flow] .char {
 
 .topic-draw-btn { margin-top: 28px; }
 
-/* ===== 山の天気マップ ===== */
+/* ===== 山の天気（①エリアを探す → ②山を選ぶ、★ウォッチ） ===== */
 .weather-page { padding-top: 48px; padding-bottom: 56px; }
 
-.weather-toolbar {
+.wx-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 12px;
-  margin: 8px 0 20px;
+  margin: -8px 0 12px;
 }
 
-.weather-toolbar__right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+.wx-updated { margin: 0; color: var(--ink-soft); font-size: 0.82rem; font-weight: 600; }
 
-.weather-mode-chips .chip.is-active {
-  background: var(--green-700);
-  border-color: var(--green-700);
-  color: var(--white);
-}
+.wx-status { margin: 0 0 18px; color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; }
+.wx-status.is-error { color: #b9665d; }
 
-.weather-model-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px 14px;
-  margin: 0 0 20px;
-}
-
-.weather-model-row__label { font-size: 0.85rem; font-weight: 700; color: var(--ink-soft); }
-
-.weather-model-chips .chip.is-active {
-  background: var(--purple);
-  border-color: var(--purple);
-  color: var(--ink);
-}
-
-.weather-model-row__note {
-  margin: 0;
-  font-size: 0.75rem;
-  color: var(--ink-soft);
-  flex-basis: 100%;
-}
-
-.weather-updated { margin: 0; color: var(--ink-soft); font-size: 0.85rem; font-weight: 600; }
-
-.weather-status {
-  color: var(--ink-soft);
-  font-weight: 600;
-  margin: 0 0 20px;
-}
-
-.weather-status--error { color: var(--accent); }
-
-/* ===== 日本地図（簡易スキャッターマップ） ===== */
-.weather-map-section {
-  background: rgba(255, 255, 255, 0.7);
+.wx-step,
+.wx-fav {
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(8px);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 20px;
-  margin-bottom: 26px;
+  padding: 22px 22px 24px;
+  margin-bottom: 28px;
+  scroll-margin-top: 90px;
+}
+
+.wx-step-title {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  font-size: 1.15rem;
 }
 
-.weather-map-wrap {
-  flex: 1 1 320px;
-  max-width: 420px;
-  margin: 0 auto;
+.wx-step-num {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--green-700);
+  color: var(--white);
+  font-size: 0.95rem;
 }
 
-.weather-map { width: 100%; height: auto; display: block; }
+.wx-step-num--fav { background: var(--accent-2); color: var(--ink); }
 
-.weather-map-hint {
-  margin: 8px 0 0;
-  font-size: 0.75rem;
-  color: var(--ink-soft);
-  text-align: center;
+.wx-sub-title { margin: 26px 0 4px; font-size: 1rem; }
+
+.wx-note { margin: 0 0 10px; font-size: 0.76rem; color: var(--ink-soft); line-height: 1.6; }
+.wx-note.is-error { color: #b9665d; }
+
+.wx-fav__empty { margin: 0; font-size: 0.85rem; color: var(--ink-soft); }
+
+/* 期間チップ */
+.wx-period { margin-bottom: 16px; }
+.wx-period .chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 8px 16px; font-size: 0.9rem; }
+.wx-chip-sub { font-size: 0.72rem; font-weight: 500; opacity: 0.85; }
+.wx-period .chip.is-active { background: var(--green-700); border-color: var(--green-700); color: var(--white); }
+
+/* 地図＋ランキング */
+.wx-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
 }
 
-.weather-map__land {
-  fill: var(--green-100);
-  stroke: var(--green-600);
-  stroke-width: 1;
-  stroke-linejoin: round;
+@media (max-width: 760px) {
+  .wx-overview { grid-template-columns: 1fr; }
 }
 
-.weather-map__marker { cursor: pointer; outline: none; }
-.weather-map__marker:focus-visible circle { stroke: var(--green-900); }
-.weather-map__marker--dim { opacity: 0.55; }
+.wx-map-wrap { max-width: 520px; width: 100%; margin: 0 auto; }
+.wx-map { width: 100%; height: auto; display: block; }
 
-.weather-map__ring {
-  fill: none;
-  stroke: var(--accent-2);
-  stroke-width: 2;
-  animation: weather-map-pulse 2s ease-out infinite;
-}
+.wx-map__land { fill: var(--green-100); stroke: var(--green-600); stroke-width: 1; stroke-linejoin: round; }
+.wx-map__leader { stroke: #a7a097; stroke-width: 1.2; stroke-dasharray: 3 3; }
+.wx-map__box { cursor: pointer; outline: none; }
+.wx-map__box rect { transition: fill .15s var(--ease); filter: drop-shadow(0 3px 6px rgba(43, 41, 38, 0.12)); }
+.wx-map__box:hover rect,
+.wx-map__box:focus-visible rect { fill: #fdf9f3; }
+.wx-map__box:focus-visible rect { stroke-width: 3.5; }
+.wx-map__name { font-size: 15px; font-weight: 700; fill: var(--ink); text-anchor: middle; font-family: var(--font-body); }
+.wx-map__sub { font-size: 17px; text-anchor: middle; font-family: var(--font-body); fill: var(--ink); font-weight: 700; }
 
-@keyframes weather-map-pulse {
-  0% { r: 9; opacity: 0.9; }
-  100% { r: 18; opacity: 0; }
-}
+.wx-rank-caption { margin: 0 0 8px; font-size: 0.78rem; font-weight: 700; color: var(--ink-soft); }
 
-.weather-map__label {
-  font-size: 9px;
-  font-weight: 600;
-  fill: var(--ink-soft);
+.wx-rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+
+.wx-rank__row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto auto 14px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
   font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s var(--ease), box-shadow .15s var(--ease);
 }
 
-.weather-map__label--best { fill: var(--ink); font-weight: 700; }
+.wx-rank__row:hover { border-color: var(--green-600); box-shadow: var(--shadow); }
+.wx-rank__row.is-selected { border-color: var(--green-700); box-shadow: 0 0 0 2px var(--green-600) inset; }
+.wx-rank__no { font-weight: 800; color: var(--ink-soft); text-align: center; }
+.wx-rank__name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wx-rank__icons { font-size: 1.05rem; letter-spacing: 2px; }
+.wx-rank__good { font-size: 0.78rem; font-weight: 700; color: var(--green-900); white-space: nowrap; }
+.wx-rank__go { color: var(--ink-soft); font-size: 1.1rem; }
 
-.weather-map-legend {
+.wx-grade {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--grade-tint);
+  color: var(--grade);
+  border: 1px solid var(--grade);
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+  filter: saturate(1.1) brightness(0.92);
+}
+
+.wx-legend {
   list-style: none;
-  margin: 0;
+  margin: 12px 0 0;
   padding: 0;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 0.78rem;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 0.74rem;
   color: var(--ink-soft);
   font-weight: 600;
 }
 
-.weather-map-legend li { display: flex; align-items: center; gap: 8px; }
+.wx-legend li { display: flex; align-items: center; gap: 5px; }
+.wx-legend span { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 
-.weather-map-legend__dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  display: inline-block;
-  flex-shrink: 0;
+/* 横スクロールの表 */
+.wx-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+.wx-calendar {
+  border-collapse: separate;
+  border-spacing: 2px;
+  font-size: 0.8rem;
+  min-width: 100%;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .weather-map__ring { animation: none; opacity: 0.6; }
+.wx-calendar th,
+.wx-calendar td { text-align: center; }
+
+.wx-calendar thead th { font-weight: 700; color: var(--ink-soft); padding: 0; }
+
+.wx-th-day button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-width: 38px;
+  padding: 4px 2px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font: inherit;
+  font-size: 0.72rem;
+  color: inherit;
+  cursor: pointer;
+  line-height: 1.3;
 }
 
-.weather-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 22px;
-}
+.wx-th-day button:hover { background: var(--green-100); }
+.wx-th-day.is-sat { color: #5b86a6; }
+.wx-th-day.is-sun { color: #c0736a; }
+.wx-th-day.is-period button { background: var(--ink); color: var(--white); }
 
-.weather-grid[aria-busy="true"] { opacity: 0.5; }
+.wx-th-corner { font-size: 0.72rem; }
 
-.weather-card {
-  position: relative;
+.wx-calendar tbody th {
+  position: sticky;
+  left: 0;
+  z-index: 1;
   background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 20px 20px 18px;
-  transition: box-shadow .3s var(--ease), transform .3s var(--ease);
+  padding: 6px 10px 6px 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: left;
+  white-space: nowrap;
 }
 
-.weather-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-4px); }
+.wx-calendar thead .wx-th-corner { position: sticky; left: 0; z-index: 2; background: var(--white); }
 
-.weather-card--best {
-  border: 2px solid var(--accent-2);
+.wx-calendar tbody tr { cursor: pointer; }
+.wx-calendar tbody tr:hover th { color: var(--green-900); text-decoration: underline; }
+.wx-calendar tbody tr.is-selected th { color: var(--green-900); }
+.wx-calendar tbody tr.is-selected th::before { content: "▶ "; font-size: 0.65rem; }
+
+.wx-td-day { height: 34px; min-width: 38px; border-radius: 8px; font-size: 1rem; }
+.wx-td-day.is-period { box-shadow: 0 0 0 2px var(--ink) inset; }
+
+/* 山のリスト（エリアのおすすめ・お気に入り共通） */
+.wx-area-note { margin: -8px 0 14px; font-size: 0.82rem; color: var(--ink-soft); font-weight: 600; }
+
+.wx-mtn-list { display: flex; flex-direction: column; gap: 12px; }
+.wx-fav .wx-mtn-list:not(:empty) { margin-top: 4px; }
+
+.wx-mtn {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px 12px;
+  box-shadow: 0 4px 14px rgba(43, 41, 38, 0.05);
 }
 
-.weather-card.is-highlighted {
-  animation: weather-card-flash 1.6s var(--ease);
+.wx-mtn.is-recommend { border-color: var(--accent-2); box-shadow: 0 0 0 1px var(--accent-2) inset, 0 4px 14px rgba(43, 41, 38, 0.05); }
+
+.wx-mtn__head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
 }
 
-@keyframes weather-card-flash {
-  0%, 100% { box-shadow: var(--shadow); }
-  30% { box-shadow: 0 0 0 4px var(--accent-2), var(--shadow-hover); }
+.wx-mtn__rank {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--green-100);
+  color: var(--green-900);
+  font-weight: 800;
+  font-size: 0.85rem;
 }
 
-.weather-card__badge {
-  position: absolute;
-  top: -12px;
-  left: 16px;
+.wx-mtn__title { min-width: 0; }
+.wx-mtn__name { margin: 0; font-size: 1rem; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.wx-mtn__meta { margin: 2px 0 0; font-size: 0.75rem; color: var(--ink-soft); }
+
+.wx-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
   background: var(--accent);
   color: var(--white);
-  font-size: 0.72rem;
+  font-size: 0.66rem;
   font-weight: 700;
-  padding: 5px 14px;
-  border-radius: 999px;
-  box-shadow: var(--shadow);
 }
 
-.weather-card__top {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-top: 6px;
-}
+.wx-mtn__summary { display: flex; align-items: center; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+.wx-mtn__icons { font-size: 1.15rem; letter-spacing: 2px; }
+.wx-mtn__good { font-size: 0.78rem; font-weight: 700; color: var(--green-900); white-space: nowrap; }
 
-.weather-card__icon { font-size: 2.4rem; line-height: 1; }
-
-.weather-card__name { margin: 0; font-size: 1.08rem; }
-
-.weather-card__meta { margin: 2px 0 0; color: var(--ink-soft); font-size: 0.78rem; }
-
-.weather-card__condition {
-  margin: 14px 0 12px;
-  font-weight: 700;
-  color: var(--green-900);
-}
-
-.weather-card__stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px 14px;
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
-}
-
-.weather-stat { display: flex; flex-direction: column; gap: 2px; }
-
-.weather-stat__label { font-size: 0.72rem; color: var(--ink-soft); font-weight: 600; }
-
-.weather-stat__value { font-size: 0.95rem; font-weight: 700; }
-
-/* ===== モデル比較（気象庁・ECMWF・GFS・ICON） ===== */
-.model-compare {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-}
-
-.model-compare__title {
-  margin: 0 0 8px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--ink-soft);
-}
-
-.model-compare__row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-}
-
-.model-compare__item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 6px 2px;
-  border-radius: 10px;
-  background: var(--green-100);
-}
-
-.model-compare__item.is-selected {
-  background: var(--purple);
-}
-
-.model-compare__label { font-size: 0.62rem; font-weight: 700; color: var(--ink-soft); }
-
-.model-compare__icon { font-size: 1rem; line-height: 1; }
-
-.model-compare__temp { font-size: 0.76rem; font-weight: 700; }
-
-/* ===== 地図クリックで表示する天気詳細パネル ===== */
-.weather-detail-panel {
-  position: relative;
-  background: var(--white);
-  border: 2px solid var(--purple);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 20px 20px 18px;
-  margin-bottom: 26px;
-}
-
-.weather-detail-panel__close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 28px;
-  height: 28px;
+.wx-fav-btn {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: none;
-  background: var(--green-100);
+  border: 1px solid var(--border-strong);
+  background: var(--white);
   color: var(--ink-soft);
-  font-size: 1rem;
+  font-size: 1.15rem;
   line-height: 1;
   cursor: pointer;
+  transition: background-color .15s var(--ease), color .15s var(--ease), transform .15s var(--ease);
 }
 
-.weather-detail-panel__close:hover { background: var(--border-strong); }
+.wx-fav-btn:hover { transform: scale(1.08); }
+.wx-fav-btn.is-on { background: var(--accent-2); border-color: var(--accent-2); color: #8a5a12; }
 
-.weather-detail-panel__jump { margin-top: 16px; }
+@media (max-width: 560px) {
+  .wx-mtn__head { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .wx-mtn__summary { grid-column: 2 / 4; grid-row: 2; justify-content: flex-start; }
+  .wx-fav-btn { grid-column: 3; grid-row: 1; }
+}
 
-.weather-forecast-strip {
+.wx-strip {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
+  grid-template-columns: repeat(14, minmax(0, 1fr));
+  gap: 2px;
+  margin-top: 10px;
 }
 
-.weather-forecast-day {
+.wx-day {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 4px 2px;
-  border-radius: 10px;
+  gap: 1px;
+  padding: 3px 0 4px;
+  border-radius: 8px;
 }
 
-.weather-forecast-day--weekend { background: var(--green-100); }
+.wx-day.is-weekend { background: var(--green-100); }
+.wx-day.is-period { box-shadow: 0 0 0 1.5px var(--ink) inset; }
+.wx-day__w { font-size: 0.6rem; color: var(--ink-soft); font-weight: 700; white-space: nowrap; }
+.wx-day__i { font-size: 0.92rem; line-height: 1.2; }
+.wx-day__dot { width: 6px; height: 6px; border-radius: 50%; }
 
-.weather-forecast-day--today { font-weight: 700; }
-
-.weather-forecast-day__label { font-size: 0.62rem; color: var(--ink-soft); font-weight: 600; }
-
-.weather-forecast-day__icon { font-size: 0.95rem; line-height: 1; }
-
-.weather-forecast-day__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+@media (max-width: 560px) {
+  .wx-step,
+  .wx-fav { padding: 16px 14px 18px; }
+  .wx-mtn { padding: 12px 10px 10px; }
+  .wx-rank__row { grid-template-columns: 22px minmax(0, 1fr) auto auto; gap: 6px; padding: 8px; }
+  .wx-rank__name { white-space: normal; line-height: 1.35; }
+  .wx-rank__go { display: none; }
+  .wx-strip { gap: 1px; }
+  .wx-day__w { font-size: 0.55rem; letter-spacing: -0.04em; }
+  .wx-day__i { font-size: 0.8rem; }
 }
+
+.wx-mtn__more { margin-top: 8px; }
+.wx-mtn__more > summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--green-900);
+  padding: 4px 0;
+}
+
+.wx-mtn__more[open] > summary { margin-bottom: 8px; }
+
+.wx-detail { border-collapse: collapse; font-size: 0.74rem; min-width: 100%; }
+.wx-detail th,
+.wx-detail td { padding: 5px 4px; text-align: center; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.wx-detail thead th { color: var(--ink-soft); font-weight: 700; line-height: 1.3; }
+.wx-detail thead th span { display: block; }
+.wx-detail thead th.is-sat { color: #5b86a6; }
+.wx-detail thead th.is-sun { color: #c0736a; }
+.wx-detail tbody th { text-align: left; color: var(--ink-soft); position: sticky; left: 0; background: var(--white); padding-right: 8px; }
+.wx-detail td { min-width: 40px; }
+.wx-detail td small { display: block; font-size: 0.6rem; color: var(--ink-soft); }
+.wx-detail .t-max { display: block; color: #c0736a; font-weight: 700; }
+.wx-detail .t-min { display: block; color: #5b86a6; }
+.wx-detail--compare td { font-size: 0.95rem; }
+.wx-detail .wx-ico { font-size: 1.1rem; }
+.wx-detail--compare td.is-empty { color: var(--border-strong); font-size: 0.8rem; }
+
+.wx-compare-btn { margin: 4px 0 10px; font-size: 0.82rem; padding: 9px 16px; }
+.wx-compare:empty { display: none; }
+
+.wx-ext { display: inline-block; margin-top: 6px; font-size: 0.8rem; font-weight: 700; color: var(--green-900); }
 
 .weather-disclaimer {
   margin-top: 28px;
@@ -1603,8 +1627,6 @@ body.is-flow-in [data-flow] .char {
   font-size: 0.78rem;
   line-height: 1.7;
 }
-
-.weather-area-chips { margin: 0 0 20px; }
 
 .weather-external-links {
   margin-top: 20px;

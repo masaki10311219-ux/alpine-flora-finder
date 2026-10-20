@@ -1,0 +1,15 @@
+[
+  { "name": "北海道", "short": "北海道", "labelX": 430, "labelY": 118 },
+  { "name": "東北", "short": "東北", "labelX": 395, "labelY": 235 },
+  { "name": "尾瀬・日光", "short": "尾瀬・日光", "labelX": 430, "labelY": 335 },
+  { "name": "上信越", "short": "上信越", "labelX": 290, "labelY": 300 },
+  { "name": "北アルプス", "short": "北アルプス", "labelX": 185, "labelY": 335 },
+  { "name": "白山・北陸", "short": "白山・北陸", "labelX": 150, "labelY": 400 },
+  { "name": "八ヶ岳・美ヶ原", "short": "八ヶ岳", "labelX": 420, "labelY": 408 },
+  { "name": "富士・奥秩父・丹沢", "short": "富士・丹沢", "labelX": 440, "labelY": 490 },
+  { "name": "南アルプス", "short": "南アルプス", "labelX": 345, "labelY": 560 },
+  { "name": "中央アルプス・御嶽", "short": "中央ア・御嶽", "labelX": 245, "labelY": 560 },
+  { "name": "近畿・中国", "short": "近畿・中国", "labelX": 195, "labelY": 480 },
+  { "name": "四国", "short": "四国", "labelX": 95, "labelY": 540 },
+  { "name": "九州・屋久島", "short": "九州", "labelX": 60, "labelY": 600 }
+]

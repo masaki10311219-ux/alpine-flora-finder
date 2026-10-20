@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>山の天気マップ | 山美和 -Yamabiyori-</title>
-<meta name="description" content="全国の主要な山域の天気を日本地図とランキングで表示。気象庁・ECMWF・GFS・ICONの天気モデルを比較でき、今／週末／週間の切り替えで週末の登山計画にも使えます。">
+<title>山の天気 | 山美和 -Yamabiyori-</title>
+<meta name="description" content="週末から2週間先まで、全国の山岳エリアの天気を地図とカレンダーで比較。天気の良いエリアからおすすめの山を選べ、お気に入りの山の天気もウォッチできます。">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
@@ -37,61 +37,62 @@
 
 <div class="ticker" aria-hidden="true">
   <div class="ticker__track">
-    <span>🌸 山美和 -Yamabiyori-</span><span>⛰️ 全国の山の天気をリアルタイムでチェック</span><span>🌿 高山植物図鑑</span><span>☀️ 今、晴れている山域はどこ？</span>
-    <span>🌸 山美和 -Yamabiyori-</span><span>⛰️ 全国の山の天気をリアルタイムでチェック</span><span>🌿 高山植物図鑑</span><span>☀️ 今、晴れている山域はどこ？</span>
+    <span>🌸 山美和 -Yamabiyori-</span><span>⛰️ 今週末、天気の良い山はどこ？</span><span>🌿 高山植物図鑑</span><span>📅 2週間先までの山の天気</span>
+    <span>🌸 山美和 -Yamabiyori-</span><span>⛰️ 今週末、天気の良い山はどこ？</span><span>🌿 高山植物図鑑</span><span>📅 2週間先までの山の天気</span>
   </div>
 </div>
 
 <main class="wrap weather-page">
 
-  <h1 class="ribbon">⛰️ 山の天気マップ</h1>
-  <p class="quiz-lead">全国の主要な山域の天気を日本地図とランキングでチェック。気象庁・ECMWF・GFS・ICONの天気モデルを比較でき、「今」「週末」「週間」の切り替えで週末の登山計画にも使えます。</p>
+  <h1 class="ribbon">⛰️ 山の天気</h1>
+  <p class="quiz-lead">まず天気の良いエリアを見つけて、次にそのエリアのおすすめの山を選ぶ。週末から2週間先までの山行計画に。</p>
 
-  <div class="weather-toolbar">
-    <div class="weather-mode-chips chip-row" role="group" aria-label="ランキング基準を選ぶ">
-      <button type="button" class="chip weather-mode is-active" data-mode="now">🌤️ 今</button>
-      <button type="button" class="chip weather-mode" data-mode="weekend">🏕️ 週末（次の土日）</button>
-      <button type="button" class="chip weather-mode" data-mode="week">📅 週間（7日間）</button>
-    </div>
-    <div class="weather-toolbar__right">
-      <p class="weather-updated" id="weather-updated"></p>
-      <button type="button" id="weather-refresh" class="btn btn--ghost">🔄 更新</button>
-    </div>
+  <div class="wx-toolbar">
+    <p class="wx-updated" id="wx-updated"></p>
+    <button type="button" id="wx-refresh" class="btn btn--ghost">🔄 更新</button>
   </div>
+  <p class="wx-status" id="wx-status" hidden></p>
 
-  <div class="weather-model-row">
-    <span class="weather-model-row__label">表示モデル:</span>
-    <div class="weather-model-chips chip-row" role="group" aria-label="表示する気象モデルを選ぶ">
-      <button type="button" class="chip weather-model-choice is-active" data-model="jma_seamless">気象庁(JMA)</button>
-      <button type="button" class="chip weather-model-choice" data-model="ecmwf_ifs025">ECMWF(欧州)</button>
-      <button type="button" class="chip weather-model-choice" data-model="gfs_seamless">GFS(米国)</button>
-      <button type="button" class="chip weather-model-choice" data-model="icon_seamless">ICON(独)</button>
-    </div>
-    <p class="weather-model-row__note">※「週末」「週間」のランキングは気象庁(JMA)データを使用します</p>
-  </div>
-
-  <p class="weather-status" id="weather-status" hidden></p>
-
-  <div class="weather-area-chips chip-row" id="weather-area-chips" role="group" aria-label="エリアで絞り込む"></div>
-
-  <section class="weather-map-section">
-    <div class="weather-map-wrap">
-      <svg id="weather-map" class="weather-map" viewBox="0 0 560 640" role="img" aria-label="全国の山域の天気マップ"></svg>
-      <p class="weather-map-hint">🖱️ マーカーをクリックすると、その場で天気の詳細とモデル比較が見られます</p>
-    </div>
-    <ul class="weather-map-legend" id="weather-map-legend" aria-label="天気の凡例"></ul>
+  <section class="wx-fav" aria-labelledby="wx-fav-title">
+    <h2 class="wx-step-title" id="wx-fav-title"><span class="wx-step-num wx-step-num--fav">★</span>お気に入りの山をウォッチ</h2>
+    <p class="wx-fav__empty" id="wx-fav-empty">山の ☆ を押すと、ここでいつでも天気をチェックできます（このブラウザに保存されます）。</p>
+    <div class="wx-mtn-list" id="wx-fav-list"></div>
   </section>
 
-  <div class="weather-detail-panel" id="weather-detail-panel" hidden>
-    <button type="button" class="weather-detail-panel__close" id="weather-detail-close" aria-label="閉じる">×</button>
-    <div id="weather-detail-body"></div>
-  </div>
+  <section class="wx-step" aria-labelledby="wx-step1-title">
+    <h2 class="wx-step-title" id="wx-step1-title"><span class="wx-step-num">1</span>天気の良いエリアを探す</h2>
+    <div class="wx-period chip-row" id="wx-period" role="group" aria-label="いつの天気で探すか"></div>
 
-  <h2 class="section-ribbon" id="weather-recommend-heading">🗾 今のおすすめ山域 TOP3</h2>
+    <div class="wx-overview">
+      <div class="wx-map-wrap">
+        <svg id="wx-map" class="wx-map" viewBox="0 0 560 640" role="img" aria-label="エリア別の天気マップ"></svg>
+      </div>
+      <div class="wx-rank-wrap">
+        <p class="wx-rank-caption">天気の良いエリア順（タップでそのエリアの山へ）</p>
+        <ol class="wx-rank" id="wx-area-rank"></ol>
+        <ul class="wx-legend" aria-label="凡例">
+          <li><span style="background:#4d7c62"></span>◎ 好天</li>
+          <li><span style="background:#6fa384"></span>○ まずまず</li>
+          <li><span style="background:#c9a46b"></span>△ いまいち</li>
+          <li><span style="background:#c98b83"></span>× 荒れ模様</li>
+        </ul>
+      </div>
+    </div>
 
-  <div class="weather-grid" id="weather-grid"></div>
+    <h3 class="wx-sub-title">エリア別 2週間カレンダー</h3>
+    <p class="wx-note">日付を押すとその日の天気でエリアを並べ替えます。行を押すとそのエリアの山を表示します。</p>
+    <div class="wx-scroll wx-calendar-wrap">
+      <table class="wx-calendar" id="wx-area-table"></table>
+    </div>
+  </section>
 
-  <p class="weather-disclaimer">※ データは<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>経由で取得した各気象機関の予報モデルによる推定です。現在天気は気象庁(MSM/GSM)・ECMWF・GFS・ICONの4モデルを比較でき、表示モデルを切り替えるとランキング・地図の色分けも切り替えたモデルの値で再計算されます。「週末」「週間」の日別予報は、日本の地形に対して高解像度な気象庁モデルのみで算出しています。先の日付ほど予報の精度は下がります。実際の山岳の天候は急変することがあります。登山の可否は直前に現地情報・気象庁の予報も必ず確認してください。<br>※ 地図の海岸線は<a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a>の公開データをもとにした簡易的なもので、正確な地形図ではありません。<br>※ この機能は通信が必要です。電波が無い場所では使えません。</p>
+  <section class="wx-step" id="wx-area-section" aria-labelledby="wx-step2-title">
+    <h2 class="wx-step-title" id="wx-step2-title"><span class="wx-step-num">2</span><span><span id="wx-area-title"></span>のおすすめの山</span></h2>
+    <p class="wx-area-note" id="wx-area-note"></p>
+    <div class="wx-mtn-list" id="wx-mtn-list"></div>
+  </section>
+
+  <p class="weather-disclaimer">※ 予報は<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>経由で取得した各気象機関の数値予報モデルによる、山頂付近の推定です。日本の地形に強い気象庁モデル（メソスケールモデルMSM・全球モデルGSM）を優先し、その予報期間（約11日）を過ぎた日はECMWFで補完しています。「好天」などの評価は天気・降水量・風速から算出した目安です。先の日付ほど予報の精度は下がり、山の天候は急変します。登山の可否は直前に現地情報・気象庁の予報も必ず確認してください。<br>※ 地図の海岸線は<a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a>の公開データをもとにした簡易的なものです。<br>※ 予報の取得には通信が必要です。一度取得した予報とお気に入りはこのブラウザに保存され、電波が無い場所でも前回の予報を表示できます。</p>
 
   <div class="weather-external-links">
     <p class="weather-external-links__title">より専門的な山岳気象情報はこちら</p>
