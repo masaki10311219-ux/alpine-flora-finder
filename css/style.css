@@ -1102,6 +1102,56 @@ body.is-flow-in [data-flow] .char {
 .quiz-feedback.is-correct { color: var(--green-900); }
 .quiz-feedback.is-wrong { color: #b3261e; }
 
+/* 花クイズ／山クイズの切り替え */
+.quiz-modes {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin: 0 auto 26px;
+  width: fit-content;
+  border: var(--line) solid var(--ink);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--white);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.quiz-modes a {
+  padding: 8px 20px;
+  font-family: var(--font-pop);
+  font-weight: 900;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.quiz-modes a + a { border-left: var(--line) solid var(--ink); }
+.quiz-modes a[aria-current="page"] { background: var(--pop-yellow); }
+.quiz-modes a:not([aria-current]):hover { background: var(--pop-cyan-soft); }
+
+/* 山クイズ */
+.mq-progress { max-width: 420px; margin: 0 auto 18px; text-align: left; }
+.mq-progress .mf-progress__item { grid-template-columns: auto 1fr auto; }
+.mq-cats { justify-content: center; margin-bottom: 16px; }
+.mq-cats .chip small { margin-left: 6px; font-size: 0.68rem; opacity: 0.8; }
+#mq-start .mf-label { margin: 6px 0 8px; }
+.mq-unsolved { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 20px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+.mq-unsolved input { width: 18px; height: 18px; accent-color: var(--ink); }
+.mq-cat-label {
+  display: inline-block;
+  margin: 0 0 10px;
+  padding: 1px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  background: var(--pop-cyan);
+  font-family: var(--font-pop);
+  font-weight: 900;
+  font-size: 0.76rem;
+}
+.mq-review .quiz-review__item { grid-template-columns: 26px minmax(0, 1fr); }
+.mq-review__mark { font-family: var(--font-pop); font-weight: 900; font-size: 1.1rem; line-height: 1.5; }
+.mq-review .quiz-review__item.is-wrong .mq-review__mark { color: #b3261e; }
+.mq-review .quiz-review__desc strong { display: block; }
+
 /* 答えたあとの花の説明 */
 .quiz-explain {
   text-align: left;

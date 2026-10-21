@@ -7,6 +7,7 @@
 ## 主な機能
 
 - 山の図鑑（`mountain.html?a=山域ID`）：山域（11区分）と月を選ぶと、その山域で見られる高山植物・キノコを一覧（写真カード表示にも切替可）で表示。出会えたものに「見た！」を付けて記録（種ごと・ブラウザに保存、写真のアップロードなし）
+- 山クイズ（`mountain-quiz.html`）：日本百名山の標高・都道府県・読み方・山系・国立公園、都道府県の最高峰、山の知識など全600問。答えるたびに解説、正解済みの記録つき
 - 山域ごとの花クイズ（`quiz.html?a=山域ID`）で予習。答えるたびに花の説明が出て、最後に出題された花の一覧でおさらいできる
 - 高山植物の検索：名前（部分一致）・花期・エリア・山名・花の色・50音インデックス
 - 種ごとの図鑑風詳細ページ（`plant.html`）：いきものメモ・注釈付き写真・愛のある紹介文・この花に会える山
@@ -22,6 +23,7 @@ mountain.html         山の図鑑（登る山の花とキノコの予習・復�
 plant.html            植物1種ごとの図鑑風詳細ページ（?id=で指定）
 weather.html          山の天気
 course-search.html    コース検索
+mountain-quiz.html    山クイズ（data/mountain-quiz.json から出題）
 quiz.html             花クイズ（?m=山名 でその山の花だけを出題）
 about.html            このサイトについて／画像出典
 privacy.html          プライバシーポリシー（AdSense審査に必要）
@@ -84,6 +86,10 @@ ads.txt               AdSense審査用（内容は取得後に追記）
 - 画像は `scientific`（学名）でWikimedia Commonsを検索して自動取得されるため、画像ファイルの用意は不要です。該当画像が無い種はプレースホルダーが表示されます。
 - `areas` / `colors` はサイト側でユニークな値を自動集計してフィルターUIを生成するため、新しい値を追加すればフィルターにも自動的に反映されます。
 - 山の図鑑との対応：`areas` が図鑑の山域（`js/mountain-flora.js` の `GUIDE_AREAS` の `plantAreas`）に含まれると、その山域の一覧に出ます。`peaks` がその山域の山名（または `PEAK_ALIASES` の呼び名）に一致すると、📍代表的な自生地として山名を表示します。
+
+## 山クイズの問題（data/mountain-quiz.json）
+
+`node tools/build-mountain-quiz.js` で生成します。元データは `data/hyakumeizan.json`（Wikipedia「日本百名山」の一覧表）と `data/pref-highest.json`（Wikipedia「各都道府県の最高峰」）、山の知識問題はスクリプト内に手書きしています。選択肢は乱数の種を固定して作るので、何度実行しても同じ問題集になります。
 
 ## キノコデータ（data/mushrooms.json）
 

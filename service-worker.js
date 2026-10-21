@@ -2,7 +2,7 @@
  * 山中など電波の無い場所でも図鑑・山の図鑑と一度表示した画像が使えるように、
  * アプリ本体とWikimedia Commonsの画像をキャッシュするService Worker。
  */
-const CACHE_VERSION = "v19";
+const CACHE_VERSION = "v20";
 const APP_SHELL_CACHE = `app-shell-${CACHE_VERSION}`;
 const IMAGE_CACHE = `wikimedia-images-${CACHE_VERSION}`;
 
@@ -13,6 +13,7 @@ const APP_SHELL_FILES = [
   "./privacy.html",
   "./plant.html",
   "./quiz.html",
+  "./mountain-quiz.html",
   "./topic.html",
   "./weather.html",
   "./course-search.html",
@@ -25,6 +26,7 @@ const APP_SHELL_FILES = [
   "./js/app.js",
   "./js/plant-detail.js",
   "./js/quiz.js",
+  "./js/mountain-quiz.js",
   "./js/topic-game.js",
   "./js/weather.js",
   "./js/mountain-flora.js",
@@ -39,6 +41,7 @@ const APP_SHELL_FILES = [
   "./data/japan-outline.json",
   "./data/areas.json",
   "./data/mushrooms.json",
+  "./data/mountain-quiz.json",
   "./manifest.json",
   "./icon.svg",
   "./images/logo.svg",
