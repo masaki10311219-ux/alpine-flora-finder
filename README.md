@@ -53,7 +53,7 @@ ads.txt               AdSense審査用（内容は取得後に追記）
    - 申し込み時点では画像の著作権処理（Wikimedia Commonsのクレジット表示）ができている状態にしておくと安心です
 2. 発行されたパブリッシャーID・広告ユニットコードを取得
 3. `ads.txt` に指定された1行を追記
-4. `index.html` 内の `<div class="ad-slot ...">` を、AdSenseが発行する `<ins class="adsbygoogle">` タグに差し替える
+4. `index.html` 内の `<div class="ad-slot ...">` を、AdSenseが発行する `<ins class="adsbygoogle">` タグに差し替える（`ad-slot` の枠は差し替えるまで CSS で非表示にしています）
 
 ### 2. GitHub Pages で公開する
 
