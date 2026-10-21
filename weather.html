@@ -7,12 +7,12 @@
 <meta name="description" content="週末から2週間先まで、全国の山岳エリアの天気を地図とカレンダーで比較。天気の良いエリアからおすすめの山を選べ、お気に入りの山の天気もウォッチできます。">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon.svg">
-<meta name="theme-color" content="#2f6b42">
+<link rel="apple-touch-icon" href="images/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#fa7896">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://api.open-meteo.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800;900&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="paper">
@@ -20,13 +20,12 @@
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="logo" href="./">
-      <span class="logo-mark" aria-hidden="true">🌸</span>
-      <span class="logo-text">山美和<span class="logo-sub">-Yamabiyori-</span></span>
+      <img class="logo-img" src="images/logo.svg" alt="山美和 -Yamabiyori-" width="88" height="55">
     </a>
     <nav class="site-nav">
       <a href="mountain.html">山の図鑑</a>
       <a href="index.html#search">花を探す</a>
-      <a href="weather.html">山の天気</a>
+      <a href="weather.html" aria-current="page">山の天気</a>
       <a href="course-search.html">コース検索</a>
       <a href="quiz.html">花クイズ</a>
       <a href="topic.html">山トークカード</a>
@@ -71,10 +70,10 @@
         <p class="wx-rank-caption">天気の良いエリア順（タップでそのエリアの山へ）</p>
         <ol class="wx-rank" id="wx-area-rank"></ol>
         <ul class="wx-legend" aria-label="凡例">
-          <li><span style="background:#4d7c62"></span>◎ 好天</li>
-          <li><span style="background:#6fa384"></span>○ まずまず</li>
-          <li><span style="background:#c9a46b"></span>△ いまいち</li>
-          <li><span style="background:#c98b83"></span>× 荒れ模様</li>
+          <li><span style="background:#14c9d4"></span>◎ 好天</li>
+          <li><span style="background:#61a7fd"></span>○ まずまず</li>
+          <li><span style="background:#f2d600"></span>△ いまいち</li>
+          <li><span style="background:#fa7896"></span>× 荒れ模様</li>
         </ul>
       </div>
     </div>
@@ -121,7 +120,6 @@
   </div>
 </footer>
 
-<script src="js/bg-blobs.js"></script>
 <script src="js/weather.js"></script>
 <script src="js/register-sw.js"></script>
 </body>

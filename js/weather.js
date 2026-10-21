@@ -35,10 +35,10 @@
   };
 
   const GRADES = [
-    { max: 30, mark: "◎", label: "好天", color: "#4d7c62", tint: "#d9eadd" },
-    { max: 70, mark: "○", label: "まずまず", color: "#6fa384", tint: "#e8f2eb" },
-    { max: 120, mark: "△", label: "いまいち", color: "#c9a46b", tint: "#f6ecdb" },
-    { max: Infinity, mark: "×", label: "荒れ模様", color: "#c98b83", tint: "#f5e1de" }
+    { max: 30, mark: "◎", label: "好天", color: "#14c9d4", tint: "#b8f6f9" },
+    { max: 70, mark: "○", label: "まずまず", color: "#61a7fd", tint: "#dbeaff" },
+    { max: 120, mark: "△", label: "いまいち", color: "#f2d600", tint: "#fff7a8" },
+    { max: Infinity, mark: "×", label: "荒れ模様", color: "#fa7896", tint: "#ffd3dd" }
   ];
   const GOOD_DAY_MAX = 70;
 
@@ -346,7 +346,7 @@
 
       if (!inside) {
         el("line", { x1: cx, y1: cy, x2: a.labelX, y2: a.labelY, class: "wx-map__leader" }, lines);
-        el("circle", { cx, cy, r: selected ? 6 : 4.5, fill: grade.color, stroke: "#fff", "stroke-width": 1.5 }, lines);
+        el("circle", { cx, cy, r: selected ? 6 : 4.5, fill: grade.color, stroke: "#1b1530", "stroke-width": 1.5 }, lines);
       }
 
       const g = el("g", {
@@ -354,7 +354,7 @@
         tabindex: 0, role: "button",
         "aria-label": `${a.name}：${grade.label}`
       }, boxes);
-      el("rect", { x: a.labelX - W / 2, y: a.labelY - H / 2, width: W, height: H, rx: 10, fill: selected ? grade.tint : "#fff", stroke: grade.color, "stroke-width": selected ? 3.5 : 2 }, g);
+      el("rect", { x: a.labelX - W / 2, y: a.labelY - H / 2, width: W, height: H, rx: 10, fill: grade.tint, stroke: "#1b1530", "stroke-width": selected ? 4 : 2 }, g);
       const name = el("text", { x: a.labelX, y: a.labelY - 8, class: "wx-map__name" }, g);
       name.textContent = a.short;
       const sub = el("text", { x: a.labelX, y: a.labelY + 16, class: "wx-map__sub" }, g);
@@ -573,7 +573,7 @@
   }
 
   function gradeFor(score) {
-    if (score == null) return { mark: "―", label: "データなし", color: "#c9c3ba", tint: "#f3f0ec" };
+    if (score == null) return { mark: "―", label: "データなし", color: "#c9bfc6", tint: "#f4eef2" };
     return GRADES.find((g) => score <= g.max);
   }
 

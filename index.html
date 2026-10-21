@@ -8,11 +8,11 @@
 <link rel="preconnect" href="https://commons.wikimedia.org">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon.svg">
-<meta name="theme-color" content="#2f6b42">
+<link rel="apple-touch-icon" href="images/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#fa7896">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800;900&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="paper">
@@ -20,8 +20,7 @@
 <header class="site-header">
   <div class="wrap header-inner">
     <a class="logo" href="./">
-      <span class="logo-mark" aria-hidden="true">🌸</span>
-      <span class="logo-text">山美和<span class="logo-sub">-Yamabiyori-</span></span>
+      <img class="logo-img" src="images/logo.svg" alt="山美和 -Yamabiyori-" width="88" height="55">
     </a>
     <nav class="site-nav">
       <a href="mountain.html">山の図鑑</a>
@@ -45,8 +44,16 @@
 <section class="hero">
   <div class="wrap hero__grid">
     <div class="hero__text">
-      <p class="hero__eyebrow" data-flow>Yamabiyori</p>
-      <h1 data-flow>登る山の花を、<br>行く前に予習。帰って復習。</h1>
+      <div class="hero__logo">
+        <img src="images/logo.svg" alt="山美和 -Yamabiyori-" width="276" height="172">
+      </div>
+      <ul class="hero__labels" aria-label="できること">
+        <li>📖 登る前に予習</li>
+        <li>✓ 帰って復習</li>
+        <li>🌸 高山植物 216種</li>
+        <li>🍄 キノコ 30種</li>
+      </ul>
+      <h1 class="pop-title" data-flow>登る山の花を、<br>行く前に予習。<br>帰って復習。</h1>
       <p>山を選ぶと、その山・その時期に見られる高山植物とキノコが一覧に。出会えた花には「見た！」を付けて、自分だけの山行記録にできます。</p>
       <div class="hero__cta-row">
         <a href="mountain.html" class="btn btn--cta">📖 登る山の花を見る</a>
@@ -54,12 +61,15 @@
         <a href="course-search.html" class="btn btn--ghost">⏱️ コースを探す</a>
       </div>
     </div>
-    <div class="hero__mosaic" aria-hidden="true">
+    <div class="hero__stage" aria-hidden="true">
+    <span class="hero__sticker">CHECK!</span>
+    <div class="hero__mosaic">
       <div class="hero__tile hero__tile--a"><img data-hero-scientific="Dicentra peregrina" alt="" loading="eager"></div>
       <div class="hero__tile hero__tile--b"><img data-hero-scientific="Geum pentapetalum" alt="" loading="eager"></div>
       <div class="hero__tile hero__tile--c"><img data-hero-scientific="Hemerocallis dumortieri var. esculenta" alt="" loading="eager"></div>
       <div class="hero__tile hero__tile--d"><img data-hero-scientific="Campanula lasiocarpa" alt="" loading="eager"></div>
       <div class="hero__tile hero__tile--e"><img data-hero-scientific="Fritillaria camschatcensis" alt="" loading="eager"></div>
+    </div>
     </div>
   </div>
 </section>
@@ -187,7 +197,6 @@
   </article>
 </template>
 
-<script src="js/bg-blobs.js"></script>
 <script src="js/wikimedia.js"></script>
 <script src="js/text-flow.js"></script>
 <script src="js/hero-mosaic.js"></script>
