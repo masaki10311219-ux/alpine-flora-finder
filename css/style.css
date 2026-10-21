@@ -59,7 +59,7 @@
 
 body {
   margin: 0;
-  background: var(--pop-pink);
+  background: var(--white);
   color: var(--ink);
   line-height: 1.8;
 }
@@ -74,11 +74,9 @@ a { color: inherit; }
   padding: 0 20px;
 }
 
-/* ===== 背景（全ページ共通・ピンクの水玉） ===== */
+/* ===== 背景（全ページ共通・白） ===== */
 .paper {
-  background-color: var(--pop-pink);
-  background-image: radial-gradient(rgba(255, 255, 255, 0.5) 1.6px, transparent 2px);
-  background-size: 14px 14px;
+  background-color: var(--white);
 }
 
 /* ===== マーキー・ティッカー（インク色の帯） ===== */
@@ -216,16 +214,13 @@ a { color: inherit; }
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 4px 16px;
   margin: 0 0 18px;
   padding: 0;
 }
 
 .hero__labels li {
-  background: var(--white);
-  border: 2px solid var(--ink);
-  border-radius: 6px;
-  padding: 1px 10px;
+  padding: 0;
   font-family: var(--font-pop);
   font-weight: 800;
   font-size: 0.82rem;
@@ -278,39 +273,8 @@ body.is-flow-in [data-flow] .char {
 }
 
 /* ===== ヒーローの花写真モザイク（青い枠を重ねた台紙の上に、雲形の写真） ===== */
-.hero__stage {
-  position: relative;
-  padding: 26px 22px 30px;
-}
+.hero__stage { position: relative; }
 
-.hero__stage::before,
-.hero__stage::after {
-  content: "";
-  position: absolute;
-  border: var(--line) solid var(--ink);
-  border-radius: 6px;
-  z-index: 0;
-}
-
-.hero__stage::before { inset: 0 18px 18px 0; background: var(--pop-blue); }
-.hero__stage::after { inset: 18px 0 0 18px; background: transparent; }
-
-.hero__sticker {
-  position: absolute;
-  z-index: 3;
-  top: -14px;
-  left: -10px;
-  background: var(--pop-yellow);
-  border: var(--line) solid var(--ink);
-  border-radius: 8px;
-  padding: 2px 12px;
-  font-family: var(--font-pop);
-  font-weight: 900;
-  font-size: 0.9rem;
-  letter-spacing: 0.06em;
-  transform: rotate(-8deg);
-  box-shadow: 3px 3px 0 var(--ink);
-}
 
 .hero__mosaic {
   position: relative;
@@ -351,7 +315,6 @@ body.is-flow-in [data-flow] .char {
 .hero__tile--e { grid-column: 4 / 5; grid-row: 2 / 3; }
 
 @media (max-width: 480px) {
-  .hero__stage { padding: 18px 14px 22px; }
   .hero__mosaic { aspect-ratio: 4 / 3; gap: 8px; }
   .hero__tile--c, .hero__tile--d { border-radius: 12px; }
   .pop-title { -webkit-text-stroke-width: 6px; text-shadow: 3px 4px 0 var(--ink); }
@@ -443,13 +406,9 @@ body.is-flow-in [data-flow] .char {
 
 /* ===== Filters ===== */
 .filters {
-  background: var(--white);
-  border: var(--line) solid var(--ink);
-  border-radius: var(--radius);
   padding: 24px 20px 20px;
   position: sticky;
   top: 88px;
-  box-shadow: var(--frame-shadow);
 }
 
 @media (max-width: 800px) {
@@ -464,29 +423,25 @@ body.is-flow-in [data-flow] .char {
 .ribbon,
 .section-ribbon {
   position: relative;
-  display: inline-block;
-  background: var(--pop-cyan);
+  display: inline;
   color: var(--ink);
   font-family: var(--font-pop);
   font-weight: 900;
-  border: var(--line) solid var(--ink);
-  border-radius: 14px;
-  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, transparent 62%, var(--pop-cyan) 62%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0 4px;
 }
 
 .ribbon {
-  padding: 8px 24px;
-  font-size: 1.45rem;
-  line-height: 1.35;
-  transform: rotate(-1.5deg);
+  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  line-height: 1.4;
 }
 
 .section-ribbon {
-  font-size: 1rem;
-  padding: 5px 16px;
+  font-size: 1.15rem;
   margin: 0;
-  background: var(--white);
-  border-radius: 6px;
+  background: linear-gradient(180deg, transparent 62%, var(--pop-yellow) 62%);
 }
 
 .ribbon__sub {
@@ -751,12 +706,8 @@ body.is-flow-in [data-flow] .char {
 /* ===== いきものメモ風の情報ボックス ===== */
 .info-memo {
   position: relative;
-  background: var(--white);
-  border: var(--line) solid var(--ink);
-  border-radius: var(--radius-sm);
   padding: 22px 20px 16px;
   margin-top: 14px;
-  box-shadow: var(--frame-shadow);
 }
 
 .info-memo__tab {
@@ -819,7 +770,7 @@ body.is-flow-in [data-flow] .char {
   border-radius: var(--radius);
   overflow: hidden;
   border: 3px solid var(--ink);
-  box-shadow: var(--frame-shadow);
+  box-shadow: none;
   aspect-ratio: 4 / 3;
   background: var(--pop-cyan-soft);
 }
@@ -970,10 +921,6 @@ body.is-flow-in [data-flow] .char {
   max-width: 760px;
   margin: 40px auto 72px;
   padding: 36px 32px 44px;
-  background: var(--white);
-  border: var(--line) solid var(--ink);
-  border-radius: var(--radius);
-  box-shadow: var(--frame-shadow);
 }
 
 @media (max-width: 800px) {
@@ -1037,10 +984,6 @@ body.is-flow-in [data-flow] .char {
 }
 
 .quiz-card {
-  background: var(--white);
-  border: var(--line) solid var(--ink);
-  border-radius: var(--radius);
-  box-shadow: var(--frame-shadow);
   padding: 28px 24px;
   margin-bottom: 20px;
 }
@@ -1155,10 +1098,6 @@ body.is-flow-in [data-flow] .char {
 /* 答えたあとの花の説明 */
 .quiz-explain {
   text-align: left;
-  background: var(--white);
-  border: var(--line) solid var(--ink);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
   padding: 16px 18px;
   margin: 0 0 18px;
 }
@@ -1180,10 +1119,6 @@ body.is-flow-in [data-flow] .char {
   list-style: none;
   margin: 14px 0 0;
   padding: 0;
-  background: var(--white);
-  border: var(--line) solid var(--ink);
-  border-radius: var(--radius);
-  box-shadow: var(--frame-shadow);
   overflow: hidden;
 }
 
@@ -1236,7 +1171,7 @@ body.is-flow-in [data-flow] .char {
   background: var(--white);
   border: 3px solid var(--ink);
   border-radius: 28px;
-  box-shadow: var(--frame-shadow);
+  box-shadow: 5px 5px 0 var(--ink);
   padding: 48px 28px;
   min-height: 220px;
   display: flex;
@@ -1300,10 +1235,6 @@ body.is-flow-in [data-flow] .char {
 
 .wx-step,
 .wx-fav {
-  background: var(--white);
-  border: var(--line) solid var(--ink);
-  border-radius: var(--radius);
-  box-shadow: var(--frame-shadow);
   padding: 22px 22px 24px;
   margin-bottom: 34px;
   scroll-margin-top: 90px;
@@ -1637,11 +1568,7 @@ body.is-flow-in [data-flow] .char {
 .wx-ext { display: inline-block; margin-top: 6px; font-size: 0.8rem; font-weight: 800; color: var(--ink); }
 
 .weather-disclaimer {
-  margin-top: 28px;
-  padding: 14px 18px;
-  background: var(--white);
-  border: 2px solid var(--ink);
-  border-radius: var(--radius-sm);
+  margin-top: 36px;
   color: var(--ink-soft);
   font-size: 0.78rem;
   line-height: 1.7;
@@ -1671,15 +1598,11 @@ body.is-flow-in [data-flow] .char {
 
 .mf-controls,
 .mf-summary {
-  background: var(--white);
-  border: var(--line) solid var(--ink);
-  border-radius: var(--radius);
-  box-shadow: var(--frame-shadow);
   padding: 18px 20px;
   margin-bottom: 26px;
 }
 
-.mf-summary { background: linear-gradient(var(--pop-yellow-soft), var(--white) 90px); }
+
 
 .mf-label { display: block; margin: 0 0 8px; font-size: 0.88rem; font-weight: 900; font-family: var(--font-pop); }
 .mf-controls .mf-label:not(:first-child) { margin-top: 14px; }
@@ -1787,10 +1710,6 @@ body.is-flow-in [data-flow] .char {
 .mf-rows {
   display: flex;
   flex-direction: column;
-  background: var(--white);
-  border: var(--line) solid var(--ink);
-  border-radius: var(--radius);
-  box-shadow: var(--frame-shadow);
   overflow: hidden;
 }
 
@@ -1937,7 +1856,7 @@ body.is-flow-in [data-flow] .char {
 .mf-seen.is-on { border: 2px solid var(--ink); background: var(--pop-yellow); color: var(--ink); box-shadow: 2px 2px 0 var(--ink); }
 .mf-seen small { margin-left: 8px; font-weight: 500; opacity: 0.9; }
 
-.mf-empty { padding: 24px; text-align: center; color: var(--ink); font-weight: 700; background: var(--white); border: 2px dashed var(--ink); border-radius: var(--radius); }
+.mf-empty { padding: 24px; text-align: center; color: var(--ink); font-weight: 700; }
 .mf-empty .chip { margin-left: 6px; }
 
 @media (max-width: 560px) {
@@ -1957,10 +1876,6 @@ body.is-flow-in [data-flow] .char {
 .course-page { padding-top: 48px; padding-bottom: 56px; }
 
 .course-filters {
-  background: var(--white);
-  border: var(--line) solid var(--ink);
-  border-radius: var(--radius);
-  box-shadow: var(--frame-shadow);
   padding: 22px 24px;
   display: flex;
   flex-wrap: wrap;
@@ -2066,3 +1981,51 @@ body.is-flow-in [data-flow] .char {
 }
 
 .course-card__link { margin-top: auto; }
+
+/* ===== 囲みを使わないレイアウト（セクションは余白と区切り線で分ける） ===== */
+.filters,
+.course-filters,
+.mf-controls,
+.mf-summary,
+.wx-step,
+.wx-fav { padding-left: 0; padding-right: 0; }
+.mf-summary,
+.wx-step,
+.wx-fav { border-top: 2px solid var(--ink); padding-top: 22px; }
+.wx-fav { border-top: none; padding-top: 0; }
+.filters { padding-top: 0; }
+.page { margin-top: 0; }
+.quiz-card { padding: 8px 0 4px; }
+.quiz-explain { padding: 14px 0 0; border-top: 2px dashed var(--ink); text-align: left; }
+.mf-row { padding-left: 0; padding-right: 0; }
+.quiz-review__item { padding-left: 0; padding-right: 0; }
+.quiz-review__item.is-wrong { background: transparent; }
+.mf-row + .mf-row,
+.quiz-review__item + .quiz-review__item { border-top: 1.5px solid var(--border); }
+.wx-mtn {
+  border: none;
+  border-bottom: 1.5px solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+.wx-mtn.is-recommend { background: none; }
+.mf-card.is-seen { box-shadow: 5px 5px 0 var(--ink); }
+.info-memo { padding: 6px 0 0; margin-top: 18px; }
+.info-memo__tab { position: static; display: inline-block; margin-bottom: 4px; }
+.plant-title { margin: 24px 0 0; font-size: inherit; font-weight: inherit; }
+.plant-title .ribbon__sub { display: block; margin-top: 6px; font-size: 0.8rem; font-weight: 700; color: var(--ink-soft); }
+
+/* 広告枠：AdSenseのタグに差し替えるまでは表示しない */
+.ad-slot { display: none; }
+
+/* カードは細いフチだけ。影はマウスを乗せたときだけ */
+.card,
+.mf-card,
+.course-card { box-shadow: none; border-width: 2px; }
+.card:hover,
+.course-card:hover { box-shadow: 5px 5px 0 var(--ink); }
+.mf-card.is-seen { box-shadow: none; }
+.card__media,
+.mf-card__media { border-bottom-width: 2px; }

@@ -52,7 +52,7 @@
   function renderPlant(plant, index) {
     document.title = `${plant.name}（${plant.kanji || plant.scientific}）| 山美和 -Yamabiyori-`;
     els.name.textContent = plant.name;
-    els.kanji.textContent = plant.kanji ? `${plant.kanji} / ${plant.scientific}` : plant.scientific;
+    els.kanji.textContent = plant.kanji || "";
     els.scientific.textContent = plant.scientific;
 
     els.photo.alt = `${plant.name}（${plant.scientific}）の写真`;
