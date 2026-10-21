@@ -1,7 +1,8 @@
 /**
  * 高山植物クイズ。data/plants.json からランダムに問題を生成する（固定パターンは持たない）。
  * 出題形式：①写真→名前 ②名前→開花時期 ③名前→エリア　の3種類をランダムに出す。
- * quiz.html?m=山名 で開くと、その山で見られる花だけを正解として出題する（登る前の予習用）。
+ * quiz.html?a=山域ID で開くと、その山域で見られる花だけを正解として出題する（登る前の予習用。旧URLの ?m=山名 はその山の山域）。
+ * 答えたあとは、その花の説明（花期・見られる山域・紹介文）を表示し、最後に出た花の一覧でおさらいできる。
  */
 (() => {
   const BEST_KEY = "alpineFloraQuiz.best";
@@ -31,7 +32,10 @@
     retryBtn: document.getElementById("quiz-retry"),
     title: document.getElementById("quiz-title"),
     lead: document.getElementById("quiz-lead"),
-    scope: document.getElementById("quiz-scope")
+    scope: document.getElementById("quiz-scope"),
+    explain: document.getElementById("quiz-explain"),
+    review: document.getElementById("quiz-review"),
+    listLink: document.getElementById("quiz-list-link")
   };
 
   let plants = [];
@@ -43,6 +47,19 @@
   let current = 0;
   let score = 0;
   let answered = false;
+  let deck = [];
+
+  // 同じ花がなるべく続けて出ないよう、正解候補をシャッフルした山から順に引く
+  function drawTarget() {
+    if (!deck.length) deck = shuffle(targets);
+    return deck.pop();
+  }
+
+  // 植物データのエリア → 図鑑の山域名（「南アルプス」と「中央・南アルプス」のような重複をまとめる）
+  function areaNames(plant) {
+    const toName = typeof MountainFlora !== "undefined" ? MountainFlora.areaNameForPlantArea : (a) => a;
+    return [...new Set(plant.areas.map(toName))];
+  }
 
   function monthLabel(months) {
     if (!months || !months.length) return "不明";
@@ -88,7 +105,7 @@
   function buildQuestion() {
     const types = ["photo-name", "name-month", "name-area"];
     const type = types[Math.floor(Math.random() * types.length)];
-    const correct = targets[Math.floor(Math.random() * targets.length)];
+    const correct = drawTarget();
     const pool = distractorPool(correct);
 
     if (type === "photo-name") {
@@ -119,14 +136,21 @@
     }
 
     // name-area
-    const correctArea = correct.areas[Math.floor(Math.random() * correct.areas.length)];
-    const candidates = pool.filter(p => !p.areas.includes(correctArea));
+    const correctAreas = areaNames(correct);
+    const correctArea = correctAreas[Math.floor(Math.random() * correctAreas.length)];
     const distractorAreas = [];
-    shuffle(candidates).some(p => {
-      const area = p.areas[0];
-      if (area && !distractorAreas.includes(area)) distractorAreas.push(area);
+    shuffle(pool.length >= 3 ? pool : plants).some(p => {
+      shuffle(areaNames(p)).some(area => {
+        if (!correctAreas.includes(area) && !distractorAreas.includes(area)) distractorAreas.push(area);
+        return true;
+      });
       return distractorAreas.length >= 3;
     });
+    if (distractorAreas.length < 3) {
+      shuffle([...new Set(plants.flatMap(areaNames))]).forEach(area => {
+        if (distractorAreas.length < 3 && !correctAreas.includes(area) && !distractorAreas.includes(area)) distractorAreas.push(area);
+      });
+    }
     const options = shuffle([
       { label: correctArea, correct: true },
       ...distractorAreas.map(label => ({ label, correct: false }))
@@ -140,6 +164,7 @@
   }
 
   function startQuiz() {
+    deck = [];
     quiz = Array.from({ length: questionCount }, buildQuestion);
     current = 0;
     score = 0;
@@ -156,6 +181,7 @@
     els.scoreText.textContent = `正解数：${score}`;
     els.question.textContent = q.prompt;
     els.feedback.hidden = true;
+    els.explain.hidden = true;
     els.nextBtn.hidden = true;
 
     // どの出題形式でも必ず写真を表示する（名前を当てる問題では名前だけ隠す）
@@ -187,6 +213,7 @@
   function selectAnswer(btn, opt) {
     if (answered) return;
     answered = true;
+    quiz[current].isCorrect = opt.correct;
 
     const buttons = Array.from(els.options.children);
     buttons.forEach(b => b.disabled = true);
@@ -206,8 +233,47 @@
 
     els.scoreText.textContent = `正解数：${score}`;
     els.feedback.hidden = false;
+    showExplanation(quiz[current].correct);
     els.nextBtn.hidden = false;
     els.nextBtn.textContent = current + 1 < quiz.length ? "次の問題へ →" : "結果を見る →";
+  }
+
+  // 答えたあとに出す、その花の説明
+  function showExplanation(p) {
+    els.subject.hidden = false;
+    els.subject.textContent = `${p.name}（${p.kanji || p.scientific}）`;
+    const areas = areaNames(p);
+    els.explain.innerHTML = `
+      <p class="quiz-explain__name">${escapeHtml(p.name)}<small>${escapeHtml([p.kanji, p.family].filter(Boolean).join(" ・ "))}</small></p>
+      <dl class="quiz-explain__facts">
+        <dt>花期</dt><dd>${escapeHtml(monthLabel(p.months))}</dd>
+        <dt>見られる山域</dt><dd>${escapeHtml(areas.join("、") || "―")}</dd>
+        ${p.colors && p.colors.length ? `<dt>花の色</dt><dd>${escapeHtml(p.colors.join("、"))}</dd>` : ""}
+      </dl>
+      <p class="quiz-explain__desc">${escapeHtml(p.desc)}</p>
+      ${p.story ? `<details class="quiz-explain__more"><summary>もっと知る</summary><p>${escapeHtml(p.story)}</p></details>` : ""}
+      <a class="quiz-explain__link" href="plant.html?id=${encodeURIComponent(p.id)}" target="_blank" rel="noopener">図鑑ページを開く ↗</a>`;
+    els.explain.hidden = false;
+  }
+
+  // 結果画面：今回出た花の一覧（同じ花が複数回出たら1つにまとめる）
+  function renderReview() {
+    const seen = new Map();
+    quiz.forEach(q => {
+      const prev = seen.get(q.correct.id);
+      seen.set(q.correct.id, { plant: q.correct, ok: (prev ? prev.ok : true) && q.isCorrect });
+    });
+    els.review.innerHTML = [...seen.values()].map(({ plant: p, ok }) => `
+      <li class="quiz-review__item${ok ? "" : " is-wrong"}">
+        <span class="quiz-review__thumb"><img alt="" data-sci="${escapeHtml(p.scientific)}" src="${WikimediaImages.FALLBACK_IMG}"></span>
+        <span class="quiz-review__main">
+          <span class="quiz-review__head"><span class="quiz-review__mark">${ok ? "○" : "×"}</span><a href="plant.html?id=${encodeURIComponent(p.id)}">${escapeHtml(p.name)}</a><small>${escapeHtml(monthLabel(p.months))}</small></span>
+          <span class="quiz-review__desc">${escapeHtml(p.desc)}</span>
+        </span>
+      </li>`).join("");
+    els.review.querySelectorAll("img[data-sci]").forEach(img => {
+      WikimediaImages.fetchImage(img.dataset.sci).then(({ url }) => { img.src = url; });
+    });
   }
 
   function nextQuestion() {
@@ -233,6 +299,7 @@
     else if (rate >= 0.5) comment = "なかなかいい調子。図鑑を見返してもう一回！";
     else comment = "これから覚えていきましょう。図鑑ページも見てみてね。";
     els.resultComment.textContent = comment;
+    renderReview();
 
     const best = loadBest();
     const key = bestKey(total, difficulty);
@@ -312,32 +379,35 @@
     updateBestOnStartScreen();
   }
 
-  // ?m=山名 があれば、その山で見られる花だけを正解として出題する
+  // ?a=山域ID（旧URLは ?m=山名）があれば、その山域で見られる花だけを正解として出題する
   async function applyMountainScope() {
-    const name = new URLSearchParams(location.search).get("m");
-    if (!name || typeof MountainFlora === "undefined") return;
-    let mountain;
+    if (typeof MountainFlora === "undefined") return;
+    const params = new URLSearchParams(location.search);
+    if (!params.get("a") && !params.get("m")) return;
+    let area;
     try {
-      const { mountains } = await MountainFlora.load();
-      mountain = mountains.find((m) => m.name === name);
+      const { areas, mountains } = await MountainFlora.load();
+      area = MountainFlora.areaById(areas, params.get("a"))
+        || MountainFlora.areaForMountain(areas, mountains.find((m) => m.name === params.get("m")));
     } catch (err) {
       console.error(err);
     }
-    if (!mountain) return;
+    if (!area) return;
 
-    const back = `<a href="${MountainFlora.pageUrl(mountain)}">← ${escapeHtml(mountain.name)}の山の図鑑へ</a>`;
-    const own = MountainFlora.plantsFor(mountain, plants).map((e) => e.item);
-    els.scope.hidden = false;
+    const listUrl = MountainFlora.pageUrl(area);
+    const own = MountainFlora.plantsForArea(area, plants).map((e) => e.item);
     if (!own.length) {
-      els.scope.innerHTML = `${escapeHtml(mountain.name)}の花のデータがまだ無いため、全国の高山植物から出題します。 ${back}`;
+      els.scope.innerHTML = `${escapeHtml(area.name)}の花のデータがまだ無いため、全国の高山植物から出題します。`;
       return;
     }
     targets = own;
-    scopeKey = `${mountain.name}:`;
-    els.title.textContent = `🌸 ${mountain.name}の花クイズ`;
-    els.lead.textContent = `${mountain.name}で見られる${own.length}種の花から出題します。登る前の予習にどうぞ。`;
-    els.scope.innerHTML = `${back} ・ <a href="quiz.html">全国の花から出題する</a>`;
-    document.title = `${mountain.name}の花クイズ | 山美和 -Yamabiyori-`;
+    scopeKey = `area:${area.id}:`;
+    els.title.textContent = `🌸 ${area.name}の花クイズ`;
+    els.lead.textContent = `${area.name}で見られる${own.length}種の花から出題します。登る前の予習にどうぞ。`;
+    els.scope.innerHTML = `<a href="${listUrl}">📖 ${escapeHtml(area.name)}の花を一覧で見る</a> ・ <a href="quiz.html">全国の花から出題する</a>`;
+    els.listLink.href = listUrl;
+    els.listLink.textContent = `📖 ${area.name}の花の一覧`;
+    document.title = `${area.name}の花クイズ | 山美和 -Yamabiyori-`;
   }
 
   function escapeHtml(str) {

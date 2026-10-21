@@ -82,15 +82,19 @@
 
   async function renderMountains(plant) {
     try {
-      const { mountains } = await MountainFlora.load();
-      const list = MountainFlora.mountainsForPlant(plant, mountains);
+      const { areas } = await MountainFlora.load();
+      const list = MountainFlora.areasForPlant(plant, areas);
       els.mountainsEmpty.hidden = list.length > 0;
-      els.mountains.innerHTML = list.map(({ mountain, here }) => {
+      els.mountains.innerHTML = list.map(({ area, peaks }) => {
         const a = document.createElement("a");
-        a.className = "chip" + (here ? " is-here" : "");
-        a.href = MountainFlora.pageUrl(mountain);
-        a.textContent = here ? `★ ${mountain.name}` : mountain.name;
-        a.title = here ? "代表的な自生地として知られる山" : `${mountain.area}のエリアで見られる目安`;
+        a.className = "chip plant-area-chip" + (peaks.length ? " is-here" : "");
+        a.href = MountainFlora.pageUrl(area);
+        a.textContent = area.name;
+        if (peaks.length) {
+          const small = document.createElement("small");
+          small.textContent = `📍 ${peaks.join("・")}`;
+          a.appendChild(small);
+        }
         return a.outerHTML;
       }).join("");
     } catch (err) {

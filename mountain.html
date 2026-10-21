@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>山の図鑑 | 山美和 -Yamabiyori-</title>
-<meta name="description" content="登る山を選ぶと、その山・その月に見られる高山植物とキノコが一覧に。山に行く前の予習に、帰ってきたら「見た！」を記録して復習に。">
+<meta name="description" content="山域と月を選ぶと、その時期に見られる高山植物とキノコが一覧に。山に行く前の予習に、帰ってきたら「見た！」を記録して復習に。">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="images/icons/apple-touch-icon.png">
@@ -44,14 +44,14 @@
 <main class="wrap mf-page">
 
   <h1 class="ribbon">📖 山の図鑑</h1>
-  <p class="quiz-lead">登る山を選ぶと、その山・その時期に見られる高山植物とキノコが一覧に。行く前の予習に、帰ってきたら「見た！」を付けて復習に。</p>
+  <p class="quiz-lead">山域と月を選ぶと、その山域・その時期に見られる高山植物とキノコが一覧に。行く前の予習に、帰ってきたら「見た！」を付けて復習に。</p>
 
   <p class="wx-status is-error" id="mf-status" hidden></p>
 
-  <section class="mf-controls" aria-label="山と時期を選ぶ">
-    <label class="mf-label" for="mf-mountain">⛰️ 登る山</label>
-    <select id="mf-mountain" class="mf-select"></select>
-    <div class="mf-quick chip-row" id="mf-quick"></div>
+  <section class="mf-controls" aria-label="山域と時期を選ぶ">
+    <p class="mf-label">⛰️ どの山域？</p>
+    <div class="chip-row mf-areas" id="mf-areas" role="group" aria-label="山域"></div>
+    <p class="mf-hint" id="mf-fav-hint" hidden>★＝天気ページでお気に入りにした山がある山域</p>
     <p class="mf-label">📅 いつ登る？</p>
     <div class="chip-row mf-months-chips" id="mf-months" role="group" aria-label="登る月"></div>
   </section>
@@ -65,12 +65,19 @@
     キノコの食毒は専門家でも判断を誤ることがあります。このページの情報だけで食べられるかどうかを判断せず、野生のキノコは絶対に自己判断で食べないでください。「食用とされる」と書いたものにも、よく似た毒キノコがあります。
   </div>
 
-  <div class="chip-row mf-filter" id="mf-filter" role="group" aria-label="見た・見ていないで絞り込む"></div>
+  <div class="mf-toolbar">
+    <div class="chip-row mf-filter" id="mf-filter" role="group" aria-label="見た・見ていないで絞り込む"></div>
+    <input type="search" class="mf-search" id="mf-search" placeholder="名前で絞り込み（例：コマクサ）" aria-label="名前で絞り込み">
+    <div class="mf-view" id="mf-view" role="group" aria-label="表示の切り替え">
+      <button type="button" class="mf-view__btn" data-view="list">☰ 一覧</button>
+      <button type="button" class="mf-view__btn" data-view="cards">▦ 写真</button>
+    </div>
+  </div>
 
-  <div class="mf-grid" id="mf-list"></div>
+  <div class="mf-list" id="mf-list"></div>
   <p class="mf-empty" id="mf-empty" hidden></p>
 
-  <p class="weather-disclaimer">※ 掲載しているのは、各植物・キノコのおおよその分布と時期から推定した「見られる目安」です。その山で必ず見られるとは限りません。「この山の記録あり」は、その山や周辺が代表的な自生地として知られているものです。<br>※ 「見た！」の記録はこのブラウザにだけ保存されます（写真のアップロードはありません）。<br>※ 高山植物の採取や踏み荒らしは法律や条例で禁止されている場所があります。登山道から外れず、見て楽しみましょう。</p>
+  <p class="weather-disclaimer">※ 掲載しているのは、各植物・キノコのおおよその分布と時期から推定した「見られる目安」です。山域内のどの山でも必ず見られるとは限りません。「📍」の山は、その山や周辺が代表的な自生地として知られているものです。<br>※ 「見た！」の記録はこのブラウザにだけ保存されます（写真のアップロードはありません）。<br>※ 高山植物の採取や踏み荒らしは法律や条例で禁止されている場所があります。登山道から外れず、見て楽しみましょう。</p>
 
 </main>
 

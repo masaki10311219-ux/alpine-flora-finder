@@ -46,7 +46,7 @@
   <section id="quiz-start" class="quiz-panel">
     <h1 class="ribbon" id="quiz-title">🌸 高山植物クイズ</h1>
     <p class="quiz-lead" id="quiz-lead">写真や花期から、高山植物の名前を当てよう。4択クイズで遊びながら覚えられます。</p>
-    <p class="quiz-scope" id="quiz-scope" hidden></p>
+    <p class="quiz-scope" id="quiz-scope"><a href="index.html#search">📖 出題される花を一覧で見る</a></p>
 
     <div class="quiz-lengths" role="group" aria-label="問題数を選ぶ">
       <button type="button" class="chip quiz-length" data-count="5">5問</button>
@@ -85,6 +85,8 @@
 
     <p class="quiz-feedback" id="quiz-feedback" hidden></p>
 
+    <div class="quiz-explain" id="quiz-explain" hidden aria-live="polite"></div>
+
     <button type="button" id="quiz-next" class="btn btn--cta" hidden>次の問題へ →</button>
   </section>
 
@@ -95,7 +97,12 @@
     <p class="quiz-best" id="quiz-result-best"></p>
     <div class="quiz-result-actions">
       <button type="button" id="quiz-retry" class="btn btn--cta">もう一度挑戦する</button>
-      <a href="index.html#search" class="btn btn--ghost">図鑑一覧にもどる</a>
+      <a href="index.html#search" class="btn btn--ghost" id="quiz-list-link">📖 花の一覧を見る</a>
+    </div>
+
+    <div class="quiz-review">
+      <h3 class="section-ribbon">今回出た花のおさらい</h3>
+      <ol class="quiz-review__list" id="quiz-review"></ol>
     </div>
   </section>
 
