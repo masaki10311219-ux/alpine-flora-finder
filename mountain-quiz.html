@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>山クイズ（日本百名山ほか600問） | 山美和 -Yamabiyori-</title>
+<meta name="description" content="日本百名山の標高・都道府県・読み方、都道府県の最高峰、山の知識まで全600問の4択クイズ。答えるたびに解説つき。">
+<link rel="preconnect" href="https://commons.wikimedia.org">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="images/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#fa7896">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800;900&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="paper">
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="./">
+      <img class="logo-img" src="images/logo.svg" alt="山美和 -Yamabiyori-" width="96" height="62">
+    </a>
+    <nav class="site-nav">
+      <a href="mountain.html">山の図鑑</a>
+      <a href="index.html#search">花を探す</a>
+      <a href="weather.html">山の天気</a>
+      <a href="course-search.html">コース検索</a>
+      <a href="quiz.html" aria-current="page">クイズ</a>
+      <a href="topic.html">山トークカード</a>
+      <a href="about.html">このサイトについて</a>
+    </nav>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__track">
+    <span>🌸 山美和 -Yamabiyori-</span><span>📖 登る山の花とキノコを予習</span><span>🌿 高山植物図鑑</span><span>✓ 見た花を記録して復習</span>
+    <span>🌸 山美和 -Yamabiyori-</span><span>📖 登る山の花とキノコを予習</span><span>🌿 高山植物図鑑</span><span>✓ 見た花を記録して復習</span>
+  </div>
+</div>
+
+<main class="wrap quiz-page">
+
+  <nav class="quiz-modes" aria-label="クイズの種類">
+    <a href="quiz.html">🌸 花クイズ</a>
+    <a href="mountain-quiz.html" aria-current="page">⛰️ 山クイズ</a>
+  </nav>
+
+  <section id="mq-start" class="quiz-panel">
+    <h1 class="ribbon">⛰️ 山クイズ</h1>
+    <p class="quiz-lead">日本百名山や都道府県の最高峰、山の知識から出題。全<strong id="mq-total">600</strong>問、答えるたびに解説つき。</p>
+
+    <div class="mq-progress" id="mq-progress"></div>
+
+    <p class="mf-label">ジャンル</p>
+    <div class="chip-row mq-cats" id="mq-cats" role="group" aria-label="ジャンル"></div>
+
+    <p class="mf-label">問題数</p>
+    <div class="quiz-lengths" role="group" aria-label="問題数を選ぶ" id="mq-lengths">
+      <button type="button" class="chip is-active" data-count="10">10問</button>
+      <button type="button" class="chip" data-count="20">20問</button>
+      <button type="button" class="chip" data-count="50">50問</button>
+    </div>
+
+    <label class="mq-unsolved"><input type="checkbox" id="mq-unsolved" checked> まだ正解していない問題から出す</label>
+
+    <button type="button" id="mq-begin" class="btn btn--cta">クイズをはじめる</button>
+    <p class="wx-status is-error" id="mq-status" hidden></p>
+  </section>
+
+  <section id="mq-play" class="quiz-panel" hidden>
+    <div class="quiz-progress">
+      <span id="mq-progress-text"></span>
+      <span id="mq-score-text"></span>
+    </div>
+    <div class="quiz-card">
+      <p class="mq-cat-label" id="mq-cat-label"></p>
+      <p class="quiz-question" id="mq-question"></p>
+    </div>
+    <div class="quiz-options" id="mq-options"></div>
+    <p class="quiz-feedback" id="mq-feedback" hidden></p>
+    <div class="quiz-explain" id="mq-explain" hidden aria-live="polite"></div>
+    <button type="button" id="mq-next" class="btn btn--cta" hidden>次の問題へ →</button>
+  </section>
+
+  <section id="mq-result" class="quiz-panel" hidden>
+    <h2 class="ribbon">結果発表</h2>
+    <p class="quiz-result-score" id="mq-result-score"></p>
+    <p class="quiz-result-comment" id="mq-result-comment"></p>
+    <div class="quiz-result-actions">
+      <button type="button" id="mq-retry" class="btn btn--cta">もう一度挑戦する</button>
+      <a href="mountain.html" class="btn btn--ghost">📖 山の図鑑へ</a>
+    </div>
+    <div class="quiz-review">
+      <h3 class="section-ribbon">今回の問題のおさらい</h3>
+      <ol class="quiz-review__list mq-review" id="mq-review"></ol>
+    </div>
+  </section>
+
+  <p class="weather-disclaimer">※ 日本百名山・都道府県の最高峰の山名・よみ・標高・山系などは、Wikipedia「日本百名山」「各都道府県の最高峰」の一覧をもとにしています。標高は測量の見直しで変わることがあります。<br>※ 正解した問題の記録はこのブラウザにだけ保存されます。</p>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>&copy; 2026 山美和 -Yamabiyori-</p>
+    <nav aria-label="サイト機能">
+      <a href="mountain.html">山の図鑑</a>
+      <a href="weather.html">山の天気</a>
+      <a href="course-search.html">コース検索</a>
+      <a href="quiz.html">花クイズ</a>
+      <a href="mountain-quiz.html">山クイズ</a>
+      <a href="topic.html">山トークカード</a>
+    </nav>
+    <nav aria-label="サイトについて">
+      <a href="about.html">このサイトについて・画像の出典</a>
+      <a href="privacy.html">プライバシーポリシー</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/mountain-quiz.js"></script>
+<script src="js/logo-colors.js"></script>
+<script src="js/register-sw.js"></script>
+</body>
+</html>
