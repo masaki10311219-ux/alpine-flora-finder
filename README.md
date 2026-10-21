@@ -28,7 +28,7 @@ quiz.html             花クイズ（?m=山名 でその山の花だけを出題
 about.html            このサイトについて／画像出典
 privacy.html          プライバシーポリシー（AdSense審査に必要）
 css/style.css         スタイル（ポップ調：ピンクの水玉地・黒フチ・ずらし影。色は先頭の :root で一括管理）
-images/logo.svg       ロゴ（ヘッダー・トップページ）。SVG内のCSSアニメーションで8色の配色を順に切り替える
+images/logo.svg       ロゴ（ヘッダー・トップページ）。枠なしで、SVG内のCSSアニメーションにより文字・稜線の色を8パターンで順に切り替える
 js/logo-colors.js     ファビコンの色を一定間隔で切り替える（ロゴと同じ配色）
 images/icons/         ホーム画面用アイコン（PNG）。icon.svg はファビコン兼用の正方形アイコン
 js/wikimedia.js       Wikimedia Commonsから画像・クレジットを取得

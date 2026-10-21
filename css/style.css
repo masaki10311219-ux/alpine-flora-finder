@@ -146,9 +146,9 @@ a { color: inherit; }
   transition: transform .2s var(--ease);
 }
 
-.logo:hover { transform: rotate(-3deg) scale(1.04); }
+.logo:hover { transform: scale(1.04); }
 
-.logo-img { display: block; width: 96px; height: auto; filter: drop-shadow(2px 2px 0 var(--ink)); }
+.logo-img { display: block; width: 96px; height: auto; }
 
 .site-nav {
   display: flex;
@@ -200,14 +200,13 @@ a { color: inherit; }
 .hero__text { text-align: left; min-width: 0; }
 
 /* ロゴは白いステッカーに載せて少し傾ける */
-/* ロゴはそれ自体が色の変わるタイル。少し傾けてずらし影を付ける */
+/* ロゴは枠なし。文字と稜線の色が順に変わる */
 .hero__logo {
   display: inline-block;
-  transform: rotate(-2.5deg);
-  margin: 0 0 22px 4px;
+  margin: 0 0 22px;
 }
 
-.hero__logo img { display: block; width: min(290px, 64vw); height: auto; filter: drop-shadow(6px 6px 0 var(--ink)); }
+.hero__logo img { display: block; width: min(300px, 70vw); height: auto; }
 
 /* 白い札ラベル（参考画像の左上のタグ風） */
 .hero__labels {
