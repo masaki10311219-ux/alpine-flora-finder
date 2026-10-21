@@ -11,7 +11,7 @@
   const MASK_FALLBACK = "data:image/svg+xml;utf8," + encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600">' +
     '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">' +
-    '<stop offset="0%" stop-color="#8fbb9f"/><stop offset="100%" stop-color="#6fa384"/>' +
+    '<stop offset="0%" stop-color="#3ee8f0"/><stop offset="100%" stop-color="#61a7fd"/>' +
     '</linearGradient></defs><rect width="100%" height="100%" fill="url(#g)"/></svg>'
   );
 

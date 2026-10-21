@@ -7,7 +7,7 @@ const WikimediaImages = (() => {
   const API_BASE = "https://commons.wikimedia.org/w/api.php";
   const cache = new Map();
   const FALLBACK_IMG = "data:image/svg+xml;utf8," + encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="#e7f2e8"/><text x="50%" y="50%" font-size="18" fill="#3d8451" text-anchor="middle" dominant-baseline="middle">画像準備中</text></svg>'
+    '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><defs><pattern id="d" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="2" fill="#ffffff"/></pattern></defs><rect width="100%" height="100%" fill="#d4fbfc"/><rect width="100%" height="100%" fill="url(#d)"/><text x="50%" y="50%" font-size="20" font-weight="700" fill="#1b1530" text-anchor="middle" dominant-baseline="middle">🌸 画像準備中</text></svg>'
   );
 
   const TIMEOUT_MS = 6000;

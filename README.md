@@ -25,7 +25,9 @@ course-search.html    コース検索
 quiz.html             花クイズ（?m=山名 でその山の花だけを出題）
 about.html            このサイトについて／画像出典
 privacy.html          プライバシーポリシー（AdSense審査に必要）
-css/style.css         スタイル
+css/style.css         スタイル（ポップ調：ピンクの水玉地・黒フチ・ずらし影。色は先頭の :root で一括管理）
+images/logo.svg       ロゴ（ヘッダー・トップページ）
+images/icons/         ホーム画面用アイコン（PNG）。icon.svg はファビコン兼用の正方形アイコン
 js/wikimedia.js       Wikimedia Commonsから画像・クレジットを取得
 js/app.js             検索・絞り込み・一覧表示ロジック
 js/mountain-flora.js  山と植物・キノコの対応づけ（山の図鑑・クイズ・詳細ページで共通）

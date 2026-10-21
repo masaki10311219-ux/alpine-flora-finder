@@ -2,7 +2,7 @@
  * 山中など電波の無い場所でも図鑑・山の図鑑と一度表示した画像が使えるように、
  * アプリ本体とWikimedia Commonsの画像をキャッシュするService Worker。
  */
-const CACHE_VERSION = "v16";
+const CACHE_VERSION = "v17";
 const APP_SHELL_CACHE = `app-shell-${CACHE_VERSION}`;
 const IMAGE_CACHE = `wikimedia-images-${CACHE_VERSION}`;
 
@@ -18,7 +18,6 @@ const APP_SHELL_FILES = [
   "./course-search.html",
   "./mountain.html",
   "./css/style.css",
-  "./js/bg-blobs.js",
   "./js/wikimedia.js",
   "./js/text-flow.js",
   "./js/hero-mosaic.js",
@@ -40,7 +39,10 @@ const APP_SHELL_FILES = [
   "./data/areas.json",
   "./data/mushrooms.json",
   "./manifest.json",
-  "./icon.svg"
+  "./icon.svg",
+  "./images/logo.svg",
+  "./images/icons/apple-touch-icon.png",
+  "./images/icons/icon-192.png"
 ];
 
 self.addEventListener("install", (event) => {
